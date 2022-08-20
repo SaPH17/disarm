@@ -1,6 +1,10 @@
+import { useRecoilState } from "recoil";
+import { user as userAtom } from './states/atoms';
+
 function App() {
+  const [user, setUser] = useRecoilState(userAtom);
   return (
-    <div>Hello World</div>
+    <div className="text-red-500">Hello World</div>
   );
 }
 
