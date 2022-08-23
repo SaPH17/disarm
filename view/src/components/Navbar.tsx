@@ -43,6 +43,12 @@ const authMenus = [
 export default function Navbar() {
   const role = useRoleStatus();
   const location = useLocation();
+  const [user, setUser] = useRecoilState(userAtom);
+
+  function handleLogout(){
+    setUser(null);
+  }
+
   return (
     <Disclosure as="nav" className="bg-white shadow fixed w-full">
       {({ open }) => (
@@ -62,22 +68,13 @@ export default function Navbar() {
               </div>
               <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex-shrink-0 flex items-center">
-                  <img
-                    className="block lg:hidden h-8 w-auto"
-                    src="/img/logos/workflow-mark-indigo-600.svg"
-                    alt="Workflow"
-                  />
-                  <img
-                    className="hidden lg:block h-8 w-auto"
-                    src="/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
-                    alt="Workflow"
-                  />
+                  DISARM
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
 
                   {leftMenus.map((menu) => {
-                    return ((role === menu.role) ?
+                    return role === menu.role ? (
                       <a
                         key={menu.name}
                         href="#"
@@ -91,11 +88,13 @@ export default function Navbar() {
                       >
                         {menu.name}
                       </a>
-                    : <span key={menu.name}></span>);
+                    ) : (
+                      <span key={menu.name}></span>
+                    );
                   })}
                 </div>
               </div>
-              {role !== 'guest' ? (
+              {role !== "guest" ? (
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <button className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     <span className="sr-only">View notifications</span>
@@ -158,15 +157,16 @@ export default function Navbar() {
                             </Menu.Item>
                             <Menu.Item>
                               {({ active }) => (
-                                <a
-                                  href="#"
+                                <Link
+                                  to="/login"
+                                  onClick={ handleLogout }
                                   className={classNames(
                                     active ? "bg-gray-100" : "",
                                     "block px-4 py-2 text-sm text-gray-700"
                                   )}
                                 >
-                                  Sign out
-                                </a>
+                                  Logout
+                                </Link>
                               )}
                             </Menu.Item>
                           </Menu.Items>
@@ -181,10 +181,10 @@ export default function Navbar() {
                     {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
 
                     {authMenus.map((menu) => {
-                      return ((role === menu.role) ?
-                        <a
+                      return role === menu.role ? (
+                        <Link
                           key={menu.name}
-                          href={ '/' + menu.name.toLowerCase() } 
+                          to={"/" + menu.name.toLowerCase()}
                           className={
                             (location.pathname.substring(1) ===
                             menu.name.toLowerCase()
@@ -193,8 +193,10 @@ export default function Navbar() {
                             "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                           }
                         >
-                          {menu.name}
-                        </a> : <span key={menu.name}></span>
+                          <span>{menu.name}</span>
+                        </Link>
+                      ) : (
+                        <span key={menu.name}></span>
                       );
                     })}
                   </div>
@@ -207,7 +209,7 @@ export default function Navbar() {
             <div className="pt-2 pb-4 space-y-1">
               {/* Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
               {leftMenus.map((menu) => {
-                return ((role === menu.role) ?
+                return role === menu.role ? (
                   <a
                     key={menu.name}
                     href="#"
@@ -220,14 +222,16 @@ export default function Navbar() {
                     }
                   >
                     <span>{menu.name}</span>
-                  </a> : <span key={menu.name}></span>
+                  </a>
+                ) : (
+                  <span key={menu.name}></span>
                 );
               })}
               {authMenus.map((menu) => {
-                return ((role === menu.role) ?
-                  <a
+                return role === menu.role ? (
+                  <Link
                     key={menu.name}
-                    href={ '/' + menu.name.toLowerCase() } 
+                    to={"/" + menu.name.toLowerCase()}
                     className={
                       (location.pathname.substring(1) ===
                       menu.name.toLowerCase()
@@ -237,7 +241,9 @@ export default function Navbar() {
                     }
                   >
                     <span>{menu.name}</span>
-                  </a> : <span key={menu.name}></span>
+                  </Link>
+                ) : (
+                  <span key={menu.name}></span>
                 );
               })}
             </div>
