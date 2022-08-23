@@ -1,10 +1,14 @@
-import { useRecoilState } from "recoil";
-import { user as userAtom } from './states/atoms';
-
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 function App() {
-  const [user, setUser] = useRecoilState(userAtom);
   return (
-    <div className="text-red-500">Hello World</div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 

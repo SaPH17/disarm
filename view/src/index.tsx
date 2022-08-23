@@ -12,9 +12,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <RecoilRoot>
-      <Layout>
-        <App />
-      </Layout>
+      <App />
     </RecoilRoot>
   </React.StrictMode>
 );
