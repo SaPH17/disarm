@@ -9,6 +9,7 @@ import ManageUserIndex from './pages/manage/user';
 import ManageUserCreate from './pages/manage/user/create';
 import ManageProjectCreate from './pages/manage/project/create';
 import ManageProjectIndex from './pages/manage/project';
+import ManageProjectShow from './pages/manage/project/show';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="project">
               <Route index element={<ManageProjectIndex />} />
               <Route path="create" element={<ManageProjectCreate />} />
+              <Route path=":id" element={<ManageProjectShow />} />
             </Route>
           </Route>
           <Route path="/" element={<Dashboard />} />

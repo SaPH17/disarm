@@ -4,6 +4,11 @@ export type TableData = {
   onClickFunction?: Function;
 };
 
+function toPascalCase(text: string) {
+  const result = text.replace(/([A-Z])/g, ' $1');
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
@@ -22,9 +27,9 @@ export default function Table({ title, content, onClickFunction = () => {} }: Ta
                       <th
                         key={ t }
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
                       >
-                        {t}
+                        {toPascalCase(t)}
                       </th>
                     );
                   })}
@@ -34,7 +39,7 @@ export default function Table({ title, content, onClickFunction = () => {} }: Ta
                 {content.map((c, contentIndex) => {
                   return (
                     <tr
-                      onClick={ () => onClickFunction }
+                      onClick={ () => onClickFunction(c) }
                       key={contentIndex}
                       className={
                         contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
