@@ -20,6 +20,7 @@ export default function Table({ title, content, onClickFunction = () => {} }: Ta
                   {title.map((t) => {
                     return (
                       <th
+                        key={ t }
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
@@ -42,6 +43,7 @@ export default function Table({ title, content, onClickFunction = () => {} }: Ta
                       {title.map((t, titleIndex) => {
                         return (
                           <td
+                          key={ titleIndex }
                             className={classNames(
                               titleIndex === 0
                                 ? 'font-medium text-gray-900'

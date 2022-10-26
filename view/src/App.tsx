@@ -7,11 +7,13 @@ import Dashboard from './pages/dashboard';
 import Layout from './components/structures/layout';
 import ManageUserIndex from './pages/manage/user';
 import ManageUserCreate from './pages/manage/user/create';
+import ManageProjectCreate from './pages/manage/project/create';
+import ManageProjectIndex from './pages/manage/project';
 
 function App() {
   return (
-    <Layout>
-      <Router>
+    <Router>
+      <Layout>
         <Routes>
           <Route path="auth">
             <Route path="login" element={<Login />} />
@@ -19,13 +21,17 @@ function App() {
           <Route path="manage">
             <Route path="user">
               <Route index element={<ManageUserIndex />} />
-              <Route path='create' element={<ManageUserCreate />} />
+              <Route path="create" element={<ManageUserCreate />} />
+            </Route>
+            <Route path="project">
+              <Route index element={<ManageProjectIndex />} />
+              <Route path="create" element={<ManageProjectCreate />} />
             </Route>
           </Route>
           <Route path="/" element={<Dashboard />} />
         </Routes>
-      </Router>
-    </Layout>
+      </Layout>
+    </Router>
   );
 }
 

@@ -1,25 +1,31 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react';
 
 import {
-  HomeIcon, MenuIcon, ServerIcon, UserIcon,
-  XIcon
-} from '@heroicons/react/outline'
-import { Fragment, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+  HomeIcon,
+  MenuIcon,
+  ServerIcon,
+  UserGroupIcon,
+  UserIcon,
+  XIcon,
+} from '@heroicons/react/outline';
+import { Fragment, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
   { name: 'Users', href: '/manage/user', icon: UserIcon, current: false },
-  { name: 'Projects', href: '#', icon: ServerIcon, current: false },
-]
+  { name: 'Groups', href: '/manage/group', icon: UserGroupIcon, current: false },
+  { name: 'Projects', href: '/manage/project', icon: ServerIcon, current: false },
+];
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
 export default function AuthorizedLayout({ children }: any) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
@@ -81,25 +87,27 @@ export default function AuthorizedLayout({ children }: any) {
                 </div>
                 <nav className="mt-5 px-2 space-y-1">
                   {navigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? 'bg-gray-100 text-gray-900'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                        'group flex items-center px-2 py-2 text-base font-medium rounded-md'
-                      )}
-                    >
-                      <item.icon
+                    <Link key={item.name} to={item.href}>
+                      <a
                         className={classNames(
-                          item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                          'mr-4 h-6 w-6'
+                          item.current
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                          'group flex items-center px-2 py-2 text-base font-medium rounded-md'
                         )}
-                        aria-hidden="true"
-                      />
-                      {item.name}
-                    </a>
+                      >
+                        <item.icon
+                          className={classNames(
+                            item.current
+                              ? 'text-gray-500'
+                              : 'text-gray-400 group-hover:text-gray-500',
+                            'mr-4 h-6 w-6'
+                          )}
+                          aria-hidden="true"
+                        />
+                        {item.name}
+                      </a>
+                    </Link>
                   ))}
                 </nav>
               </div>
@@ -114,15 +122,21 @@ export default function AuthorizedLayout({ children }: any) {
                       />
                     </div>
                     <div className="ml-3">
-                      <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">Tom Cook</p>
-                      <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
+                      <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
+                        Tom Cook
+                      </p>
+                      <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
+                        View profile
+                      </p>
                     </div>
                   </div>
                 </a>
               </div>
             </div>
           </Transition.Child>
-          <div className="flex-shrink-0 w-14">{/* Force sidebar to shrink to fit close icon */}</div>
+          <div className="flex-shrink-0 w-14">
+            {/* Force sidebar to shrink to fit close icon */}
+          </div>
         </Dialog>
       </Transition.Root>
 
@@ -141,23 +155,27 @@ export default function AuthorizedLayout({ children }: any) {
               </div>
               <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
                 {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={classNames(
-                      item.current ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                      'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
-                    )}
-                  >
-                    <item.icon
+                  <Link key={item.name} to={item.href}>
+                    <span
                       className={classNames(
-                        item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-3 h-6 w-6'
+                        item.current
+                          ? 'bg-gray-100 text-gray-900'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                        'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
                       )}
-                      aria-hidden="true"
-                    />
-                    {item.name}
-                  </a>
+                    >
+                      <item.icon
+                        className={classNames(
+                          item.current
+                            ? 'text-gray-500'
+                            : 'text-gray-400 group-hover:text-gray-500',
+                          'mr-3 h-6 w-6'
+                        )}
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </span>
+                  </Link>
                 ))}
               </nav>
             </div>
@@ -172,8 +190,12 @@ export default function AuthorizedLayout({ children }: any) {
                     />
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Tom Cook</p>
-                    <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
+                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                      Tom Cook
+                    </p>
+                    <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+                      View profile
+                    </p>
                   </div>
                 </div>
               </a>
@@ -194,7 +216,9 @@ export default function AuthorizedLayout({ children }: any) {
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              <div className='flex flex-col gap-2 sm:gap-4 p-2 sm:p-4'>{ children }</div>
+              <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4">
+                {children}
+              </div>
             </div>
           </div>
         </main>
