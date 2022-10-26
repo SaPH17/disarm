@@ -1,28 +1,23 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+
 import {
-  CalendarIcon,
-  HomeIcon,
-  MapIcon,
-  MenuIcon,
-  SearchCircleIcon,
-  ServerIcon,
-  SpeakerphoneIcon,
-  UserGroupIcon,
-  UserIcon,
-  XIcon,
+  HomeIcon, MenuIcon, ServerIcon, UserIcon,
+  XIcon
 } from '@heroicons/react/outline'
+import { Fragment, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Users', href: '#', icon: UserIcon, current: false },
+  { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
+  { name: 'Users', href: '/manage/user', icon: UserIcon, current: false },
   { name: 'Projects', href: '#', icon: ServerIcon, current: false },
 ]
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
+
 
 
 export default function AuthorizedLayout({ children }: any) {
@@ -89,9 +84,9 @@ export default function AuthorizedLayout({ children }: any) {
                 <nav aria-label="Sidebar" className="mt-5">
                   <div className="px-2 space-y-1">
                     {navigation.map((item) => (
-                      <a
+                      <NavLink to={ item.href }>
+                        <span
                         key={item.name}
-                        href={item.href}
                         className={classNames(
                           item.current
                             ? 'bg-gray-100 text-gray-900'
@@ -109,7 +104,8 @@ export default function AuthorizedLayout({ children }: any) {
                           aria-hidden="true"
                         />
                         {item.name}
-                      </a>
+                      </span>
+                      </NavLink>
                     ))}
                   </div>
                 </nav>
@@ -230,7 +226,9 @@ export default function AuthorizedLayout({ children }: any) {
             </div>
           </div>
         </div>
+        <div className='p-2 sm:p-4 flex flex-col gap-2 sm:gap-4'>
         {children}
+        </div>
       </div>
     </div>
   );
