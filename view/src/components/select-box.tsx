@@ -10,6 +10,7 @@ function classNames(...classes: string[]) {
 export type GeneralSelectBoxData = {
   items: SelectBoxData[];
   defaultValue?: string;
+  onClickFunction?: Function;
 };
 
 export type SelectBoxData = {
@@ -20,6 +21,7 @@ export type SelectBoxData = {
 export default function SelectBox({
   items,
   defaultValue = '-- Select Data --',
+  onClickFunction = () => {}
 }: GeneralSelectBoxData) {
   const [selected, setSelected] = useState<null | SelectBoxData>(null);
 
@@ -49,16 +51,17 @@ export default function SelectBox({
                 static
                 className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
               >
-                {items.map((person) => (
+                {items.map((item) => (
                   <Listbox.Option
-                    key={person.id}
+                    key={item.id}
                     className={({ active }) =>
                       classNames(
                         active ? 'text-white bg-indigo-600' : 'text-gray-900',
                         'cursor-default select-none relative py-2 pl-3 pr-9'
                       )
                     }
-                    value={person}
+                    value={item}
+                    onClick={ () => { onClickFunction(item) } }
                   >
                     {({ selected, active }) => (
                       <>
@@ -68,7 +71,7 @@ export default function SelectBox({
                             'block truncate'
                           )}
                         >
-                          {person.name}
+                          {item.name}
                         </span>
 
                         {selected ? (
