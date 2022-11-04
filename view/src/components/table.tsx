@@ -13,7 +13,11 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Table({ title, content, onClickFunction = () => {} }: TableData) {
+export default function Table({
+  title,
+  content,
+  onClickFunction = () => {},
+}: TableData) {
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -25,7 +29,7 @@ export default function Table({ title, content, onClickFunction = () => {} }: Ta
                   {title.map((t) => {
                     return (
                       <th
-                        key={ t }
+                        key={t}
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
                       >
@@ -39,7 +43,7 @@ export default function Table({ title, content, onClickFunction = () => {} }: Ta
                 {content.map((c, contentIndex) => {
                   return (
                     <tr
-                      onClick={ () => onClickFunction(c) }
+                      onClick={() => onClickFunction(c)}
                       key={contentIndex}
                       className={
                         contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
@@ -48,7 +52,7 @@ export default function Table({ title, content, onClickFunction = () => {} }: Ta
                       {title.map((t, titleIndex) => {
                         return (
                           <td
-                          key={ titleIndex }
+                            key={titleIndex}
                             className={classNames(
                               titleIndex === 0
                                 ? 'font-medium text-gray-900'

@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-import SelectBox, { GeneralSelectBoxData, SelectBoxData } from '../../../components/select-box';
+import SelectBox, { SelectBoxData } from '../../../components/select-box';
 import Table from '../../../components/table';
+import PrimaryButton from '../../../components/primary-button';
 
 const content = [
   {
@@ -11,7 +12,7 @@ const content = [
     standard: 'Standard A',
     status: 'On Going',
     phase: '',
-    report: 'Download Report'
+    report: 'Download Report',
   },
   {
     id: '2',
@@ -20,7 +21,7 @@ const content = [
     standard: 'Standard A',
     status: 'Approved',
     phase: '',
-    report: 'Download Report'
+    report: 'Download Report',
   },
   {
     id: '3',
@@ -29,7 +30,7 @@ const content = [
     standard: 'Standard A',
     status: 'Not Started',
     phase: '',
-    report: 'No Report'
+    report: 'No Report',
   },
   {
     id: '4',
@@ -38,7 +39,7 @@ const content = [
     standard: 'Standard A',
     status: 'On Going',
     phase: '',
-    report: 'Download Report'
+    report: 'Download Report',
   },
 ];
 
@@ -55,7 +56,7 @@ const items: SelectBoxData[] = [
     id: '3',
     name: 'Generate Report',
   },
-]
+];
 
 const title = ['name', 'company', 'standard', 'status', 'phase', 'report'];
 
@@ -69,19 +70,18 @@ export default function ManageProjectIndex() {
     <>
       <div className="text-xl font-semibold">Manage Project</div>
       <div className="flex flex-row justify-between gap-2 sm:gap-4">
-        <NavLink to={ '/manage/project/create' }>
-        <button
-          type="button"
-          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Create Project
-        </button>
+        <NavLink to={'/manage/project/create'}>
+          <PrimaryButton content="Create Project" />
         </NavLink>
-        <SelectBox items={items} defaultValue={ '-- Select Action --' } />
+        <SelectBox items={items} defaultValue={'-- Select Action --'} />
       </div>
       <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border border-4 border-dashed rounded">
         <div className="text-lg font-semibold">Current Projects</div>
-        <Table title={title} content={content} onClickFunction={ handleRedirectToProjectDetail } />
+        <Table
+          title={title}
+          content={content}
+          onClickFunction={handleRedirectToProjectDetail}
+        />
       </div>
     </>
   );

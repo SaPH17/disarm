@@ -1,11 +1,7 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { NavLink } from 'react-router-dom';
-import SelectBox, {
-  GeneralSelectBoxData,
-  SelectBoxData,
-} from '../../../components/select-box';
+import { useParams } from 'react-router-dom';
 import SelectedDetail from '../../../components/selected-detail';
 import Table from '../../../components/table';
+import PrimaryButton from '../../../components/primary-button';
 
 const content = [
   {
@@ -71,12 +67,7 @@ export default function ManageProjectShow() {
         content={contentData}
       />
       <div className="flex flex-row justify-end gap-4">
-        <button
-          type="button"
-          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Insert Finding
-        </button>
+        <PrimaryButton content="Insert Finding" />
         <button
           type="button"
           className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
