@@ -10,6 +10,7 @@ import ManageUserCreate from './pages/manage/user/create';
 import ManageProjectCreate from './pages/manage/project/create';
 import ManageProjectIndex from './pages/manage/project';
 import ManageProjectShow from './pages/manage/project/show';
+import ManageGroupIndex from './pages/manage/group';
 
 function App() {
   return (
@@ -24,6 +25,10 @@ function App() {
               <Route index element={<ManageUserIndex />} />
               <Route path="create" element={<ManageUserCreate />} />
             </Route>
+            <Route path="group">
+              <Route index element={<ManageGroupIndex />} />
+            </Route>
+
             <Route path="project">
               <Route index element={<ManageProjectIndex />} />
               <Route path="create" element={<ManageProjectCreate />} />
