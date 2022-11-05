@@ -1,8 +1,5 @@
-import SelectBox from './select-box';
-
 export type SelectedDetailData = {
   title: string;
-  selectBox?: JSX.Element;
   contentTitle: string[];
   content: object;
 };
@@ -14,7 +11,6 @@ function toPascalCase(text: string) {
 
 export default function SelectedDetail({
   title,
-  selectBox = <div></div>,
   contentTitle,
   content,
 }: SelectedDetailData) {
@@ -22,7 +18,6 @@ export default function SelectedDetail({
     <div className="flex flex-col gap-2 sm:gap-4 bg-gray-100 rounded border border-4 border-dashed rounded divide-y-4 divide-dashed">
       <div className="flex flex-row justify-between items-center px-2 sm:px-4 pt-2 sm:pt-4">
         <div className="text-lg font-semibold">{title}</div>
-        {selectBox}
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3">
         {contentTitle.map((ct) => {
