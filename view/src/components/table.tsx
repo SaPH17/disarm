@@ -1,6 +1,7 @@
 export type TableData = {
   title: string[];
   content: object[];
+  isClickable?: Boolean;
   onClickFunction?: Function;
 };
 
@@ -16,6 +17,7 @@ function classNames(...classes: string[]) {
 export default function Table({
   title,
   content,
+  isClickable = false,
   onClickFunction = () => {},
 }: TableData) {
   return (
@@ -45,9 +47,11 @@ export default function Table({
                     <tr
                       onClick={() => onClickFunction(c)}
                       key={contentIndex}
-                      className={
+                      className={`${
                         contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      }
+                      } ${
+                        isClickable ? 'cursor-pointer hover:bg-gray-200 ' : ''
+                      }`}
                     >
                       {title.map((t, titleIndex) => {
                         return (

@@ -15,7 +15,7 @@ export default function SelectedDetail({
   content,
 }: SelectedDetailData) {
   return (
-    <div className="flex flex-col gap-2 sm:gap-4 bg-gray-100 rounded border border-4 border-dashed rounded divide-y-4 divide-dashed">
+    <div className="flex flex-col gap-2 sm:gap-4 bg-gray-100 rounded border-4 border-dashed  divide-y-4 divide-dashed">
       <div className="flex flex-row justify-between items-center px-2 sm:px-4 pt-2 sm:pt-4">
         <div className="text-lg font-semibold">{title}</div>
       </div>

@@ -75,7 +75,7 @@ export default function ManageProjectShow() {
           Download Report
         </button>
       </div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border border-4 border-dashed rounded">
+      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border-4 border-dashed ">
         <div className="text-lg font-semibold">Findings</div>
         <Table title={title} content={content} />
       </div>

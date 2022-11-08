@@ -73,9 +73,9 @@ export default function ManageUserIndex() {
       <div className="text-xl font-semibold">Manage User</div>
       <div className="flex flex-row gap-2 sm:gap-4 justify-between">
         <PrimaryButton content="Create User" />
-        <SelectBox items={items} defaultValue={'-- Select Action --'} />
+        <SelectBox items={items} />
       </div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border border-4 border-dashed rounded">
+      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border-4 border-dashed">
         <div className="text-lg font-semibold">Users</div>
         <Table title={title} content={content} />
       </div>
