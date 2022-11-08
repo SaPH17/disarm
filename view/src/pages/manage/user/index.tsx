@@ -4,6 +4,7 @@ import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
+import { Link } from 'react-router-dom';
 
 const content = [
   {
@@ -78,7 +79,10 @@ export default function ManageUserIndex() {
     <>
       <div className="text-xl font-semibold">Manage User</div>
       <div className="flex flex-row gap-2 sm:gap-4 justify-between">
-        <PrimaryButton content="Create User" />
+        <Link to="/manage/user/create">
+          <PrimaryButton content="Create User" />
+        </Link>
+
         <ActionButton items={items} />
       </div>
 
