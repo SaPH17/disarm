@@ -121,7 +121,7 @@ export default function CreateProjectForm() {
             </label>
             <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
               <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox items={items} />
+                <SelectBox items={items} defaultValue={'Select Standard'} />
               </div>
               <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
                 Create a new standard
@@ -140,10 +140,11 @@ export default function CreateProjectForm() {
               <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                 <SelectBox
                   items={availableUsers}
+                  defaultValue={'Select User'}
                   onClickFunction={getCurrentUser}
                 />
               </div>
-              <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
+              <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
                 {selectedUsers.map((selectedUser, index) => (
                   <UserCard
                     key={index}
