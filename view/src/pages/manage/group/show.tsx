@@ -16,7 +16,7 @@ const ManageGroupShow = () => {
           <div className="text-lg font-semibold">Assign User</div>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FaSearch aria-hidden="true" />
+              <FaSearch className="text-gray-600" aria-hidden="true" />
             </div>
             <input
               type="text"
