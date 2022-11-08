@@ -1,5 +1,3 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/auth/login';
@@ -13,6 +11,7 @@ import ManageProjectShow from './pages/manage/project/show';
 import ManageGroupIndex from './pages/manage/group';
 import ManageChecklistIndex from './pages/manage/checklist';
 import ManageChecklistShow from './pages/manage/checklist/show';
+import ManageGroupShow from './pages/manage/group/show';
 
 function App() {
   return (
@@ -30,6 +29,7 @@ function App() {
 
             <Route path="group">
               <Route index element={<ManageGroupIndex />} />
+              <Route path=":id" element={<ManageGroupShow />} />
             </Route>
 
             <Route path="checklist">
