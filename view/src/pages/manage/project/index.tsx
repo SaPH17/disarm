@@ -80,8 +80,8 @@ export default function ManageProjectIndex() {
         </NavLink>
         <ActionButton items={items} />
       </div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border-4 border-dashed ">
-        <div className="text-lg font-semibold">Current Projects</div>
+      <div className="flex flex-col gap-1 sm:gap-2">
+        <div className="text-lg font-semibold">Projects</div>
         <Table
           title={title}
           content={content}

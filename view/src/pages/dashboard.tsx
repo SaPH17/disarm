@@ -40,9 +40,10 @@ const title = ['name', 'company', 'status', 'date'];
 export default function Dashboard() {
   return (
     <>
-      <div className="text-xl font-semibold">Dashboard</div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border border-4 border-dashed rounded">
-        <div className="text-lg font-semibold">Current Project</div>
+      <div className="text-xl font-bold">Dashboard</div>
+
+      <div className="flex flex-col gap-1 sm:gap-2">
+        <div className="text-lg font-semibold">Projects</div>
         <Table title={title} content={content} />
       </div>
     </>
