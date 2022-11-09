@@ -11,7 +11,7 @@ const ManageGroupShow = () => {
   return (
     <>
       <div className="text-xl font-semibold">Role {params.id}</div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border-4 border-dashed mt-4">
+      <div className="flex flex-col gap-2 sm:gap-4 py-2 sm:py-4 bg-gray-100 rounded mt-4">
         <div className="flex justify-between items-center">
           <div className="text-lg font-semibold">Assign User</div>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -33,7 +33,7 @@ const ManageGroupShow = () => {
           isClickable={true}
         />
       </div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border-4 border-dashed mt-8">
+      <div className="flex flex-col gap-2 sm:gap-4 py-2 sm:py-4 bg-gray-100 rounded mt-8">
         <div className="flex justify-between items-center">
           <div className="text-lg font-semibold">User List</div>
         </div>

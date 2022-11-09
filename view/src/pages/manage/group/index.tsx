@@ -6,6 +6,8 @@ import ActionButton, {
 } from '../../../components/action-button';
 import { useNavigate } from 'react-router-dom';
 
+const title = ['name', 'description'];
+
 const content = [
   {
     id: 1,
@@ -47,8 +49,6 @@ const items: ActionButtonItem[] = [
   },
 ];
 
-const title = ['name', 'description'];
-
 const contentTitle = [
   'name',
   'description',
@@ -58,7 +58,7 @@ const contentTitle = [
 const contentData = {
   name: 'Role A',
   description: 'Role for admin',
-  Permissions: '- updateuser.*',
+  permissions: '- updateuser.*',
   directParentGroup: 'Role B',
 };
 
