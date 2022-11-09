@@ -56,7 +56,7 @@ export default function TableCheckbox({
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <div className="flex justify-center content-center py-3">
+                  <th className="flex justify-center content-center py-3">
                     <input
                       id="check-all"
                       checked={isCheckedAll}
@@ -64,7 +64,7 @@ export default function TableCheckbox({
                       type="checkbox"
                       className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
-                  </div>
+                  </th>
                   {title.map((t) => {
                     return (
                       <th
@@ -90,7 +90,7 @@ export default function TableCheckbox({
                         isClickable ? 'cursor-pointer hover:bg-gray-200 ' : ''
                       }`}
                     >
-                      <div className="flex justify-center content-center py-3">
+                      <td className="flex justify-center content-center py-3">
                         <input
                           id={`check-${contentIndex}`}
                           type="checkbox"
@@ -100,7 +100,7 @@ export default function TableCheckbox({
                           )}
                           className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
-                      </div>
+                      </td>
                       {title.map((t, titleIndex) => {
                         return (
                           <td
