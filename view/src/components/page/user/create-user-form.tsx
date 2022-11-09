@@ -1,22 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import SelectBox, { SelectBoxData } from '../../select-box';
+import SelectBox from '../../select-box';
 import GroupCard from './group-card';
-import UserCard1 from './group-card';
-const items: SelectBoxData[] = [
-  {
-    id: '1',
-    name: 'Standard A',
-  },
-  {
-    id: '2',
-    name: 'Standard B',
-  },
-  {
-    id: '3',
-    name: 'Standard C',
-  },
-];
 
 export type Group = {
   id: string;
@@ -148,7 +133,7 @@ export default function CreateUserForm() {
                   </span>
                 </Link>
               </div>
-              <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
+              <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
                 {selectedGroups.map((selectedGroup, index) => (
                   <GroupCard
                     key={index}

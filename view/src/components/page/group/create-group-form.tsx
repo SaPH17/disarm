@@ -1,9 +1,84 @@
-import React from 'react';
+import React, { useState } from 'react';
+import SelectBox, { SelectBoxData } from '../../select-box';
+import UserCard from '../project/user-card';
+
+const items: SelectBoxData[] = [
+  {
+    id: '1',
+    name: 'Role A',
+  },
+  {
+    id: '2',
+    name: 'Role B',
+  },
+  {
+    id: '3',
+    name: 'Role C',
+  },
+  {
+    id: '4',
+    name: 'Role D',
+  },
+];
+
+export type User = {
+  id: string;
+  name: string;
+  job: string;
+};
 
 const CreateGroupForm = () => {
+  const users = [
+    {
+      id: '1',
+      name: 'Bambang',
+      job: 'Pentester',
+    },
+    {
+      id: '2',
+      name: 'Memeng',
+      job: 'System Analyst',
+    },
+    {
+      id: '3',
+      name: 'Mamang',
+      job: 'Pentester',
+    },
+    {
+      id: '4',
+      name: 'Cadelia',
+      job: 'System Analyst',
+    },
+  ];
+
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [availableUsers, setAvailableUsers] = useState<User[]>(users);
+
+  function getCurrentUser(item: any) {
+    const tempSelectedUser = [...selectedUsers, item];
+    resetAssignedUserState(tempSelectedUser);
+  }
+
+  function removeCurrentUser(user: any) {
+    const tempSelectedUser = selectedUsers.filter(
+      (selectedUser) => selectedUser.id !== user.id
+    );
+    resetAssignedUserState(tempSelectedUser);
+  }
+
+  function resetAssignedUserState(tempSelectedUser: User[]) {
+    setSelectedUsers(tempSelectedUser);
+    setAvailableUsers(
+      users.filter(
+        (user) =>
+          !tempSelectedUser.find((selectedUser) => selectedUser.id === user.id)
+      )
+    );
+  }
+
   return (
     <form className="space-y-8">
-      {/* <div className="space-y-8 sm:space-y-5">
+      <div className="space-y-8 sm:space-y-5">
         <div className="space-y-6 sm:space-y-5">
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
             <label
@@ -23,12 +98,12 @@ const CreateGroupForm = () => {
             </div>
           </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start  sm:pt-5">
             <label
               htmlFor="last_name"
               className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
             >
-              Company
+              Description
             </label>
             <div className="mt-1 sm:mt-0 sm:col-span-2">
               <input
@@ -46,15 +121,12 @@ const CreateGroupForm = () => {
               htmlFor="country"
               className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
             >
-              Standard
+              Parent Group
             </label>
             <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
               <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox items={items} defaultValue={'Select Standard'} />
+                <SelectBox items={items} defaultValue={'None'} />
               </div>
-              <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
-                Create a new standard
-              </span>
             </div>
           </div>
 
@@ -85,7 +157,7 @@ const CreateGroupForm = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </form>
   );
 };
