@@ -46,7 +46,8 @@ const ManageGroupEdit = () => {
         <TableCheckbox
           title={title}
           content={content}
-          isClickable={true}
+          onCheckedFunction={() => {}}
+          onUncheckedFunction={() => {}}
           onClickFunction={(group: any) => {}}
         />
       </div>
@@ -56,7 +57,8 @@ const ManageGroupEdit = () => {
         <TableCheckbox
           title={title}
           content={content}
-          isClickable={true}
+          onCheckedFunction={() => {}}
+          onUncheckedFunction={() => {}}
           onClickFunction={(group: any) => {}}
         />
       </div>

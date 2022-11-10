@@ -44,7 +44,7 @@ const ActionButton = ({
           <div className="py-1">
             {items.map((val, idx) => {
               return (
-                <Menu.Item>
+                <Menu.Item key={idx}>
                   {({ active }) => (
                     <Link
                       to={val.url}

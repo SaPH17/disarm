@@ -3,7 +3,8 @@ import { useState } from 'react';
 export type TableData = {
   title: string[];
   content: object[];
-  isClickable?: Boolean;
+  onCheckedFunction: Function;
+  onUncheckedFunction: Function;
   onClickFunction?: Function;
 };
 
@@ -16,10 +17,15 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
+/*
+  onClickFunction : Callback function when a row content is clicked
+*/
+
 export default function TableCheckbox({
   title,
   content,
-  isClickable = false,
+  onCheckedFunction,
+  onUncheckedFunction,
   onClickFunction = () => {},
 }: TableData) {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
@@ -38,14 +44,15 @@ export default function TableCheckbox({
     setCheckedList([]);
   };
 
-  const handleCheck = (e: any) => {
-    const { id, checked } = e.target;
-    if (checked) {
+  const handleCheck = (e: any, id: String, item: any) => {
+    if (!checkedList.includes(id)) {
       setCheckedList([...checkedList, id]);
+      onCheckedFunction(item);
       return;
     }
 
     setCheckedList(checkedList.filter((item) => item !== id));
+    onUncheckedFunction(item);
   };
 
   return (
@@ -82,19 +89,20 @@ export default function TableCheckbox({
                 {content.map((c, contentIndex) => {
                   return (
                     <tr
-                      onClick={() => onClickFunction(c)}
+                      onClick={(e) =>
+                        handleCheck(e, `check-${contentIndex}`, c)
+                      }
                       key={contentIndex}
                       className={`${
                         contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      } ${
-                        isClickable ? 'cursor-pointer hover:bg-gray-200 ' : ''
-                      }`}
+                      } cursor-pointer hover:bg-gray-200`}
                     >
                       <td className="py-4">
                         <input
-                          id={`check-${contentIndex}`}
                           type="checkbox"
-                          onChange={handleCheck}
+                          onChange={(e) => {
+                            handleCheck(e, `check-${contentIndex}`, c);
+                          }}
                           checked={checkedList.includes(
                             `check-${contentIndex}`
                           )}
@@ -109,10 +117,17 @@ export default function TableCheckbox({
                               titleIndex === 0
                                 ? 'font-medium text-gray-900'
                                 : 'text-gray-500',
-                              'px-6 py-4 whitespace-nowrap text-sm'
+                              'px-6 py-4 whitespace-nowrap text-sm select-none'
                             )}
                           >
-                            {(c as any)[t]}
+                            <span
+                              onClick={(e) => onClickFunction(c)}
+                              className={`${
+                                titleIndex === 0 ? 'hover:underline' : ''
+                              }`}
+                            >
+                              {(c as any)[t]}
+                            </span>
                           </td>
                         );
                       })}

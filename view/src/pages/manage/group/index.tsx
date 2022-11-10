@@ -5,6 +5,7 @@ import ActionButton, {
 } from '../../../components/action-button';
 import { useNavigate } from 'react-router-dom';
 import TableCheckbox from '../../../components/table-checkbox';
+import { useState } from 'react';
 
 const title = ['name', 'description'];
 
@@ -13,21 +14,29 @@ const content = [
     id: 1,
     name: 'Role A',
     description: 'Role for admin',
+    permissions: '- updateuser.*',
+    directParentGroup: 'Role B',
   },
   {
     id: 2,
     name: 'Role B',
     description: 'Role for pentester',
+    permissions: '- updateuser.*',
+    directParentGroup: 'Role B',
   },
   {
     id: 3,
     name: 'Role C',
     description: 'Role for SysAdmin',
+    permissions: '- updateuser.*',
+    directParentGroup: 'Role B',
   },
   {
     id: 4,
     name: 'Role D',
     description: 'Role for others',
+    permissions: '- updateuser.*',
+    directParentGroup: 'Role B',
   },
 ];
 
@@ -55,14 +64,16 @@ const contentTitle = [
   'permissions',
   'directParentGroup',
 ];
-const contentData = {
-  name: 'Role A',
-  description: 'Role for admin',
-  permissions: '- updateuser.*',
-  directParentGroup: 'Role B',
-};
 
 export default function ManageGroupIndex() {
+  const [selectedGroup, setSelectedGroup] = useState<any[]>([
+    {
+      name: '-',
+      description: '-',
+      permissions: '-',
+      directParentGroup: '-',
+    },
+  ]);
   const navigate = useNavigate();
 
   return (
@@ -78,9 +89,14 @@ export default function ManageGroupIndex() {
         <TableCheckbox
           title={title}
           content={content}
-          isClickable={true}
+          onCheckedFunction={(group: any) => {
+            setSelectedGroup([...selectedGroup, group]);
+          }}
+          onUncheckedFunction={(group: any) => {
+            setSelectedGroup(selectedGroup.filter((item) => item !== group));
+          }}
           onClickFunction={(group: any) => {
-            // navigate(`/manage/group/${group.id}`);
+            navigate(`/manage/group/${group.id}`);
           }}
         />
       </div>
@@ -88,7 +104,7 @@ export default function ManageGroupIndex() {
       <SelectedDetail
         title={'Group Detail'}
         contentTitle={contentTitle}
-        content={contentData}
+        content={selectedGroup[selectedGroup.length - 1]}
       />
     </>
   );
