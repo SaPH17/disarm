@@ -1,10 +1,10 @@
-import Table from '../../../components/table';
 import SelectedDetail from '../../../components/selected-detail';
 import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
 import { useNavigate } from 'react-router-dom';
+import TableCheckbox from '../../../components/table-checkbox';
 
 const title = ['name', 'description'];
 
@@ -75,12 +75,12 @@ export default function ManageGroupIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Groups</div>
-        <Table
+        <TableCheckbox
           title={title}
           content={content}
           isClickable={true}
           onClickFunction={(group: any) => {
-            navigate(`/manage/group/${group.id}`);
+            // navigate(`/manage/group/${group.id}`);
           }}
         />
       </div>
