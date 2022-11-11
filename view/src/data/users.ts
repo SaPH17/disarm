@@ -6,6 +6,8 @@ export const users = [
     status: 'Idle',
     assignedProjects: '-',
     directSupervisor: 'Memeng',
+    job: 'Pentester',
+    email: 'bambang@gmail.com'
   },
   {
     id: '2',
@@ -14,6 +16,8 @@ export const users = [
     status: 'Idle',
     assignedProjects: '-',
     directSupervisor: 'Memeng',
+    job: 'System Analyst',
+    email: 'mamang@gmail.com'
   },
   {
     id: '3',
@@ -22,6 +26,8 @@ export const users = [
     status: 'Review',
     assignedProjects: '-',
     directSupervisor: '-',
+    job: 'Pentester',
+    email: 'memeng@gmail.com'
   },
   {
     id: '4',
@@ -30,5 +36,7 @@ export const users = [
     status: 'Review',
     assignedProjects: '-',
     directSupervisor: 'Memeng',
+    job: 'System Analyst',
+    email: 'revaldi@gmail.com'
   },
 ];

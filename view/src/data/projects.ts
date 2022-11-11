@@ -1,0 +1,38 @@
+export const projects = [
+  {
+    id: '1',
+    name: 'Project A',
+    company: 'Company A',
+    standard: 'Standard A',
+    status: 'On Going',
+    phase: '',
+    report: 'Download Report',
+  },
+  {
+    id: '2',
+    name: 'Project B',
+    company: 'Company B',
+    standard: 'Standard A',
+    status: 'Approved',
+    phase: '',
+    report: 'Download Report',
+  },
+  {
+    id: '3',
+    name: 'Project C',
+    company: 'Company C',
+    standard: 'Standard B',
+    status: 'Not Started',
+    phase: '',
+    report: 'No Report',
+  },
+  {
+    id: '4',
+    name: 'Project D',
+    company: 'Company D',
+    standard: 'Standard A',
+    status: 'On Going',
+    phase: '',
+    report: 'Download Report',
+  },
+];

@@ -6,7 +6,6 @@ export default function ManageProjectCreate() {
     <>
       <div className="flex flex-row justify-between">
         <div className="text-xl font-semibold">Create Project</div>
-        <PrimaryButton content="Create Project" />
       </div>
       <CreateProjectForm />
     </>

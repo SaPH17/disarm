@@ -6,7 +6,6 @@ const ManageGroupCreate = () => {
     <>
       <div className="flex flex-row justify-between">
         <div className="text-xl font-semibold">Create Group</div>
-        <PrimaryButton content="Create Group" />
       </div>
       <CreateGroupForm />
     </>

@@ -5,45 +5,10 @@ import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
-
-const content = [
-  {
-    id: '1',
-    name: 'Project A',
-    company: 'Company A',
-    standard: 'Standard A',
-    status: 'On Going',
-    phase: '',
-    report: 'Download Report',
-  },
-  {
-    id: '2',
-    name: 'Project A',
-    company: 'Company A',
-    standard: 'Standard A',
-    status: 'Approved',
-    phase: '',
-    report: 'Download Report',
-  },
-  {
-    id: '3',
-    name: 'Project A',
-    company: 'Company A',
-    standard: 'Standard A',
-    status: 'Not Started',
-    phase: '',
-    report: 'No Report',
-  },
-  {
-    id: '4',
-    name: 'Project A',
-    company: 'Company A',
-    standard: 'Standard A',
-    status: 'On Going',
-    phase: '',
-    report: 'Download Report',
-  },
-];
+import { projects } from '../../../data/projects';
+import { useEffect, useState } from 'react';
+import ProjectServices from '../../../services/project-services';
+import { Project } from '../../../models/project';
 
 const items: ActionButtonItem[] = [
   {
@@ -66,12 +31,23 @@ const items: ActionButtonItem[] = [
 const title = ['name', 'company', 'standard', 'status', 'phase', 'report'];
 
 export default function ManageProjectIndex() {
+  const [projects, setProjects] = useState<Project[]>();
   const navigate = useNavigate();
 
   function handleRedirectToProjectDetail(project: any) {
     navigate('/projects/' + project.id);
   }
-  return (
+
+  async function fetchProjects() {
+    const result = await ProjectServices.getProjects();
+    setProjects(result);
+  }
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  return (projects ?
     <>
       <div className="text-xl font-semibold">Manage Project</div>
       <div className="flex flex-row justify-between gap-2 sm:gap-4">
@@ -84,11 +60,11 @@ export default function ManageProjectIndex() {
         <div className="text-lg font-semibold">Projects</div>
         <Table
           title={title}
-          content={content}
+          content={projects as object[]}
           isClickable={true}
           onClickFunction={handleRedirectToProjectDetail}
         />
       </div>
-    </>
+    </> : <></>
   );
 }

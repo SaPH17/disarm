@@ -5,41 +5,12 @@ import ActionButton, {
 } from '../../../components/action-button';
 import { useNavigate } from 'react-router-dom';
 import TableCheckbox from '../../../components/table-checkbox';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Group } from '../../../models/group';
+import GroupServices from '../../../services/group-services';
 
 const title = ['name', 'description'];
-
-const content = [
-  {
-    id: 1,
-    name: 'Role A',
-    description: 'Role for admin',
-    permissions: '- updateuser.*',
-    directParentGroup: 'Role B',
-  },
-  {
-    id: 2,
-    name: 'Role B',
-    description: 'Role for pentester',
-    permissions: '- updateuser.*',
-    directParentGroup: 'Role B',
-  },
-  {
-    id: 3,
-    name: 'Role C',
-    description: 'Role for SysAdmin',
-    permissions: '- updateuser.*',
-    directParentGroup: 'Role B',
-  },
-  {
-    id: 4,
-    name: 'Role D',
-    description: 'Role for others',
-    permissions: '- updateuser.*',
-    directParentGroup: 'Role B',
-  },
-];
 
 const items: ActionButtonItem[] = [
   {
@@ -62,6 +33,7 @@ const contentTitle = [
 ];
 
 export default function ManageGroupIndex() {
+  const [groups, setGroups] = useState<Group[]>();
   const [selectedGroup, setSelectedGroup] = useState<any[]>([
     {
       id: -1,
@@ -72,6 +44,15 @@ export default function ManageGroupIndex() {
     },
   ]);
   const navigate = useNavigate();
+
+  async function fetchGroups() {
+    const result = await GroupServices.getGroups();
+    setGroups(result);
+  }
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
 
   return (
     <>
@@ -85,19 +66,21 @@ export default function ManageGroupIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Groups</div>
-        <TableCheckbox
-          title={title}
-          content={content}
-          onCheckedFunction={(group: any) => {
-            setSelectedGroup([...selectedGroup, group]);
-          }}
-          onUncheckedFunction={(group: any) => {
-            setSelectedGroup(selectedGroup.filter((item) => item !== group));
-          }}
-          onClickFunction={(group: any) => {
-            navigate(`/groups/${group.id}`);
-          }}
-        />
+        {groups && (
+          <TableCheckbox
+            title={title}
+            content={groups as object[]}
+            onCheckedFunction={(group: any) => {
+              setSelectedGroup([...selectedGroup, group]);
+            }}
+            onUncheckedFunction={(group: any) => {
+              setSelectedGroup(selectedGroup.filter((item) => item !== group));
+            }}
+            onClickFunction={(group: any) => {
+              navigate(`/groups/${group.id}`);
+            }}
+          />
+        )}
       </div>
 
       <SelectedDetail
@@ -105,7 +88,7 @@ export default function ManageGroupIndex() {
         contentTitle={contentTitle}
         content={selectedGroup[selectedGroup.length - 1]}
       >
-        <Link to="/">
+        <Link to={`/groups/${selectedGroup[selectedGroup.length - 1].id}/edit`}>
           <PrimaryButton content="Edit" />
         </Link>
       </SelectedDetail>

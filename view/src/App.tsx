@@ -15,6 +15,7 @@ import ManageGroupShow from './pages/manage/group/show';
 import ManageGroupCreate from './pages/manage/group/create';
 import ManageGroupEdit from './pages/manage/group/edit';
 import ManageUserEdit from './pages/manage/user/edit';
+import ManageProjectEdit from './pages/manage/project/edit';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
             <Route index element={<ManageProjectIndex />} />
             <Route path="create" element={<ManageProjectCreate />} />
             <Route path=":id" element={<ManageProjectShow />} />
+            <Route path=":id/edit" element={<ManageProjectEdit />} />
           </Route>
           <Route path="/" element={<Dashboard />} />
         </Routes>

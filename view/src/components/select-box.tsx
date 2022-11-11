@@ -1,20 +1,16 @@
 import { Fragment, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
+import { GeneralData } from '../models/general-data';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export type GeneralSelectBoxData = {
-  items: SelectBoxData[];
+  items: GeneralData[];
   defaultValue?: string;
   onClickFunction?: Function;
-};
-
-export type SelectBoxData = {
-  id: string;
-  name: string;
 };
 
 export default function SelectBox({
@@ -22,7 +18,7 @@ export default function SelectBox({
   defaultValue = 'Select Item',
   onClickFunction = () => {},
 }: GeneralSelectBoxData) {
-  const [selected, setSelected] = useState<null | SelectBoxData>(null);
+  const [selected, setSelected] = useState<null | GeneralData>(null);
 
   return (
     <Listbox value={selected} onChange={setSelected}>

@@ -25,11 +25,11 @@ function classNames(...classes: string[]) {
 }
 
 function activePath(currentPath: string, comparePath: string){
-  if (currentPath === '/'){
+  if (comparePath === '/'){
     return currentPath === comparePath;
   }
 
-  return comparePath.startsWith(currentPath);
+  return currentPath.startsWith(comparePath);
 }
 
 export default function AuthorizedLayout({ children }: any) {

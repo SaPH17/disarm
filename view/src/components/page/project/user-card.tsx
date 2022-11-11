@@ -1,10 +1,5 @@
 import { XIcon } from '@heroicons/react/outline';
-
-export type User = {
-  id: string;
-  name: string;
-  job: string;
-};
+import { User } from '../../../models/user';
 
 export type UserCardData = {
   user: User,

@@ -1,6 +1,6 @@
 import { users } from "../data/users";
 
-export default class UserService {
+export default class UserServices {
   static getUsers(){
     return users;
   }

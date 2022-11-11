@@ -1,41 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+  useParams
+} from 'react-router-dom';
+import { UserFormData } from '../../../models/forms/user-form-data';
+import { GeneralData } from '../../../models/general-data';
+import { Group } from '../../../models/group';
+import { User } from '../../../models/user';
+import GroupServices from '../../../services/group-services';
 import UserService from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
 import GroupCard from './group-card';
-import { User } from '../../../models/user';
-import { UserFormData } from '../../../models/forms/user-form-data';
-
-export type Group = {
-  id: string;
-  name: string;
-};
 
 export default function EditUserForm() {
-  const groups = [
-    {
-      id: '1',
-      name: 'Group 1',
-    },
-    {
-      id: '2',
-      name: 'Group 2',
-    },
-    {
-      id: '3',
-      name: 'Group 3',
-    },
-    {
-      id: '4',
-      name: 'Group 4',
-    },
-  ];
-
+  const [groups, setGroups] = useState<Group[]>();
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
-  const [availableGroups, setAvailableGroups] = useState<Group[]>(groups);
+  const [availableGroups, setAvailableGroups] = useState<Group[]>();
   const { id } = useParams();
   const [user, setUser] = useState<User>();
 
@@ -47,20 +31,27 @@ export default function EditUserForm() {
     reset,
   } = useForm<UserFormData>();
 
-  async function fetchUser(){
-    if (id === undefined){
-      return navigate('/');;
+  async function fetchUser() {
+    if (id === undefined) {
+      return navigate('/');
     }
 
-    if (user === undefined){
+    if (user === undefined) {
       const result = await UserService.getOneUser(id);
       setUser(result);
     }
-  
+
     reset(user);
   }
 
+  async function fetchGroups() {
+    const result = await GroupServices.getGroups();
+    setGroups(result);
+    setAvailableGroups(result);
+  }
+
   useEffect(() => {
+    fetchGroups();
     fetchUser();
   }, [id, user]);
 
@@ -79,7 +70,7 @@ export default function EditUserForm() {
   function resetAssignedGroupState(tempSelectedGroup: Group[]) {
     setSelectedGroups(tempSelectedGroup);
     setAvailableGroups(
-      groups.filter(
+      groups!.filter(
         (group) =>
           !tempSelectedGroup.find(
             (selectedGroup) => selectedGroup.id === group.id
@@ -92,7 +83,7 @@ export default function EditUserForm() {
     console.log(data);
   }
 
-  return (
+  return user && groups ? (
     <form className="space-y-8" onSubmit={handleSubmit(handleCreateUserButton)}>
       <div className="space-y-8 sm:space-y-5">
         <div className="space-y-6 sm:space-y-5">
@@ -135,44 +126,48 @@ export default function EditUserForm() {
             />
           </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label
-              htmlFor="last_name"
-              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-            >
-              Groups
-            </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                  <SelectBox
-                    defaultValue="Select Group"
-                    items={availableGroups}
-                    onClickFunction={getCurrentGroup}
-                  />
+          {availableGroups && (
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+              <label
+                htmlFor="last_name"
+                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+              >
+                Groups
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    <SelectBox
+                      defaultValue="Select Group"
+                      items={availableGroups as GeneralData[]}
+                      onClickFunction={getCurrentGroup}
+                    />
+                  </div>
+                  <Link to="/groups/create">
+                    <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
+                      Create a new group
+                    </span>
+                  </Link>
                 </div>
-                <Link to="/group/create">
-                  <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
-                    Create a new group
-                  </span>
-                </Link>
-              </div>
-              <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
-                {selectedGroups.map((selectedGroup, index) => (
-                  <GroupCard
-                    key={index}
-                    group={selectedGroup}
-                    onClickFunction={removeCurrentGroup}
-                  />
-                ))}
+                <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
+                  {selectedGroups.map((selectedGroup, index) => (
+                    <GroupCard
+                      key={index}
+                      group={selectedGroup}
+                      onClickFunction={removeCurrentGroup}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <div className="flex flex-row justify-end">
         <PrimaryButton content="Create User" type="submit" />
       </div>
     </form>
+  ) : (
+    <></>
   );
 }

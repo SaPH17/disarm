@@ -1,9 +1,5 @@
 import { XIcon } from '@heroicons/react/outline';
-
-export type Group = {
-  id: string;
-  name: string;
-};
+import { Group } from '../../../models/group';
 
 export type UserCardData = {
   group: Group,

@@ -7,7 +7,7 @@ import PrimaryButton from '../../../components/primary-button';
 import SelectedDetail from '../../../components/selected-detail';
 import TableCheckbox from '../../../components/table-checkbox';
 import { User } from '../../../models/user';
-import UserService from '../../../services/user-services';
+import UserServices from '../../../services/user-services';
 
 const title = ['name', 'groups', 'status'];
 
@@ -51,7 +51,7 @@ export default function ManageUserIndex() {
   ];
 
   async function fetchUsers(){
-    const result = await UserService.getUsers();
+    const result = await UserServices.getUsers();
     setUsers(result);
   }
 

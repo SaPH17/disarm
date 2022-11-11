@@ -1,39 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { UserFormData } from '../../../models/forms/user-form-data';
+import { GeneralData } from '../../../models/general-data';
+import { Group } from '../../../models/group';
+import GroupServices from '../../../services/group-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
 import GroupCard from './group-card';
 
-export type Group = {
-  id: string;
-  name: string;
-};
-
 export default function CreateUserForm() {
-  const groups = [
-    {
-      id: '1',
-      name: 'Group 1',
-    },
-    {
-      id: '2',
-      name: 'Group 2',
-    },
-    {
-      id: '3',
-      name: 'Group 3',
-    },
-    {
-      id: '4',
-      name: 'Group 4',
-    },
-  ];
-
+  const [groups, setGroups] = useState<Group[]>();
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
-  const [availableGroups, setAvailableGroups] = useState<Group[]>(groups);
+  const [availableGroups, setAvailableGroups] = useState<Group[]>();
   const {
     register,
     formState: { errors },
@@ -55,7 +35,7 @@ export default function CreateUserForm() {
   function resetAssignedGroupState(tempSelectedGroup: Group[]) {
     setSelectedGroups(tempSelectedGroup);
     setAvailableGroups(
-      groups.filter(
+      groups!.filter(
         (group) =>
           !tempSelectedGroup.find(
             (selectedGroup) => selectedGroup.id === group.id
@@ -68,7 +48,17 @@ export default function CreateUserForm() {
     console.log(data);
   }
 
-  return (
+  async function fetchGroups() {
+    const result = await GroupServices.getGroups();
+    setGroups(result);
+    setAvailableGroups(result);
+  }
+  
+  useEffect(() => {
+    fetchGroups();
+  }, [])
+
+  return (groups ?
     <form className="space-y-8" onSubmit={handleSubmit(handleCreateUserButton)}>
       <div className="space-y-8 sm:space-y-5">
         <div className="space-y-6 sm:space-y-5">
@@ -123,11 +113,11 @@ export default function CreateUserForm() {
                 <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                   <SelectBox
                     defaultValue="Select Group"
-                    items={availableGroups}
+                    items={availableGroups as GeneralData[]}
                     onClickFunction={getCurrentGroup}
                   />
                 </div>
-                <Link to="/group/create">
+                <Link to="/groups/create">
                   <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
                     Create a new group
                   </span>
@@ -149,6 +139,6 @@ export default function CreateUserForm() {
       <div className="flex flex-row justify-end">
         <PrimaryButton content="Create User" type="submit" />
       </div>
-    </form>
+    </form> : <></>
   );
 }

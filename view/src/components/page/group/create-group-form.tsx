@@ -1,58 +1,28 @@
-import React, { useState } from 'react';
-import SelectBox, { SelectBoxData } from '../../select-box';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { GroupFormData } from '../../../models/forms/group-form-data';
+import { GeneralData } from '../../../models/general-data';
+import { Group } from '../../../models/group';
+import { User } from '../../../models/user';
+import GroupServices from '../../../services/group-services';
+import UserServices from '../../../services/user-services';
+import InputText from '../../input-text/input-text';
+import PrimaryButton from '../../primary-button';
+import SelectBox from '../../select-box';
 import UserCard from '../project/user-card';
 
-const items: SelectBoxData[] = [
-  {
-    id: '1',
-    name: 'Role A',
-  },
-  {
-    id: '2',
-    name: 'Role B',
-  },
-  {
-    id: '3',
-    name: 'Role C',
-  },
-  {
-    id: '4',
-    name: 'Role D',
-  },
-];
-
-export type User = {
-  id: string;
-  name: string;
-  job: string;
-};
-
 const CreateGroupForm = () => {
-  const users = [
-    {
-      id: '1',
-      name: 'Bambang',
-      job: 'Pentester',
-    },
-    {
-      id: '2',
-      name: 'Memeng',
-      job: 'System Analyst',
-    },
-    {
-      id: '3',
-      name: 'Mamang',
-      job: 'Pentester',
-    },
-    {
-      id: '4',
-      name: 'Cadelia',
-      job: 'System Analyst',
-    },
-  ];
-
+  const [users, setUsers] = useState<User[]>();
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-  const [availableUsers, setAvailableUsers] = useState<User[]>(users);
+  const [availableUsers, setAvailableUsers] = useState<User[]>();
+
+  const [groups, setGroups] = useState<Group[]>();
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<GroupFormData>();
 
   function getCurrentUser(item: any) {
     const tempSelectedUser = [...selectedUsers, item];
@@ -69,51 +39,64 @@ const CreateGroupForm = () => {
   function resetAssignedUserState(tempSelectedUser: User[]) {
     setSelectedUsers(tempSelectedUser);
     setAvailableUsers(
-      users.filter(
+      users!.filter(
         (user) =>
           !tempSelectedUser.find((selectedUser) => selectedUser.id === user.id)
       )
     );
   }
 
-  return (
-    <form className="space-y-8">
+  function handleCreateGroupButton(data: GroupFormData) {
+    console.log(data);
+  }
+
+  async function fetchGroups() {
+    const result = await GroupServices.getGroups();
+    setGroups(result);
+  }
+
+  async function fetchUsers() {
+    const result = await UserServices.getUsers();
+    setAvailableUsers(result);
+    setUsers(result);
+  }
+
+  useEffect(() => {
+    fetchGroups();
+    fetchUsers();
+  }, []);
+
+  return groups && users ? (
+    <form
+      className="space-y-8"
+      onSubmit={handleSubmit(handleCreateGroupButton)}
+    >
       <div className="space-y-8 sm:space-y-5">
         <div className="space-y-6 sm:space-y-5">
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-            <label
-              htmlFor="first_name"
-              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-            >
-              Name
-            </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
-              <input
-                type="text"
-                name="first_name"
-                id="first_name"
-                autoComplete="given-name"
-                className="block max-w-lg w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
-              />
-            </div>
+            <InputText
+              id="name"
+              name="name"
+              label="Name"
+              type="text"
+              errors={errors}
+              register={register('name', {
+                required: 'Name is required.',
+              })}
+            />
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start  sm:pt-5">
-            <label
-              htmlFor="last_name"
-              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-            >
-              Description
-            </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
-              <input
-                type="text"
-                name="last_name"
-                id="last_name"
-                autoComplete="family-name"
-                className="block max-w-lg w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
-              />
-            </div>
+            <InputText
+              id="description"
+              name="description"
+              label="Description"
+              type="text"
+              errors={errors}
+              register={register('description', {
+                required: 'Description is required.',
+              })}
+            />
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -125,7 +108,10 @@ const CreateGroupForm = () => {
             </label>
             <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
               <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox items={items} defaultValue={'None'} />
+                <SelectBox
+                  items={groups as GeneralData[]}
+                  defaultValue={'None'}
+                />
               </div>
             </div>
           </div>
@@ -140,7 +126,7 @@ const CreateGroupForm = () => {
             <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
               <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                 <SelectBox
-                  items={availableUsers}
+                  items={availableUsers as GeneralData[]}
                   defaultValue={'Select User'}
                   onClickFunction={getCurrentUser}
                 />
@@ -158,7 +144,12 @@ const CreateGroupForm = () => {
           </div>
         </div>
       </div>
+      <div className="flex flex-row justify-end">
+        <PrimaryButton content="Create Group" type="submit" />
+      </div>
     </form>
+  ) : (
+    <></>
   );
 };
 
