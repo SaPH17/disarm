@@ -1,46 +1,13 @@
-import SelectedDetail from '../../../components/selected-detail';
-import PrimaryButton from '../../../components/primary-button';
-import ActionButton, {
-  ActionButtonItem,
-} from '../../../components/action-button';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ActionButton, {
+  ActionButtonItem
+} from '../../../components/action-button';
+import PrimaryButton from '../../../components/primary-button';
+import SelectedDetail from '../../../components/selected-detail';
 import TableCheckbox from '../../../components/table-checkbox';
-import { useState } from 'react';
-
-const content = [
-  {
-    id: 1,
-    name: 'Bambang',
-    groups: 'Role A, Role B',
-    status: 'Idle',
-    assignedProjects: '-',
-    directSupervisor: 'Memeng',
-  },
-  {
-    id: 2,
-    name: 'Mamang',
-    groups: 'Role B',
-    status: 'Idle',
-    assignedProjects: '-',
-    directSupervisor: 'Memeng',
-  },
-  {
-    id: 3,
-    name: 'Memeng',
-    groups: 'Role A',
-    status: 'Review',
-    assignedProjects: '-',
-    directSupervisor: '-',
-  },
-  {
-    id: 4,
-    name: 'Revaldi',
-    groups: 'Role B',
-    status: 'Review',
-    assignedProjects: '-',
-    directSupervisor: 'Memeng',
-  },
-];
+import { User } from '../../../models/user';
+import UserService from '../../../services/user-services';
 
 const title = ['name', 'groups', 'status'];
 
@@ -53,7 +20,8 @@ const contentTitle = [
 ];
 
 export default function ManageUserIndex() {
-  const [selectedUser, setSelectedUser] = useState<any[]>([
+  const [users, setUsers] = useState<User[]>();
+  const [selectedUser, setSelectedUser] = useState<User[]>([
     {
       id: -1,
       name: '-',
@@ -82,6 +50,15 @@ export default function ManageUserIndex() {
     },
   ];
 
+  async function fetchUsers(){
+    const result = await UserService.getUsers();
+    setUsers(result);
+  }
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <>
       <div className="text-xl font-semibold">Manage User</div>
@@ -95,9 +72,10 @@ export default function ManageUserIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Users</div>
-        <TableCheckbox
+        {
+          users && <TableCheckbox
           title={title}
-          content={content}
+          content={users as object[]}
           onCheckedFunction={(user: any) => {
             setSelectedUser([...selectedUser, user]);
           }}
@@ -105,9 +83,10 @@ export default function ManageUserIndex() {
             setSelectedUser(selectedUser.filter((item) => item !== user));
           }}
           onClickFunction={(user: any) => {
-            navigate(`/users/${user.id}`);
+            // navigate(`/users/${user.id}`);
           }}
         />
+        }
       </div>
 
       <SelectedDetail
@@ -122,7 +101,7 @@ export default function ManageUserIndex() {
             </Link>
           </div>
           <div>
-            <Link to="/">
+            <Link to={`/users/${ selectedUser[selectedUser.length - 1].id }/edit`}>
               <PrimaryButton content="Edit" />
             </Link>
           </div>

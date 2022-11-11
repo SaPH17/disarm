@@ -10,22 +10,31 @@ import {
   XIcon,
 } from '@heroicons/react/outline';
 import { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
-  { name: 'Users', href: '/users', icon: UserIcon, current: false },
-  { name: 'Groups', href: '/groups', icon: UserGroupIcon, current: false },
-  { name: 'Projects', href: '/projects', icon: ServerIcon, current: false },
+  { name: 'Dashboard', href: '/', icon: HomeIcon },
+  { name: 'Users', href: '/users', icon: UserIcon },
+  { name: 'Groups', href: '/groups', icon: UserGroupIcon },
+  { name: 'Projects', href: '/projects', icon: ServerIcon },
 ];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
+function activePath(currentPath: string, comparePath: string){
+  if (currentPath === '/'){
+    return currentPath === comparePath;
+  }
+
+  return comparePath.startsWith(currentPath);
+}
+
 export default function AuthorizedLayout({ children }: any) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
@@ -81,7 +90,7 @@ export default function AuthorizedLayout({ children }: any) {
                 <div className="flex-shrink-0 flex items-center px-4">
                   <img
                     className="h-8 w-auto"
-                    src="/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                    src="/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
                     alt="Workflow"
                   />
                 </div>
@@ -90,7 +99,7 @@ export default function AuthorizedLayout({ children }: any) {
                     <Link key={item.name} to={item.href}>
                       <a
                         className={classNames(
-                          item.current
+                          activePath(location.pathname, item.href)
                             ? 'bg-gray-100 text-gray-900'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                           'group flex items-center px-2 py-2 text-base font-medium rounded-md'
@@ -98,7 +107,7 @@ export default function AuthorizedLayout({ children }: any) {
                       >
                         <item.icon
                           className={classNames(
-                            item.current
+                            activePath(location.pathname, item.href)
                               ? 'text-gray-500'
                               : 'text-gray-400 group-hover:text-gray-500',
                             'mr-4 h-6 w-6'
@@ -112,7 +121,7 @@ export default function AuthorizedLayout({ children }: any) {
                 </nav>
               </div>
               <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-                <a href="#" className="flex-shrink-0 group block">
+                <Link to="#" className="flex-shrink-0 group block">
                   <div className="flex items-center">
                     <div>
                       <img
@@ -130,7 +139,7 @@ export default function AuthorizedLayout({ children }: any) {
                       </p>
                     </div>
                   </div>
-                </a>
+                </Link>
               </div>
             </div>
           </Transition.Child>
@@ -149,7 +158,7 @@ export default function AuthorizedLayout({ children }: any) {
               <div className="flex items-center flex-shrink-0 px-4">
                 <img
                   className="h-8 w-auto"
-                  src="/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                  src="/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
                   alt="Workflow"
                 />
               </div>
@@ -158,7 +167,7 @@ export default function AuthorizedLayout({ children }: any) {
                   <Link key={item.name} to={item.href}>
                     <span
                       className={classNames(
-                        item.current
+                        activePath(location.pathname, item.href)
                           ? 'bg-gray-100 text-gray-900'
                           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
@@ -166,7 +175,7 @@ export default function AuthorizedLayout({ children }: any) {
                     >
                       <item.icon
                         className={classNames(
-                          item.current
+                          activePath(location.pathname, item.href)
                             ? 'text-gray-500'
                             : 'text-gray-400 group-hover:text-gray-500',
                           'mr-3 h-6 w-6'
@@ -180,7 +189,7 @@ export default function AuthorizedLayout({ children }: any) {
               </nav>
             </div>
             <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-              <a href="#" className="flex-shrink-0 w-full group block">
+              <Link to="#" className="flex-shrink-0 w-full group block">
                 <div className="flex items-center">
                   <div>
                     <img
@@ -198,7 +207,7 @@ export default function AuthorizedLayout({ children }: any) {
                     </p>
                   </div>
                 </div>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -206,7 +215,7 @@ export default function AuthorizedLayout({ children }: any) {
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
           <button
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>

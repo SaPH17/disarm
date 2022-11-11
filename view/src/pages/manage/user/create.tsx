@@ -6,7 +6,6 @@ export default function ManageUserCreate() {
     <>
       <div className="flex flex-row justify-between">
         <div className="text-xl font-semibold">Create User</div>
-        <PrimaryButton content="Create User" />
       </div>
       <CreateUserForm />
     </>

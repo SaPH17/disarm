@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import { UserFormData } from '../../../models/forms/user-form-data';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import UserService from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
 import GroupCard from './group-card';
+import { User } from '../../../models/user';
+import { UserFormData } from '../../../models/forms/user-form-data';
 
 export type Group = {
   id: string;
   name: string;
 };
 
-export default function CreateUserForm() {
+export default function EditUserForm() {
   const groups = [
     {
       id: '1',
@@ -34,11 +36,33 @@ export default function CreateUserForm() {
 
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
   const [availableGroups, setAvailableGroups] = useState<Group[]>(groups);
+  const { id } = useParams();
+  const [user, setUser] = useState<User>();
+
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm<UserFormData>();
+
+  async function fetchUser(){
+    if (id === undefined){
+      return navigate('/');;
+    }
+
+    if (user === undefined){
+      const result = await UserService.getOneUser(id);
+      setUser(result);
+    }
+  
+    reset(user);
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, [id, user]);
 
   function getCurrentGroup(item: any) {
     const tempSelectedGroup = [...selectedGroups, item];

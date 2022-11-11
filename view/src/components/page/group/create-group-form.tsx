@@ -93,7 +93,7 @@ const CreateGroupForm = () => {
                 name="first_name"
                 id="first_name"
                 autoComplete="given-name"
-                className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                className="block max-w-lg w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
               />
             </div>
           </div>
@@ -111,7 +111,7 @@ const CreateGroupForm = () => {
                 name="last_name"
                 id="last_name"
                 autoComplete="family-name"
-                className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                className="block max-w-lg w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
               />
             </div>
           </div>

@@ -77,7 +77,9 @@ export default function ManageGroupIndex() {
     <>
       <div className="text-xl font-semibold">Manage Group</div>
       <div className="flex flex-row gap-2 sm:gap-4 justify-between">
-        <PrimaryButton content="Create Group" />
+        <Link to="/groups/create">
+          <PrimaryButton content="Create Group" />
+        </Link>
         <ActionButton items={items} />
       </div>
 
@@ -93,7 +95,7 @@ export default function ManageGroupIndex() {
             setSelectedGroup(selectedGroup.filter((item) => item !== group));
           }}
           onClickFunction={(group: any) => {
-            navigate(`/group/${group.id}`);
+            navigate(`/groups/${group.id}`);
           }}
         />
       </div>
