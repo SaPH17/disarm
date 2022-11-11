@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
+import { Link } from 'react-router-dom';
 
 const content = [
   {
@@ -40,17 +41,7 @@ const content = [
 const items: ActionButtonItem[] = [
   {
     id: '1',
-    name: 'Edit Group',
-    url: '/',
-  },
-  {
-    id: '2',
-    name: 'Delete Group',
-    url: '/',
-  },
-  {
-    id: '3',
-    name: 'Assign User',
+    name: 'Delete Checklist',
     url: '/',
   },
 ];
@@ -97,10 +88,23 @@ export default function ManageChecklistIndex() {
       </div>
 
       <SelectedDetail
-        title={'Group Detail'}
+        title={'Checklist Detail'}
         contentTitle={contentTitle}
         content={contentData}
-      />
+      >
+        <div className="flex items-center gap-4">
+          <div>
+            <Link to="/" className={'underline'}>
+              Apply to Project
+            </Link>
+          </div>
+          <div>
+            <Link to="/">
+              <PrimaryButton content="Edit" />
+            </Link>
+          </div>
+        </div>
+      </SelectedDetail>
     </>
   );
 }
