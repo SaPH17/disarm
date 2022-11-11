@@ -127,7 +127,7 @@ export default function CreateUserForm() {
                     onClickFunction={getCurrentGroup}
                   />
                 </div>
-                <Link to="/manage/group/create">
+                <Link to="/group/create">
                   <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
                     Create a new group
                   </span>

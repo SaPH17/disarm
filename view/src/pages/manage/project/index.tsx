@@ -69,13 +69,13 @@ export default function ManageProjectIndex() {
   const navigate = useNavigate();
 
   function handleRedirectToProjectDetail(project: any) {
-    navigate('/manage/project/' + project.id);
+    navigate('/project/' + project.id);
   }
   return (
     <>
       <div className="text-xl font-semibold">Manage Project</div>
       <div className="flex flex-row justify-between gap-2 sm:gap-4">
-        <NavLink to={'/manage/project/create'}>
+        <NavLink to={'/project/create'}>
           <PrimaryButton content="Create Project" />
         </NavLink>
         <ActionButton items={items} />

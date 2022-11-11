@@ -23,29 +23,27 @@ function App() {
           <Route path="auth">
             <Route path="login" element={<Login />} />
           </Route>
-          <Route path="manage">
-            <Route path="user">
-              <Route index element={<ManageUserIndex />} />
-              <Route path="create" element={<ManageUserCreate />} />
-            </Route>
+          <Route path="users">
+            <Route index element={<ManageUserIndex />} />
+            <Route path="create" element={<ManageUserCreate />} />
+          </Route>
 
-            <Route path="group">
-              <Route index element={<ManageGroupIndex />} />
-              <Route path="create" element={<ManageGroupCreate />} />
-              <Route path=":id" element={<ManageGroupShow />} />
-              <Route path=":id/edit" element={<ManageGroupEdit />} />
-            </Route>
+          <Route path="groups">
+            <Route index element={<ManageGroupIndex />} />
+            <Route path="create" element={<ManageGroupCreate />} />
+            <Route path=":id" element={<ManageGroupShow />} />
+            <Route path=":id/edit" element={<ManageGroupEdit />} />
+          </Route>
 
-            <Route path="checklist">
-              <Route index element={<ManageChecklistIndex />} />
-              <Route path=":id" element={<ManageChecklistShow />} />
-            </Route>
+          <Route path="checklists">
+            <Route index element={<ManageChecklistIndex />} />
+            <Route path=":id" element={<ManageChecklistShow />} />
+          </Route>
 
-            <Route path="project">
-              <Route index element={<ManageProjectIndex />} />
-              <Route path="create" element={<ManageProjectCreate />} />
-              <Route path=":id" element={<ManageProjectShow />} />
-            </Route>
+          <Route path="projects">
+            <Route index element={<ManageProjectIndex />} />
+            <Route path="create" element={<ManageProjectCreate />} />
+            <Route path=":id" element={<ManageProjectShow />} />
           </Route>
           <Route path="/" element={<Dashboard />} />
         </Routes>

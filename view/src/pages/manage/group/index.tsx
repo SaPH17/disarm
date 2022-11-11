@@ -6,6 +6,7 @@ import ActionButton, {
 import { useNavigate } from 'react-router-dom';
 import TableCheckbox from '../../../components/table-checkbox';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const title = ['name', 'description'];
 
@@ -68,6 +69,7 @@ const contentTitle = [
 export default function ManageGroupIndex() {
   const [selectedGroup, setSelectedGroup] = useState<any[]>([
     {
+      id: -1,
       name: '-',
       description: '-',
       permissions: '-',
@@ -96,7 +98,7 @@ export default function ManageGroupIndex() {
             setSelectedGroup(selectedGroup.filter((item) => item !== group));
           }}
           onClickFunction={(group: any) => {
-            navigate(`/manage/group/${group.id}`);
+            navigate(`/group/${group.id}`);
           }}
         />
       </div>
@@ -105,7 +107,11 @@ export default function ManageGroupIndex() {
         title={'Group Detail'}
         contentTitle={contentTitle}
         content={selectedGroup[selectedGroup.length - 1]}
-      />
+      >
+        <Link to="/">
+          <PrimaryButton content="Edit" />
+        </Link>
+      </SelectedDetail>
     </>
   );
 }

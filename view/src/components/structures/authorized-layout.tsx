@@ -15,9 +15,9 @@ import { NavLink } from 'react-router-dom';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
-  { name: 'Users', href: '/manage/user', icon: UserIcon, current: false },
-  { name: 'Groups', href: '/manage/group', icon: UserGroupIcon, current: false },
-  { name: 'Projects', href: '/manage/project', icon: ServerIcon, current: false },
+  { name: 'Users', href: '/users', icon: UserIcon, current: false },
+  { name: 'Groups', href: '/groups', icon: UserGroupIcon, current: false },
+  { name: 'Projects', href: '/projects', icon: ServerIcon, current: false },
 ];
 
 function classNames(...classes: string[]) {

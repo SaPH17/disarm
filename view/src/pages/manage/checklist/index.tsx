@@ -91,7 +91,7 @@ export default function ManageChecklistIndex() {
           content={content}
           isClickable={true}
           onClickFunction={(checklist: any) => {
-            navigate(`/manage/checklist/${checklist.id}`);
+            navigate(`/checklist/${checklist.id}`);
           }}
         />
       </div>
