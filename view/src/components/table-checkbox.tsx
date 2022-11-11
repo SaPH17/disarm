@@ -120,14 +120,18 @@ export default function TableCheckbox({
                               'px-6 py-4 whitespace-nowrap text-sm select-none'
                             )}
                           >
-                            <span
-                              onClick={(e) => onClickFunction(c)}
-                              className={`${
-                                titleIndex === 0 ? 'hover:underline' : ''
-                              }`}
-                            >
-                              {(c as any)[t]}
-                            </span>
+                            {titleIndex === 0 ? (
+                              <span
+                                onClick={(e) => onClickFunction(c)}
+                                className={`${
+                                  titleIndex === 0 ? 'hover:underline' : ''
+                                }`}
+                              >
+                                {(c as any)[t]}
+                              </span>
+                            ) : (
+                              <span>{(c as any)[t]}</span>
+                            )}
                           </td>
                         );
                       })}
