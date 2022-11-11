@@ -44,16 +44,11 @@ const content = [
 const items: ActionButtonItem[] = [
   {
     id: '1',
-    name: 'Edit Group',
-    url: '/',
-  },
-  {
-    id: '2',
     name: 'Delete Group',
     url: '/',
   },
   {
-    id: '3',
+    id: '2',
     name: 'Assign User',
     url: '/',
   },

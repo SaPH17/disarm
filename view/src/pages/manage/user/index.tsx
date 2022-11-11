@@ -67,27 +67,17 @@ export default function ManageUserIndex() {
   const items: ActionButtonItem[] = [
     {
       id: '1',
-      name: 'Edit User',
-      url: `/`,
-    },
-    {
-      id: '2',
       name: 'Delete User',
       url: '/',
     },
     {
-      id: '3',
+      id: '2',
       name: 'Add Group',
       url: '/',
     },
     {
-      id: '4',
+      id: '3',
       name: 'Assign Project',
-      url: '/',
-    },
-    {
-      id: '5',
-      name: 'View All Project',
       url: '/',
     },
   ];
