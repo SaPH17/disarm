@@ -5,7 +5,6 @@ import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
-import { projects } from '../../../data/projects';
 import { useEffect, useState } from 'react';
 import ProjectServices from '../../../services/project-services';
 import { Project } from '../../../models/project';
@@ -47,7 +46,7 @@ export default function ManageProjectIndex() {
     fetchProjects();
   }, []);
 
-  return (projects ?
+  return projects ? (
     <>
       <div className="text-xl font-semibold">Manage Project</div>
       <div className="flex flex-row justify-between gap-2 sm:gap-4">
@@ -65,6 +64,8 @@ export default function ManageProjectIndex() {
           onClickFunction={handleRedirectToProjectDetail}
         />
       </div>
-    </> : <></>
+    </>
+  ) : (
+    <></>
   );
 }
