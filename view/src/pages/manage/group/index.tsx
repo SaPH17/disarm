@@ -4,11 +4,11 @@ import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
 import { useNavigate } from 'react-router-dom';
-import TableCheckbox from '../../../components/table-checkbox';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Group } from '../../../models/group';
 import GroupServices from '../../../services/group-services';
+import TableCheckbox2 from '../../../components/table-checkbox2';
 
 const title = ['name', 'description'];
 
@@ -67,7 +67,7 @@ export default function ManageGroupIndex() {
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Groups</div>
         {groups && (
-          <TableCheckbox
+          <TableCheckbox2
             title={title}
             content={groups as object[]}
             onCheckedFunction={(group: any) => {
