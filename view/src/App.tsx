@@ -13,6 +13,7 @@ import ManageProjectShow from './pages/manage/project/show';
 import ManageGroupIndex from './pages/manage/group';
 import ManageChecklistIndex from './pages/manage/checklist';
 import ManageChecklistShow from './pages/manage/checklist/show';
+import ManageFindingIndex from './pages/manage/finding';
 
 function App() {
   return (
@@ -35,6 +36,10 @@ function App() {
             <Route path="checklist">
               <Route index element={<ManageChecklistIndex />} />
               <Route path=":id" element={<ManageChecklistShow />} />
+            </Route>
+
+            <Route path="finding">
+              <Route index element={<ManageFindingIndex />} />
             </Route>
 
             <Route path="project">
