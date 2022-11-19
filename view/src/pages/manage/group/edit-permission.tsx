@@ -1,11 +1,9 @@
-import { Switch } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TableCheckbox from '../../../components/table-checkbox';
 import { Permission } from '../../../models/permission';
 import PermissionServices from '../../../services/permission-services';
 import InputSwitch from '../../../components/input-switch/input-switch';
-import { Link } from 'react-router-dom';
 import { SearchIcon } from '@heroicons/react/outline';
 
 const title = ['id', 'name', 'category', 'description'];
@@ -14,7 +12,6 @@ const ManageGroupEditPermission = () => {
   const { id } = useParams();
   const [permission, setPermission] = useState<Permission[]>();
   const navigate = useNavigate();
-  const [enabled, setEnabled] = useState(false);
 
   async function fetchGroup() {
     if (id === undefined) {

@@ -60,7 +60,6 @@ export default function CreateProjectForm() {
     console.log(data);
   }
 
-
   async function fetchUsers() {
     const result = await UserServices.getUsers();
     setAvailableUsers(result);
@@ -72,82 +71,83 @@ export default function CreateProjectForm() {
   }, []);
 
   return users ? (
-    <form className="space-y-8" onSubmit={handleSubmit(handleCreateProjectButton)}>
-      <div className="space-y-8 sm:space-y-5">
-        <div className="space-y-6 sm:space-y-5">
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
+    <form
+      className="space-y-8"
+      onSubmit={handleSubmit(handleCreateProjectButton)}
+    >
+      <div className="space-y-6 sm:space-y-5">
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText
-              id="name"
-              name="name"
-              label="Name"
-              type="text"
-              errors={errors}
-              register={register('name', {
-                required: 'Name is required.',
-              })}
-            />
-          </div>
+            id="name"
+            name="name"
+            label="Name"
+            type="text"
+            errors={errors}
+            register={register('name', {
+              required: 'Name is required.',
+            })}
+          />
+        </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <InputText
-              id="company"
-              name="company"
-              label="Company"
-              type="text"
-              errors={errors}
-              register={register('company', {
-                required: 'Company name is required.',
-              })}
-            />
-          </div>
+            id="company"
+            name="company"
+            label="Company"
+            type="text"
+            errors={errors}
+            register={register('company', {
+              required: 'Company name is required.',
+            })}
+          />
+        </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label
-              htmlFor="country"
-              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-            >
-              Standard
-            </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
-              <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox items={items} defaultValue={'Select Standard'} />
-              </div>
-              <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
-                Create a new standard
-              </span>
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Standard
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+              <SelectBox items={items} defaultValue={'Select Standard'} />
             </div>
+            <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
+              Create a new standard
+            </span>
           </div>
+        </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label
-              htmlFor="last_name"
-              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-            >
-              Assigned User
-            </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
-              <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox
-                  items={availableUsers as GeneralData[]}
-                  defaultValue={'Select User'}
-                  onClickFunction={getCurrentUser}
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="last_name"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Assigned User
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
+            <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+              <SelectBox
+                items={availableUsers as GeneralData[]}
+                defaultValue={'Select User'}
+                onClickFunction={getCurrentUser}
+              />
+            </div>
+            <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
+              {selectedUsers.map((selectedUser, index) => (
+                <UserCard
+                  key={index}
+                  user={selectedUser}
+                  onClickFunction={removeCurrentUser}
                 />
-              </div>
-              <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
-                {selectedUsers.map((selectedUser, index) => (
-                  <UserCard
-                    key={index}
-                    user={selectedUser}
-                    onClickFunction={removeCurrentUser}
-                  />
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
       <div className="flex flex-row justify-end">
-        <PrimaryButton content="Create Project" type='submit' />
+        <PrimaryButton content="Create Project" type="submit" />
       </div>
     </form>
   ) : (

@@ -8,6 +8,7 @@ import {
   UserGroupIcon,
   UserIcon,
   XIcon,
+  CheckIcon,
 } from '@heroicons/react/outline';
 import { Fragment, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -18,14 +19,15 @@ const navigation = [
   { name: 'Users', href: '/users', icon: UserIcon },
   { name: 'Groups', href: '/groups', icon: UserGroupIcon },
   { name: 'Projects', href: '/projects', icon: ServerIcon },
+  { name: 'Checklist', href: '/checklists', icon: CheckIcon },
 ];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-function activePath(currentPath: string, comparePath: string){
-  if (comparePath === '/'){
+function activePath(currentPath: string, comparePath: string) {
+  if (comparePath === '/') {
     return currentPath === comparePath;
   }
 

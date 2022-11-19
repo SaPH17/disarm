@@ -71,75 +71,73 @@ const CreateGroupForm = () => {
       className="space-y-8"
       onSubmit={handleSubmit(handleCreateGroupButton)}
     >
-      <div className="space-y-8 sm:space-y-5">
-        <div className="space-y-6 sm:space-y-5">
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-            <InputText
-              id="name"
-              name="name"
-              label="Name"
-              type="text"
-              errors={errors}
-              register={register('name', {
-                required: 'Name is required.',
-              })}
-            />
-          </div>
+      <div className="space-y-6 sm:space-y-5">
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
+          <InputText
+            id="name"
+            name="name"
+            label="Name"
+            type="text"
+            errors={errors}
+            register={register('name', {
+              required: 'Name is required.',
+            })}
+          />
+        </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start  sm:pt-5">
-            <InputText
-              id="description"
-              name="description"
-              label="Description"
-              type="text"
-              errors={errors}
-              register={register('description', {
-                required: 'Description is required.',
-              })}
-            />
-          </div>
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start  sm:pt-5">
+          <InputText
+            id="description"
+            name="description"
+            label="Description"
+            type="text"
+            errors={errors}
+            register={register('description', {
+              required: 'Description is required.',
+            })}
+          />
+        </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label
-              htmlFor="country"
-              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-            >
-              Parent Group
-            </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
-              <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox
-                  items={groups as GeneralData[]}
-                  defaultValue={'None'}
-                />
-              </div>
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Parent Group
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+              <SelectBox
+                items={groups as GeneralData[]}
+                defaultValue={'None'}
+              />
             </div>
           </div>
+        </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label
-              htmlFor="last_name"
-              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-            >
-              Assigned User
-            </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
-              <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox
-                  items={availableUsers as GeneralData[]}
-                  defaultValue={'Select User'}
-                  onClickFunction={getCurrentUser}
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="last_name"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Assigned User
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
+            <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+              <SelectBox
+                items={availableUsers as GeneralData[]}
+                defaultValue={'Select User'}
+                onClickFunction={getCurrentUser}
+              />
+            </div>
+            <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
+              {selectedUsers.map((selectedUser, index) => (
+                <UserCard
+                  key={index}
+                  user={selectedUser}
+                  onClickFunction={removeCurrentUser}
                 />
-              </div>
-              <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
-                {selectedUsers.map((selectedUser, index) => (
-                  <UserCard
-                    key={index}
-                    user={selectedUser}
-                    onClickFunction={removeCurrentUser}
-                  />
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </div>

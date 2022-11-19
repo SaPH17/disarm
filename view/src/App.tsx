@@ -16,6 +16,7 @@ import ManageGroupCreate from './pages/manage/group/create';
 import ManageUserEdit from './pages/manage/user/edit';
 import ManageProjectEdit from './pages/manage/project/edit';
 import ManageGroupEditPermission from './pages/manage/group/edit-permission';
+import ManageChecklistCreate from './pages/manage/checklist/create';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="checklists">
             <Route index element={<ManageChecklistIndex />} />
             <Route path=":id" element={<ManageChecklistShow />} />
+            <Route path="create" element={<ManageChecklistCreate />} />
           </Route>
 
           <Route path="projects">

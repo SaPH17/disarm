@@ -72,7 +72,9 @@ export default function ManageChecklistIndex() {
     <>
       <div className="text-xl font-semibold">Manage Checklist</div>
       <div className="flex flex-row gap-2 sm:gap-4 justify-between">
-        <PrimaryButton content="Create Checklist" />
+        <Link to={'create'}>
+          <PrimaryButton content="Create Checklist" />
+        </Link>
         <ActionButton items={items} />
       </div>
       <div className="flex flex-col gap-1 sm:gap-2">
