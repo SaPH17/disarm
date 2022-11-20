@@ -6,4 +6,5 @@ export type User = GeneralData & {
   assignedProjects: string;
   directSupervisor: string;
   job?: string;
+  dateCreated?: string;
 }

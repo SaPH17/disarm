@@ -7,7 +7,8 @@ export const users = [
     assignedProjects: '-',
     directSupervisor: 'Memeng',
     job: 'Pentester',
-    email: 'bambang@gmail.com'
+    email: 'bambang@gmail.com',
+    dateCreated: '2022-11-20T12:42:01.008Z',
   },
   {
     id: '2',
@@ -17,7 +18,8 @@ export const users = [
     assignedProjects: '-',
     directSupervisor: 'Memeng',
     job: 'System Analyst',
-    email: 'mamang@gmail.com'
+    email: 'mamang@gmail.com',
+    dateCreated: '2022-11-20T12:42:01.008Z',
   },
   {
     id: '3',
@@ -27,7 +29,8 @@ export const users = [
     assignedProjects: '-',
     directSupervisor: '-',
     job: 'Pentester',
-    email: 'memeng@gmail.com'
+    email: 'memeng@gmail.com',
+    dateCreated: '2022-11-20T12:42:01.008Z',
   },
   {
     id: '4',
@@ -37,6 +40,7 @@ export const users = [
     assignedProjects: '-',
     directSupervisor: 'Memeng',
     job: 'System Analyst',
-    email: 'revaldi@gmail.com'
+    email: 'revaldi@gmail.com',
+    dateCreated: '2022-11-20T12:42:01.008Z',
   },
 ];
