@@ -6,6 +6,7 @@ export const checklists = [
     createdAt: '18/10/2022',
     createdBy: 'Bambang',
     status: 'Inactive',
+    sections: [],
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const checklists = [
     createdAt: '18/10/2022',
     createdBy: 'Bambang',
     status: 'Inactive',
+    sections: [],
   },
   {
     id: 3,
@@ -22,6 +24,7 @@ export const checklists = [
     createdAt: '18/10/2022',
     createdBy: 'Bambang',
     status: 'Active',
+    sections: [],
   },
   {
     id: 4,
@@ -30,5 +33,6 @@ export const checklists = [
     createdAt: '18/10/2022',
     createdBy: 'Bambang',
     status: 'Active',
+    sections: [],
   },
 ];

@@ -1,4 +1,3 @@
-import Table from '../../../components/table';
 import SelectedDetail from '../../../components/selected-detail';
 import PrimaryButton from '../../../components/primary-button';
 import { useNavigate } from 'react-router-dom';
