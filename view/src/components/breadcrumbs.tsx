@@ -16,13 +16,13 @@ const Breadcrumbs = ({ pages }: BreadcrumbsData) => {
             <div className="flex items-center">
               {idx > 0 && (
                 <ChevronRightIcon
-                  className="flex-shrink-0 h-5 w-5 text-gray-400"
+                  className="flex-shrink-0 h-5 w-5 text-gray-400 mr-4"
                   aria-hidden="true"
                 />
               )}
               <a
                 href={page.url}
-                className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                className="text-sm font-medium text-gray-500 hover:text-gray-700"
               >
                 {page.name}
               </a>
