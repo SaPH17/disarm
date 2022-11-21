@@ -1,38 +1,28 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ProjectFormData } from '../../../models/forms/project-form-data';
+import { GroupFormData } from '../../../models/forms/group-form-data';
 import { GeneralData } from '../../../models/general-data';
+import { Group } from '../../../models/group';
 import { User } from '../../../models/user';
+import GroupServices from '../../../services/group-services';
 import UserServices from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
-import UserCard from './user-card';
+import UserCard from '../project/user-card';
 
-const items: GeneralData[] = [
-  {
-    id: '1',
-    name: 'Standard A',
-  },
-  {
-    id: '2',
-    name: 'Standard B',
-  },
-  {
-    id: '3',
-    name: 'Standard C',
-  },
-];
-
-export default function CreateProjectForm() {
+const CreateGroupForm = () => {
   const [users, setUsers] = useState<User[]>();
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>();
+
+  const [groups, setGroups] = useState<Group[]>();
+
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<ProjectFormData>();
+  } = useForm<GroupFormData>();
 
   function getCurrentUser(item: any) {
     const tempSelectedUser = [...selectedUsers, item];
@@ -56,8 +46,13 @@ export default function CreateProjectForm() {
     );
   }
 
-  function handleCreateProjectButton(data: ProjectFormData) {
+  function handleCreateGroupButton(data: GroupFormData) {
     console.log(data);
+  }
+
+  async function fetchGroups() {
+    const result = await GroupServices.getGroups();
+    setGroups(result);
   }
 
   async function fetchUsers() {
@@ -67,13 +62,14 @@ export default function CreateProjectForm() {
   }
 
   useEffect(() => {
+    fetchGroups();
     fetchUsers();
   }, []);
 
-  return users ? (
+  return groups && users ? (
     <form
       className="space-y-8"
-      onSubmit={handleSubmit(handleCreateProjectButton)}
+      onSubmit={handleSubmit(handleCreateGroupButton)}
     >
       <div className="space-y-6 sm:space-y-5">
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
@@ -89,15 +85,15 @@ export default function CreateProjectForm() {
           />
         </div>
 
-        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start  sm:pt-5">
           <InputText
-            id="company"
-            name="company"
-            label="Company"
+            id="description"
+            name="description"
+            label="Description"
             type="text"
             errors={errors}
-            register={register('company', {
-              required: 'Company name is required.',
+            register={register('description', {
+              required: 'Description is required.',
             })}
           />
         </div>
@@ -107,15 +103,15 @@ export default function CreateProjectForm() {
             htmlFor="country"
             className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
           >
-            Standard
+            Parent Group
           </label>
           <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
             <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-              <SelectBox items={items} defaultValue={'Select Standard'} />
+              <SelectBox
+                items={groups as GeneralData[]}
+                defaultValue={'None'}
+              />
             </div>
-            <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
-              Create a new standard
-            </span>
           </div>
         </div>
 
@@ -147,10 +143,12 @@ export default function CreateProjectForm() {
         </div>
       </div>
       <div className="flex flex-row justify-end">
-        <PrimaryButton content="Create Project" type="submit" />
+        <PrimaryButton content="Create Group" type="submit" />
       </div>
     </form>
   ) : (
     <></>
   );
-}
+};
+
+export default CreateGroupForm;

@@ -1,4 +1,4 @@
-import SelectBox, { SelectBoxData } from '../../../components/select-box';
+import SelectBox, { GeneralSelectBoxData } from '../../../components/select-box';
 import SelectedDetail from '../../../components/selected-detail';
 import EditableList from '../../../components/editable-list';
 import { useState } from 'react';
@@ -22,23 +22,6 @@ const content = [
     description: 'Role for others',
   },
 ];
-
-const items: SelectBoxData[] = [
-  {
-    id: '1',
-    name: 'Edit Group',
-  },
-  {
-    id: '2',
-    name: 'Delete Group',
-  },
-  {
-    id: '3',
-    name: 'Assign User',
-  },
-];
-
-const title = ['name', 'description'];
 
 const contentTitle = [
   'name',

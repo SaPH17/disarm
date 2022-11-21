@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectFormData } from '../../../models/forms/project-form-data';
 import { GeneralData } from '../../../models/general-data';
+import { Project } from '../../../models/project';
 import { User } from '../../../models/user';
+import ProjectServices from '../../../services/project-services';
 import UserServices from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
@@ -24,12 +27,18 @@ const items: GeneralData[] = [
   },
 ];
 
-export default function CreateProjectForm() {
+export default function EditProjectForm() {
+  const { id } = useParams();
   const [users, setUsers] = useState<User[]>();
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>();
+
+  const [project, setProject] = useState<Project>();
+
+  const navigate = useNavigate();
   const {
     register,
+    reset,
     formState: { errors },
     handleSubmit,
   } = useForm<ProjectFormData>();
@@ -66,9 +75,23 @@ export default function CreateProjectForm() {
     setUsers(result);
   }
 
+  async function fetchProject() {
+    if (id === undefined) {
+      return navigate('/');
+    }
+
+    if (project === undefined) {
+      const result = await ProjectServices.getOneProject(id);
+      setProject(result);
+    }
+
+    reset(project);
+  }
+
   useEffect(() => {
     fetchUsers();
-  }, []);
+    fetchProject();
+  }, [id, project]);
 
   return users ? (
     <form
@@ -147,7 +170,7 @@ export default function CreateProjectForm() {
         </div>
       </div>
       <div className="flex flex-row justify-end">
-        <PrimaryButton content="Create Project" type="submit" />
+        <PrimaryButton content="Edit Project" type="submit" />
       </div>
     </form>
   ) : (

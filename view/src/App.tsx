@@ -1,5 +1,3 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/auth/login';
@@ -14,6 +12,12 @@ import ManageGroupIndex from './pages/manage/group';
 import ManageChecklistIndex from './pages/manage/checklist';
 import ManageChecklistShow from './pages/manage/checklist/show';
 import ManageFindingIndex from './pages/manage/finding';
+import ManageGroupShow from './pages/manage/group/show';
+import ManageGroupCreate from './pages/manage/group/create';
+import ManageUserEdit from './pages/manage/user/edit';
+import ManageProjectEdit from './pages/manage/project/edit';
+import ManageGroupEditPermission from './pages/manage/group/edit-permission';
+import ManageChecklistCreate from './pages/manage/checklist/create';
 
 function App() {
   return (
@@ -23,30 +27,37 @@ function App() {
           <Route path="auth">
             <Route path="login" element={<Login />} />
           </Route>
-          <Route path="manage">
-            <Route path="user">
-              <Route index element={<ManageUserIndex />} />
-              <Route path="create" element={<ManageUserCreate />} />
-            </Route>
+          <Route path="users">
+            <Route index element={<ManageUserIndex />} />
+            <Route path="create" element={<ManageUserCreate />} />
+            <Route path=":id/edit" element={<ManageUserEdit />} />
+          </Route>
 
-            <Route path="group">
-              <Route index element={<ManageGroupIndex />} />
-            </Route>
+          <Route path="groups">
+            <Route index element={<ManageGroupIndex />} />
+            <Route path="create" element={<ManageGroupCreate />} />
+            <Route path=":id" element={<ManageGroupShow />} />
+            <Route
+              path=":id/edit-permission"
+              element={<ManageGroupEditPermission />}
+            />
+          </Route>
 
-            <Route path="checklist">
-              <Route index element={<ManageChecklistIndex />} />
-              <Route path=":id" element={<ManageChecklistShow />} />
-            </Route>
+          <Route path="checklists">
+            <Route index element={<ManageChecklistIndex />} />
+            <Route path=":id" element={<ManageChecklistShow />} />
+            <Route path="create" element={<ManageChecklistCreate />} />
+          </Route>
 
-            <Route path="finding">
-              <Route index element={<ManageFindingIndex />} />
-            </Route>
+          <Route path="finding">
+            <Route index element={<ManageFindingIndex />} />
+          </Route>
 
-            <Route path="project">
-              <Route index element={<ManageProjectIndex />} />
-              <Route path="create" element={<ManageProjectCreate />} />
-              <Route path=":id" element={<ManageProjectShow />} />
-            </Route>
+          <Route path="projects">
+            <Route index element={<ManageProjectIndex />} />
+            <Route path="create" element={<ManageProjectCreate />} />
+            <Route path=":id" element={<ManageProjectShow />} />
+            <Route path=":id/edit" element={<ManageProjectEdit />} />
           </Route>
           <Route path="/" element={<Dashboard />} />
         </Routes>

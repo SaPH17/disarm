@@ -1,43 +1,29 @@
-import SelectBox, { SelectBoxData } from '../../../components/select-box';
-import Table from '../../../components/table';
 import SelectedDetail from '../../../components/selected-detail';
 import PrimaryButton from '../../../components/primary-button';
+import ActionButton, {
+  ActionButtonItem,
+} from '../../../components/action-button';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Group } from '../../../models/group';
+import GroupServices from '../../../services/group-services';
+import TableCheckbox2 from '../../../components/table-checkbox2';
 
-const content = [
-  {
-    name: 'Role A',
-    description: 'Role for admin',
-  },
-  {
-    name: 'Role B',
-    description: 'Role for pentester',
-  },
-  {
-    name: 'Role C',
-    description: 'Role for SysAdmin',
-  },
-  {
-    name: 'Role D',
-    description: 'Role for others',
-  },
-];
+const title = ['name', 'description'];
 
-const items: SelectBoxData[] = [
+const items: ActionButtonItem[] = [
   {
     id: '1',
-    name: 'Edit Group',
+    name: 'Delete Group',
+    url: '/',
   },
   {
     id: '2',
-    name: 'Delete Group',
-  },
-  {
-    id: '3',
     name: 'Assign User',
+    url: '/',
   },
 ];
-
-const title = ['name', 'description'];
 
 const contentTitle = [
   'name',
@@ -45,32 +31,67 @@ const contentTitle = [
   'permissions',
   'directParentGroup',
 ];
-const contentData = {
-  name: 'Role A',
-  description: 'Role for admin',
-  Permissions: '- updateuser.*',
-  directParentGroup: 'Role B',
-};
 
 export default function ManageGroupIndex() {
+  const [groups, setGroups] = useState<Group[]>();
+  const [selectedGroup, setSelectedGroup] = useState<any[]>([
+    {
+      id: -1,
+      name: '-',
+      description: '-',
+      permissions: '-',
+      directParentGroup: '-',
+    },
+  ]);
+  const navigate = useNavigate();
+
+  async function fetchGroups() {
+    const result = await GroupServices.getGroups();
+    setGroups(result);
+  }
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
   return (
     <>
       <div className="text-xl font-semibold">Manage Group</div>
       <div className="flex flex-row gap-2 sm:gap-4 justify-between">
-        <PrimaryButton content="Create Group" />
-        <SelectBox items={items} defaultValue={'-- Select Action --'} />
+        <Link to="/groups/create">
+          <PrimaryButton content="Create Group" />
+        </Link>
+        <ActionButton items={items} />
       </div>
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Groups</div>
-        <Table title={title} content={content} />
+        {groups && (
+          <TableCheckbox2
+            title={title}
+            content={groups as object[]}
+            onCheckedFunction={(group: any) => {
+              setSelectedGroup([...selectedGroup, group]);
+            }}
+            onUncheckedFunction={(group: any) => {
+              setSelectedGroup(selectedGroup.filter((item) => item !== group));
+            }}
+            onClickFunction={(group: any) => {
+              navigate(`/groups/${group.id}`);
+            }}
+          />
+        )}
       </div>
 
       <SelectedDetail
         title={'Group Detail'}
         contentTitle={contentTitle}
-        content={contentData}
-      />
+        content={selectedGroup[selectedGroup.length - 1]}
+      >
+        <Link to={`/groups/${selectedGroup[selectedGroup.length - 1].id}/edit`}>
+          <PrimaryButton content="Edit" />
+        </Link>
+      </SelectedDetail>
     </>
   );
 }
