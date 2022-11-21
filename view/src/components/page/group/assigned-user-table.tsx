@@ -1,54 +1,20 @@
-import { useEffect, useState } from 'react';
-import TableCheckbox from '../../table-checkbox';
-import { User } from '../../../models/user';
-import userServices from '../../../services/user-services';
-import InputSwitch from '../../input-switch/input-switch';
-import { SearchIcon, XIcon } from '@heroicons/react/outline';
-import { useNavigate, useParams } from 'react-router-dom';
+import { SearchIcon } from '@heroicons/react/outline';
 import PrimaryButton from '../../primary-button';
-import UserServices from '../../../services/user-services';
 import Table from '../../table';
+import { useState } from 'react';
 
 const title = ['id', 'name', 'dateCreated', 'action'];
 
-const AssignedUserTable = () => {
-  const { id } = useParams();
-  const [user, setUser] = useState<User[]>();
+const AssignedUserTable = ({ users }: any) => {
   const [search, setSearch] = useState('');
-  const navigate = useNavigate();
 
-  function deleteUser(user: User){
-    console.log(user);
-  }
-
-  async function fetchGroup() {
-    if (id === undefined) {
-      return navigate('/');
-    }
-
-    if (user === undefined) {
-      const result = await UserServices.getUsers();
-      const mappedUser = result.map(user => {
-        return {
-          ...user,
-          action: <XIcon className='w-5 h-5 cursor-pointer' onClick={ () => deleteUser(user) } />
-        }
-      })
-      setUser(mappedUser);
-    }
-  }
-
-  useEffect(() => {
-    fetchGroup();
-  }, [id, user]);
-
-  return user ? (
+  return users ? (
     <div className="flex flex-col sm:gap-2 rounded divide-y-1 bg-white text-sm shadow">
       <div className="flex flex-row justify-between items-center px-2 py-2 sm:px-8  sm:py-4 bg-gray-50">
-        <div className='flex flex-col sm:flex-row gap-x-4 gap-y-2'>
-          <div className="text-lg font-semibold">Available User</div>
-          <div className='max-w-sm'>
-            <PrimaryButton content='Add User' type='button' />
+        <div className="flex flex-col sm:flex-row gap-x-4 gap-y-2">
+          <div className="text-lg font-semibold">Assigned User</div>
+          <div className="max-w-sm">
+            <PrimaryButton content="Add User" type="button" />
           </div>
         </div>
         <div className="relative">
@@ -62,14 +28,15 @@ const AssignedUserTable = () => {
             placeholder="Search"
             type="search"
             onChange={(e) => setSearch(e.target.value)}
+            value={search}
           />
         </div>
       </div>
       <div className="flex flex-col gap-4 px-8 pb-8 pt-4">
         <Table
           title={title}
-          content={user}
-          onClickFunction={(group: any) => { }}
+          content={users}
+          onClickFunction={(group: any) => {}}
         />
       </div>
     </div>

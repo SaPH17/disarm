@@ -32,12 +32,12 @@ export default function ManageUserIndex() {
     },
     {
       id: '2',
-      name: 'Add Group',
+      name: 'Add to Group',
       url: '/',
     },
     {
       id: '3',
-      name: 'Assign Project',
+      name: 'Assign to Project',
       url: '/',
     },
   ];
@@ -89,7 +89,7 @@ export default function ManageUserIndex() {
         <div className="flex items-center gap-4">
           <div>
             <Link to="/" className={'underline'}>
-              View All Report
+              View All Findings
             </Link>
           </div>
           <div>
