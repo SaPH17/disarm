@@ -30,7 +30,7 @@ const contentTitle = [
 
 export default function ManageGroupIndex() {
   const [groups, setGroups] = useState<Group[]>();
-  const [selectedGroup, setSelectedGroup] = useState<any[]>([defaultGroup]);
+  const [selectedGroup, setSelectedGroup] = useState<Group[]>([defaultGroup]);
   const navigate = useNavigate();
 
   async function fetchGroups() {

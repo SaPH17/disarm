@@ -1,8 +1,8 @@
-import { Group } from "../models/group";
-import { Project } from "../models/project";
-import { User } from "../models/user";
+import { Group } from '../models/group';
+import { Project } from '../models/project';
+import { User } from '../models/user';
 
-export const defaultProject : Project = {
+export const defaultProject: Project = {
   id: -1,
   name: '-',
   company: '-',
@@ -11,8 +11,8 @@ export const defaultProject : Project = {
   phase: '-',
   report: '-',
   description: '-',
-  assignedUser: '-'
-}
+  assignedUser: '-',
+};
 
 export const defaultGroup: Group = {
   id: -1,
@@ -20,13 +20,22 @@ export const defaultGroup: Group = {
   description: '-',
   permissions: '-',
   directParentGroup: '-',
-}
+};
 
-export const defaultUser : User = {
+export const defaultUser: User = {
   id: -1,
   name: '-',
   status: '-',
   groups: '-',
   assignedProjects: '-',
   directSupervisor: '-',
-}
+};
+
+export const defaultChecklist = {
+  id: -1,
+  name: '-',
+  createdBy: '-',
+  createdAt: '-',
+  lastModified: '-',
+  status: '-',
+};

@@ -6,37 +6,11 @@ import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
 import { Link } from 'react-router-dom';
-
-const content = [
-  {
-    id: 1,
-    name: 'Checklist A',
-    lastModified: '18/10/2022',
-    createdBy: 'Bambang',
-    status: 'Inactive',
-  },
-  {
-    id: 2,
-    name: 'Checklist B',
-    lastModified: '18/10/2022',
-    createdBy: 'Bambang',
-    status: 'Inactive',
-  },
-  {
-    id: 3,
-    name: 'Checklist C',
-    lastModified: '18/10/2022',
-    createdBy: 'Bambang',
-    status: 'Active',
-  },
-  {
-    id: 4,
-    name: 'Checklist D',
-    lastModified: '18/10/2022',
-    createdBy: 'Bambang',
-    status: 'Active',
-  },
-];
+import TableCheckbox from '../../../components/table-checkbox';
+import { defaultChecklist } from '../../../data/default-values';
+import { useState, useEffect } from 'react';
+import ChecklistService from '../../../services/checklist-service';
+import { Checklist } from '../../../models/checklist';
 
 const items: ActionButtonItem[] = [
   {
@@ -56,19 +30,24 @@ const contentTitle = [
   'createdAt',
   'lastModified',
 ];
-const contentData = {
-  id: 1,
-  name: 'Bambang',
-  createdBy: 'Bambang',
-  createdAt: '18/10/2022',
-  lastModified: '18/10/2022',
-  status: 'Active',
-};
 
 export default function ManageChecklistIndex() {
+  const [checklists, setChecklists] = useState<Checklist[]>();
+  const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>([
+    defaultChecklist,
+  ]);
   const navigate = useNavigate();
 
-  return (
+  async function fetchChecklists() {
+    const result = await ChecklistService.getChecklists();
+    setChecklists(result);
+  }
+
+  useEffect(() => {
+    fetchChecklists();
+  }, []);
+
+  return checklists ? (
     <>
       <div className="text-xl font-semibold">Manage Checklist</div>
       <div className="flex flex-row gap-2 sm:gap-4 justify-between">
@@ -79,12 +58,19 @@ export default function ManageChecklistIndex() {
       </div>
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Checklists</div>
-        <Table
+        <TableCheckbox
           title={title}
-          content={content}
-          isClickable={true}
+          content={checklists as object[]}
+          onCheckedFunction={(checklist: any) => {
+            setSelectedChecklist([...selectedChecklist, checklist]);
+          }}
+          onUncheckedFunction={(checklist: any) => {
+            setSelectedChecklist(
+              selectedChecklist.filter((item) => item !== checklist)
+            );
+          }}
           onClickFunction={(checklist: any) => {
-            navigate(`/checklist/${checklist.id}`);
+            navigate(`/checklists/${checklist.id}`);
           }}
         />
       </div>
@@ -92,7 +78,7 @@ export default function ManageChecklistIndex() {
       <SelectedDetail
         title={'Checklist Detail'}
         contentTitle={contentTitle}
-        content={contentData}
+        content={selectedChecklist[selectedChecklist.length - 1]}
       >
         <div className="flex items-center gap-4">
           <div>
@@ -108,5 +94,7 @@ export default function ManageChecklistIndex() {
         </div>
       </SelectedDetail>
     </>
+  ) : (
+    <></>
   );
 }

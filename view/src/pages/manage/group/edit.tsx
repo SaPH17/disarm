@@ -43,7 +43,7 @@ const ManageGroupEdit = () => {
       <div className="flex flex-row justify-between">
         <div className="text-xl font-semibold">Edit Group</div>
       </div>
-      <EditGroupForm />
+      <EditGroupForm group={group} />
     </>
   );
 };

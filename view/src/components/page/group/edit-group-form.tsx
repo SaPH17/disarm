@@ -1,7 +1,7 @@
 import { XIcon } from '@heroicons/react/outline';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { GroupFormData } from '../../../models/forms/group-form-data';
 import { GeneralData } from '../../../models/general-data';
 import { Group } from '../../../models/group';
@@ -12,17 +12,14 @@ import InputText from '../../input-text/input-text';
 import SelectBox from '../../select-box';
 import AssignedUserTable from './assigned-user-table';
 
-const EditGroupForm = () => {
+const EditGroupForm = ({ group }: any) => {
   const [users, setUsers] = useState<User[]>();
   const [groups, setGroups] = useState<Group[]>();
-  const [group, setGroup] = useState<Group>();
 
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const {
     register,
-    reset,
     formState: { errors },
     handleSubmit,
   } = useForm<GroupFormData>();
@@ -56,23 +53,9 @@ const EditGroupForm = () => {
     setUsers(mappedUser);
   }
 
-  async function fetchCurrentGroup() {
-    if (id === undefined) {
-      return navigate('/');
-    }
-
-    if (group === undefined) {
-      const result = await GroupServices.getOneGroup(id);
-      setGroup(result);
-    }
-
-    reset(group);
-  }
-
   useEffect(() => {
     fetchGroups();
     fetchUsers();
-    fetchCurrentGroup();
   }, [id, group]);
 
   return groups && users ? (
