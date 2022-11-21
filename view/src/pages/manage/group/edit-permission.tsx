@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import TableCheckbox from '../../../components/table-checkbox';
+import TableCheckbox from '../../../components/table-checkbox-old';
 import { Permission } from '../../../models/permission';
 import PermissionServices from '../../../services/permission-services';
 import InputSwitch from '../../../components/input-switch/input-switch';

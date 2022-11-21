@@ -1,4 +1,3 @@
-import { groups } from "../data/groups";
 import { projects } from "../data/projects";
 
 export default class ProjectServices {

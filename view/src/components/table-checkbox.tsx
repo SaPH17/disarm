@@ -47,12 +47,10 @@ export default function TableCheckbox({
   const handleCheck = (e: any, id: String, item: any) => {
     if (!checkedList.includes(id)) {
       setCheckedList([...checkedList, id]);
-      onCheckedFunction(item);
       return;
     }
 
     setCheckedList(checkedList.filter((item) => item !== id));
-    onUncheckedFunction(item);
   };
 
   return (
@@ -89,9 +87,12 @@ export default function TableCheckbox({
                 {content.map((c, contentIndex) => {
                   return (
                     <tr
-                      onClick={(e) =>
-                        handleCheck(e, `check-${contentIndex}`, c)
-                      }
+                      onClick={(e: any) => {
+                        if (e.target.tagName === 'INPUT') {
+                          return;
+                        }
+                        onCheckedFunction(c);
+                      }}
                       key={contentIndex}
                       className={`${
                         contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'

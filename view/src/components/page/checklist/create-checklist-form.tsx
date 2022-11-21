@@ -44,14 +44,12 @@ const CreateChecklistForm = () => {
               })}
             />
           </div>
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4">
-            <div></div>
-            <div className="flex justify-end max-w-lg col-span-2">
-              <PrimaryButton
-                content="Create Section"
-                classNames="w-full sm:w-fit"
-              ></PrimaryButton>
-            </div>
+
+          <div className="flex justify-end col-span-2">
+            <PrimaryButton
+              content="Create Section"
+              classNames="w-full sm:w-fit"
+            ></PrimaryButton>
           </div>
         </div>
         <div className="flex items-center gap-4">

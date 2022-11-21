@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-import Table from '../../../components/table';
+import TableCheckbox from '../../../components/table-checkbox';
 import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
@@ -12,25 +12,21 @@ import { Project } from '../../../models/project';
 const items: ActionButtonItem[] = [
   {
     id: '1',
-    name: 'Edit Project',
-    url: '/',
-  },
-  {
-    id: '2',
     name: 'Add User',
     url: '/',
   },
   {
-    id: '3',
+    id: '2',
     name: 'Generate Report',
     url: '/',
   },
 ];
 
-const title = ['name', 'company', 'standard', 'status', 'phase', 'report'];
+const title = ['name', 'company', 'checklist', 'status', 'phase', 'report'];
 
 export default function ManageProjectIndex() {
   const [projects, setProjects] = useState<Project[]>();
+  const [selectedProject, setSelectedProject] = useState<Project[]>([]);
   const navigate = useNavigate();
 
   function handleRedirectToProjectDetail(project: any) {
@@ -57,10 +53,18 @@ export default function ManageProjectIndex() {
       </div>
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Projects</div>
-        <Table
+        <TableCheckbox
           title={title}
           content={projects as object[]}
-          isClickable={true}
+          onCheckedFunction={(project: any) => {
+            setSelectedProject([...selectedProject, project]);
+            handleRedirectToProjectDetail(project);
+          }}
+          onUncheckedFunction={(project: any) => {
+            setSelectedProject(
+              selectedProject.filter((item) => item !== project)
+            );
+          }}
           onClickFunction={handleRedirectToProjectDetail}
         />
       </div>

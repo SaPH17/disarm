@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionButton, {
-  ActionButtonItem
+  ActionButtonItem,
 } from '../../../components/action-button';
 import PrimaryButton from '../../../components/primary-button';
 import SelectedDetail from '../../../components/selected-detail';
@@ -50,7 +50,7 @@ export default function ManageUserIndex() {
     },
   ];
 
-  async function fetchUsers(){
+  async function fetchUsers() {
     const result = await UserServices.getUsers();
     setUsers(result);
   }
@@ -72,21 +72,21 @@ export default function ManageUserIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Users</div>
-        {
-          users && <TableCheckbox
-          title={title}
-          content={users as object[]}
-          onCheckedFunction={(user: any) => {
-            setSelectedUser([...selectedUser, user]);
-          }}
-          onUncheckedFunction={(user: any) => {
-            setSelectedUser(selectedUser.filter((item) => item !== user));
-          }}
-          onClickFunction={(user: any) => {
-            // navigate(`/users/${user.id}`);
-          }}
-        />
-        }
+        {users && (
+          <TableCheckbox
+            title={title}
+            content={users as object[]}
+            onCheckedFunction={(user: any) => {
+              setSelectedUser([...selectedUser, user]);
+            }}
+            onUncheckedFunction={(user: any) => {
+              setSelectedUser(selectedUser.filter((item) => item !== user));
+            }}
+            onClickFunction={(user: any) => {
+              navigate(`/users/${user.id}`);
+            }}
+          />
+        )}
       </div>
 
       <SelectedDetail
@@ -101,7 +101,9 @@ export default function ManageUserIndex() {
             </Link>
           </div>
           <div>
-            <Link to={`/users/${ selectedUser[selectedUser.length - 1].id }/edit`}>
+            <Link
+              to={`/users/${selectedUser[selectedUser.length - 1].id}/edit`}
+            >
               <PrimaryButton content="Edit" />
             </Link>
           </div>
