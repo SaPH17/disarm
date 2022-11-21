@@ -83,7 +83,7 @@ const ManageGroupEditPermission = () => {
             content={permission}
             onCheckedFunction={() => {}}
             onUncheckedFunction={() => {}}
-            onClickFunction={(group: any) => {}}
+            isCheckOnRowClick={true}
           />
         </div>
       </div>

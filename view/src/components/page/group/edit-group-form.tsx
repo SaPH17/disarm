@@ -87,7 +87,7 @@ const EditGroupForm = () => {
   }, [id, group]);
 
   return groups && users ? (
-    <div className='flex flex-col gap-4'>
+    <div className="flex flex-col gap-4">
       <form
         className="space-y-8"
         onSubmit={handleSubmit(handleCreateGroupButton)}

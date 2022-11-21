@@ -6,6 +6,7 @@ import ActionButton, {
 import PrimaryButton from '../../../components/primary-button';
 import SelectedDetail from '../../../components/selected-detail';
 import TableCheckbox from '../../../components/table-checkbox';
+import { defaultUser } from '../../../data/default-values';
 import { User } from '../../../models/user';
 import UserServices from '../../../services/user-services';
 
@@ -21,16 +22,7 @@ const contentTitle = [
 
 export default function ManageUserIndex() {
   const [users, setUsers] = useState<User[]>();
-  const [selectedUser, setSelectedUser] = useState<User[]>([
-    {
-      id: -1,
-      name: '-',
-      status: '-',
-      groups: '-',
-      assignedProjects: '-',
-      directSupervisor: '-',
-    },
-  ]);
+  const [selectedUser, setSelectedUser] = useState<User[]>([defaultUser]);
   const navigate = useNavigate();
   const items: ActionButtonItem[] = [
     {

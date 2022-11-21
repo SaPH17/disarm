@@ -8,6 +8,9 @@ import ActionButton, {
 import { useEffect, useState } from 'react';
 import ProjectServices from '../../../services/project-services';
 import { Project } from '../../../models/project';
+import { defaultProject } from '../../../data/default-values';
+import SelectedDetail from '../../../components/selected-detail';
+import { Link } from 'react-router-dom';
 
 const items: ActionButtonItem[] = [
   {
@@ -23,10 +26,13 @@ const items: ActionButtonItem[] = [
 ];
 
 const title = ['name', 'company', 'checklist', 'status', 'phase', 'report'];
+const contentTitle = ['name', 'company', 'status', 'assignedUser'];
 
 export default function ManageProjectIndex() {
   const [projects, setProjects] = useState<Project[]>();
-  const [selectedProject, setSelectedProject] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project[]>([
+    defaultProject,
+  ]);
   const navigate = useNavigate();
 
   function handleRedirectToProjectDetail(project: any) {
@@ -35,7 +41,14 @@ export default function ManageProjectIndex() {
 
   async function fetchProjects() {
     const result = await ProjectServices.getProjects();
-    setProjects(result);
+    const addedResult = result.map((v) => {
+      return {
+        ...v,
+        assignedUser: 'Bambang, Mamang, Revaldi, Mijaya',
+      };
+    });
+
+    setProjects(addedResult);
   }
 
   useEffect(() => {
@@ -58,7 +71,6 @@ export default function ManageProjectIndex() {
           content={projects as object[]}
           onCheckedFunction={(project: any) => {
             setSelectedProject([...selectedProject, project]);
-            handleRedirectToProjectDetail(project);
           }}
           onUncheckedFunction={(project: any) => {
             setSelectedProject(
@@ -68,6 +80,32 @@ export default function ManageProjectIndex() {
           onClickFunction={handleRedirectToProjectDetail}
         />
       </div>
+
+      <SelectedDetail
+        title={'Project Detail'}
+        contentTitle={contentTitle}
+        content={selectedProject[selectedProject.length - 1]}
+      >
+        <div className="flex items-center gap-4">
+          <div>
+            <Link
+              to={`/projects/${selectedProject[selectedProject.length - 1].id}`}
+              className={'underline'}
+            >
+              View Detail
+            </Link>
+          </div>
+          <div>
+            <Link
+              to={`/projects/${
+                selectedProject[selectedProject.length - 1].id
+              }/edit`}
+            >
+              <PrimaryButton content="Edit" />
+            </Link>
+          </div>
+        </div>
+      </SelectedDetail>
     </>
   ) : (
     <></>

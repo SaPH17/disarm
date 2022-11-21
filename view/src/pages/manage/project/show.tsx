@@ -53,12 +53,6 @@ const content = [
 const title = ['id', 'title', 'impactedSystem', 'risk', 'status', 'action'];
 
 const contentTitle = ['name', 'company', 'status', 'assignedUser'];
-const contentData = {
-  name: 'Bambang',
-  company: 'Company A',
-  status: 'Waiting Approval',
-  assignedUser: 'Bambang, Mamang, Revaldi, Mijaya',
-};
 
 export default function ManageProjectShow() {
   const params = useParams();
@@ -88,7 +82,7 @@ export default function ManageProjectShow() {
   return project ? (
     <>
       <div className="flex flex-row justify-between">
-        <div className="text-xl font-semibold">Project {params.id}</div>
+        <div className="text-xl font-semibold">{project.name}</div>
         <Link to={`/projects/${params.id}/edit`}>
           <PrimaryButton content="Edit Project" />
         </Link>

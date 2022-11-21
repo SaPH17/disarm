@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { Group } from '../../../models/group';
 import GroupServices from '../../../services/group-services';
 import TableCheckbox from '../../../components/table-checkbox';
+import { defaultGroup } from '../../../data/default-values';
 
 const title = ['name', 'description'];
 
@@ -29,15 +30,7 @@ const contentTitle = [
 
 export default function ManageGroupIndex() {
   const [groups, setGroups] = useState<Group[]>();
-  const [selectedGroup, setSelectedGroup] = useState<any[]>([
-    {
-      id: -1,
-      name: '-',
-      description: '-',
-      permissions: '-',
-      directParentGroup: '-',
-    },
-  ]);
+  const [selectedGroup, setSelectedGroup] = useState<any[]>([defaultGroup]);
   const navigate = useNavigate();
 
   async function fetchGroups() {
