@@ -38,4 +38,5 @@ export const defaultChecklist = {
   createdAt: '-',
   lastModified: '-',
   status: '-',
+  sections: [],
 };

@@ -3,6 +3,9 @@ import { useForm } from 'react-hook-form';
 import { ChecklistFormData } from '../../../models/forms/checklist-form-data';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
+import TableAccordion from '../../table-accordion';
+
+const title = ['id', 'detail', 'tool', 'procedure'];
 
 const CreateChecklistForm = () => {
   const {
@@ -11,7 +14,54 @@ const CreateChecklistForm = () => {
     handleSubmit,
   } = useForm<ChecklistFormData>();
 
-  const [sections, setSections] = useState([]);
+  const [sections, setSections] = useState<any[]>([
+    {
+      name: 'Section 1',
+      details: [
+        {
+          id: 'WEB-001',
+          detail: 'Detail',
+          tool: 'Tool',
+          procedure: 'Procedure',
+        },
+        {
+          id: 'WEB-002',
+          detail: 'Detail',
+          tool: 'Tool',
+          procedure: 'Procedure',
+        },
+      ],
+    },
+    {
+      name: 'Section 2',
+      details: [
+        {
+          id: 'WEB-001',
+          detail: 'Detail',
+          tool: 'Tool',
+          procedure: 'Procedure',
+        },
+        {
+          id: 'WEB-002',
+          detail: 'Detail',
+          tool: 'Tool',
+          procedure: 'Procedure',
+        },
+      ],
+    },
+    {
+      name: 'Section 3',
+      details: [],
+    },
+    {
+      name: 'Section 4',
+      details: [],
+    },
+  ]);
+  const handleSectionInsert = (e: any) => {
+    //TODO: Ambil value dari text field section name, validasi empty, terus insert ke sections.
+    // setSections([...sections, ]);
+  };
 
   return (
     <form className="space-y-8">
@@ -45,23 +95,35 @@ const CreateChecklistForm = () => {
             />
           </div>
 
-          <div className="flex justify-end col-span-2">
+          <div className="flex justify-end">
             <PrimaryButton
+              onClick={handleSectionInsert}
               content="Create Section"
               classNames="w-full sm:w-fit"
             ></PrimaryButton>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
-            placeholder="Search section"
-          />
-          <button className="inline-flex h-8 justify-center items-center px-4 border border-transparent text-xs leading-4 font-medium shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded">
-            Delete
-          </button>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-4">
+            <input
+              type="text"
+              className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+              placeholder="Search section"
+            />
+            <button className="inline-flex h-8 justify-center items-center px-4 border border-transparent text-xs leading-4 font-medium shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded">
+              Delete
+            </button>
+          </div>
+          <div className="flex justify-end text-gray-500 text-sm">
+            * Selected section and detail will be deleted
+          </div>
         </div>
+        <TableAccordion
+          title={title}
+          content={sections}
+          onCheckedFunction={() => {}}
+          onUncheckedFunction={() => {}}
+        ></TableAccordion>
       </div>
     </form>
   );
