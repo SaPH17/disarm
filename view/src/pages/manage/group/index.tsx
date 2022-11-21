@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Group } from '../../../models/group';
 import GroupServices from '../../../services/group-services';
-import TableCheckbox2 from '../../../components/table-checkbox2';
+import TableCheckbox from '../../../components/table-checkbox';
+import { defaultGroup } from '../../../data/default-values';
 
 const title = ['name', 'description'];
 
@@ -16,11 +17,6 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Delete Group',
-    url: '/',
-  },
-  {
-    id: '2',
-    name: 'Assign User',
     url: '/',
   },
 ];
@@ -34,15 +30,7 @@ const contentTitle = [
 
 export default function ManageGroupIndex() {
   const [groups, setGroups] = useState<Group[]>();
-  const [selectedGroup, setSelectedGroup] = useState<any[]>([
-    {
-      id: -1,
-      name: '-',
-      description: '-',
-      permissions: '-',
-      directParentGroup: '-',
-    },
-  ]);
+  const [selectedGroup, setSelectedGroup] = useState<Group[]>([defaultGroup]);
   const navigate = useNavigate();
 
   async function fetchGroups() {
@@ -67,7 +55,7 @@ export default function ManageGroupIndex() {
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Groups</div>
         {groups && (
-          <TableCheckbox2
+          <TableCheckbox
             title={title}
             content={groups as object[]}
             onCheckedFunction={(group: any) => {
@@ -88,9 +76,25 @@ export default function ManageGroupIndex() {
         contentTitle={contentTitle}
         content={selectedGroup[selectedGroup.length - 1]}
       >
-        <Link to={`/groups/${selectedGroup[selectedGroup.length - 1].id}/edit`}>
-          <PrimaryButton content="Edit" />
-        </Link>
+        <div className="flex items-center gap-4">
+          <div>
+            <Link
+              to={`/groups/${
+                selectedGroup[selectedGroup.length - 1].id
+              }/edit-permission`}
+              className={'underline'}
+            >
+              Edit Permission
+            </Link>
+          </div>
+          <div>
+            <Link
+              to={`/groups/${selectedGroup[selectedGroup.length - 1].id}/edit`}
+            >
+              <PrimaryButton content="Edit" />
+            </Link>
+          </div>
+        </div>
       </SelectedDetail>
     </>
   );

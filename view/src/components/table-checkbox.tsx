@@ -6,6 +6,7 @@ export type TableData = {
   onCheckedFunction: Function;
   onUncheckedFunction: Function;
   onClickFunction?: Function;
+  isCheckOnRowClick?: Boolean;
 };
 
 function toPascalCase(text: string) {
@@ -27,6 +28,7 @@ export default function TableCheckbox({
   onCheckedFunction,
   onUncheckedFunction,
   onClickFunction = () => {},
+  isCheckOnRowClick = false,
 }: TableData) {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [checkedList, setCheckedList] = useState<String[]>([]);
@@ -47,12 +49,10 @@ export default function TableCheckbox({
   const handleCheck = (e: any, id: String, item: any) => {
     if (!checkedList.includes(id)) {
       setCheckedList([...checkedList, id]);
-      onCheckedFunction(item);
       return;
     }
 
     setCheckedList(checkedList.filter((item) => item !== id));
-    onUncheckedFunction(item);
   };
 
   return (
@@ -89,9 +89,15 @@ export default function TableCheckbox({
                 {content.map((c, contentIndex) => {
                   return (
                     <tr
-                      onClick={(e) =>
-                        handleCheck(e, `check-${contentIndex}`, c)
-                      }
+                      onClick={(e: any) => {
+                        if (e.target.tagName === 'INPUT') {
+                          return;
+                        }
+                        if (isCheckOnRowClick) {
+                          handleCheck(e, `check-${contentIndex}`, c);
+                        }
+                        onCheckedFunction(c);
+                      }}
                       key={contentIndex}
                       className={`${
                         contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'

@@ -21,7 +21,7 @@ function classNames(...classes: string[]) {
   onClickFunction : Callback function when a row content is clicked
 */
 
-export default function TableCheckbox2({
+export default function TableCheckbox({
   title,
   content,
   onCheckedFunction,
@@ -47,10 +47,12 @@ export default function TableCheckbox2({
   const handleCheck = (e: any, id: String, item: any) => {
     if (!checkedList.includes(id)) {
       setCheckedList([...checkedList, id]);
+      onCheckedFunction(item);
       return;
     }
 
     setCheckedList(checkedList.filter((item) => item !== id));
+    onUncheckedFunction(item);
   };
 
   return (
@@ -87,13 +89,9 @@ export default function TableCheckbox2({
                 {content.map((c, contentIndex) => {
                   return (
                     <tr
-                      onClick={(e: any) => {
-                        console.log(e.target.tagName);
-                        if (e.target.tagName === 'INPUT') {
-                          return;
-                        }
-                        onCheckedFunction(c);
-                      }}
+                      onClick={(e) =>
+                        handleCheck(e, `check-${contentIndex}`, c)
+                      }
                       key={contentIndex}
                       className={`${
                         contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'

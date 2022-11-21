@@ -2,8 +2,9 @@ export const projects = [
   {
     id: '1',
     name: 'Project A',
+    description: 'This is a project',
     company: 'Company A',
-    standard: 'Standard A',
+    checklist: 'Checklist A',
     status: 'On Going',
     phase: '',
     report: 'Download Report',
@@ -11,8 +12,9 @@ export const projects = [
   {
     id: '2',
     name: 'Project B',
+    description: 'This is a project',
     company: 'Company B',
-    standard: 'Standard A',
+    checklist: 'Checklist A',
     status: 'Approved',
     phase: '',
     report: 'Download Report',
@@ -20,8 +22,9 @@ export const projects = [
   {
     id: '3',
     name: 'Project C',
+    description: 'This is a project',
     company: 'Company C',
-    standard: 'Standard B',
+    checklist: 'Checklist B',
     status: 'Not Started',
     phase: '',
     report: 'No Report',
@@ -29,8 +32,9 @@ export const projects = [
   {
     id: '4',
     name: 'Project D',
+    description: 'This is a project',
     company: 'Company D',
-    standard: 'Standard A',
+    checklist: 'Checklist A',
     status: 'On Going',
     phase: '',
     report: 'Download Report',

@@ -1,4 +1,3 @@
-import SelectBox, { GeneralSelectBoxData } from '../../../components/select-box';
 import SelectedDetail from '../../../components/selected-detail';
 import EditableList from '../../../components/editable-list';
 import { useState } from 'react';
