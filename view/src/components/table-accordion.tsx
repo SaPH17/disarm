@@ -53,52 +53,35 @@ export default function TableAccordion({
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="py-3">
-                    <input
-                      id="check-all"
-                      checked={isCheckedAll}
-                      onChange={handleCheckAll}
-                      type="checkbox"
-                      className="flex mx-auto w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-                  </th>
-                  {title.map((t) => {
-                    return (
-                      <th
-                        key={t}
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
-                      >
-                        {toPascalCase(t)}
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {content.map((c, contentIndex) => {
-                  return (
-                    <tr key={contentIndex}>
-                      <td colSpan={title.length + 1}>
-                        <Accordion
-                          title={(c as any).name}
-                          content={(c as any).details}
-                        ></Accordion>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <div className='flex mb-4 flex-col rounded-sm shadow overflow-hidden border-gray-200'>
+      <div className={'bg-white p-3 pl-5 items-center inline-grid grid-cols-' + ((title.length + 1) * 2)}>
+        <input
+          id="check-all"
+          checked={isCheckedAll}
+          onChange={handleCheckAll}
+          type="checkbox"
+          className="flex w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
+        {
+          title.map((t) => {
+            return (
+              <div className='col-span-2'>
+              {toPascalCase(t)}
+              </div>
+            );
+          })
+        }
+      </div>
+      <div className='bg-gray-50'>
+        {content.map((c, contentIndex) => {
+          return (
+            <Accordion
+              title={(c as any).name}
+              headers={title}
+              content={(c as any).details}
+            ></Accordion>
+          );
+        })}
       </div>
     </div>
   );
