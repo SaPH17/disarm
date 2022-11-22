@@ -25,8 +25,8 @@ const items: ActionButtonItem[] = [
   },
 ];
 
-const title = ['name', 'company', 'checklist', 'status', 'phase', 'report'];
-const contentTitle = ['name', 'company', 'status', 'assignedUser'];
+const title = ['name', 'company', 'checklist', 'phase', 'report'];
+const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectIndex() {
   const [projects, setProjects] = useState<Project[]>();

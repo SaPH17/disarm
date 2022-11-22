@@ -1,6 +1,8 @@
-export const checklists = [
+import { Checklist } from '../models/checklist';
+
+export const checklists: Checklist[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Checklist A',
     lastModified: '18/10/2022',
     createdAt: '18/10/2022',
@@ -9,7 +11,7 @@ export const checklists = [
     sections: [],
   },
   {
-    id: 2,
+    id: '2',
     name: 'Checklist B',
     lastModified: '18/10/2022',
     createdAt: '18/10/2022',
@@ -18,7 +20,7 @@ export const checklists = [
     sections: [],
   },
   {
-    id: 3,
+    id: '3',
     name: 'Checklist C',
     lastModified: '18/10/2022',
     createdAt: '18/10/2022',
@@ -27,7 +29,7 @@ export const checklists = [
     sections: [],
   },
   {
-    id: 4,
+    id: '4',
     name: 'Checklist D',
     lastModified: '18/10/2022',
     createdAt: '18/10/2022',

@@ -8,6 +8,7 @@ export type TableData = {
   onUncheckedFunction: Function;
   onClickFunction?: Function;
   isCheckOnRowClick?: Boolean;
+  isEditable?: Boolean;
 };
 
 function toPascalCase(text: string) {
@@ -26,6 +27,7 @@ export default function TableAccordion({
   onUncheckedFunction,
   onClickFunction = () => {},
   isCheckOnRowClick = false,
+  isEditable = false,
 }: TableData) {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [checkedList, setCheckedList] = useState<String[]>([]);
@@ -53,8 +55,10 @@ export default function TableAccordion({
   };
 
   return (
-    <div className='flex mb-4 flex-col rounded-sm shadow overflow-hidden border-gray-200'>
-      <div className={'bg-white p-3 pl-5 items-center inline-grid grid-cols-' + ((title.length + 1) * 2)}>
+    <div className="flex mb-4 flex-col rounded-sm shadow overflow-hidden border-gray-200">
+      <div
+        className={`bg-white p-3 pl-5 items-center inline-grid grid-cols-10`}
+      >
         <input
           id="check-all"
           checked={isCheckedAll}
@@ -62,21 +66,21 @@ export default function TableAccordion({
           type="checkbox"
           className="flex w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
         />
-        {
-          title.map((t) => {
-            return (
-              <div className='col-span-2'>
+        {title.map((t, idx) => {
+          return (
+            <div key={idx} className="col-span-2">
               {toPascalCase(t)}
-              </div>
-            );
-          })
-        }
+            </div>
+          );
+        })}
       </div>
-      <div className='bg-gray-50'>
+      <div className="bg-gray-50">
         {content.map((c, contentIndex) => {
           return (
             <Accordion
-              title={(c as any).name}
+              key={contentIndex}
+              isEditable={isEditable}
+              accordionTitle={(c as any).name}
               headers={title}
               content={(c as any).details}
             ></Accordion>

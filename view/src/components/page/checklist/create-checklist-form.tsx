@@ -45,7 +45,8 @@ const CreateChecklistForm = () => {
           id: 'WEB-002',
           detail: 'Detail',
           tool: 'Tool',
-          procedure: 'Procedure',
+          procedure:
+            'Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure',
         },
       ],
     },
@@ -66,6 +67,7 @@ const CreateChecklistForm = () => {
   return (
     <form className="space-y-8">
       <div className="space-y-6 sm:space-y-5">
+        <PrimaryButton content="Save"></PrimaryButton>
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start pt-2 sm:pt-5">
           <InputText
             id="name"
@@ -121,6 +123,7 @@ const CreateChecklistForm = () => {
         <TableAccordion
           title={title}
           content={sections}
+          isEditable={true}
           onCheckedFunction={() => {}}
           onUncheckedFunction={() => {}}
         ></TableAccordion>

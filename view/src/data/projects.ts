@@ -5,8 +5,7 @@ export const projects = [
     description: 'This is a project',
     company: 'Company A',
     checklist: 'Checklist A',
-    status: 'On Going',
-    phase: '',
+    phase: 'On Going',
     report: 'Download Report',
   },
   {
@@ -15,8 +14,7 @@ export const projects = [
     description: 'This is a project',
     company: 'Company B',
     checklist: 'Checklist A',
-    status: 'Approved',
-    phase: '',
+    phase: 'Approved',
     report: 'Download Report',
   },
   {
@@ -25,8 +23,7 @@ export const projects = [
     description: 'This is a project',
     company: 'Company C',
     checklist: 'Checklist B',
-    status: 'Not Started',
-    phase: '',
+    phase: 'Not Started',
     report: 'No Report',
   },
   {
@@ -35,8 +32,7 @@ export const projects = [
     description: 'This is a project',
     company: 'Company D',
     checklist: 'Checklist A',
-    status: 'On Going',
-    phase: '',
+    phase: 'On Going',
     report: 'Download Report',
   },
 ];

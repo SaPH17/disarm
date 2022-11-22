@@ -18,6 +18,7 @@ import ManageUserEdit from './pages/manage/user/edit';
 import ManageProjectEdit from './pages/manage/project/edit';
 import ManageGroupEditPermission from './pages/manage/group/edit-permission';
 import ManageChecklistCreate from './pages/manage/checklist/create';
+import ManageGroupEdit from './pages/manage/group/edit';
 
 function App() {
   return (
@@ -36,11 +37,11 @@ function App() {
           <Route path="groups">
             <Route index element={<ManageGroupIndex />} />
             <Route path="create" element={<ManageGroupCreate />} />
-            <Route path=":id" element={<ManageGroupShow />} />
             <Route
               path=":id/edit-permission"
               element={<ManageGroupEditPermission />}
             />
+            <Route path=":id/edit" element={<ManageGroupEdit />} />
           </Route>
 
           <Route path="checklists">

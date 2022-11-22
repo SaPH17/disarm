@@ -19,10 +19,9 @@ const items: ActionButtonItem[] = [
   },
 ];
 
-const title = ['id', 'name', 'lastModified', 'createdBy', 'status'];
+const title = ['name', 'lastModified', 'createdBy', 'status'];
 
 const contentTitle = [
-  'id',
   'name',
   'status',
   'createdBy',
@@ -80,16 +79,24 @@ export default function ManageChecklistIndex() {
         content={selectedChecklist[selectedChecklist.length - 1]}
       >
         <div className="flex items-center gap-4">
-          <div>
-            <Link to="/" className={'underline'}>
-              Apply to Project
-            </Link>
-          </div>
-          <div>
-            <Link to="/">
-              <PrimaryButton content="Edit" />
-            </Link>
-          </div>
+          <Link
+            to={`/checklists/${
+              selectedChecklist[selectedChecklist.length - 1].id
+            }`}
+            className={'underline'}
+          >
+            View Detail
+          </Link>
+          <Link to="/" className={'underline'}>
+            Apply to Project
+          </Link>
+          <Link
+            to={`/checklists/${
+              selectedChecklist[selectedChecklist.length - 1].id
+            }/edit`}
+          >
+            <PrimaryButton content="Edit" />
+          </Link>
         </div>
       </SelectedDetail>
     </>

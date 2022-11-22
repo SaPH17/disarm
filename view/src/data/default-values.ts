@@ -7,7 +7,6 @@ export const defaultProject: Project = {
   name: '-',
   company: '-',
   checklist: '-',
-  status: '-',
   phase: '-',
   report: '-',
   description: '-',

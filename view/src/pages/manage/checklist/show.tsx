@@ -1,51 +1,99 @@
-import React from 'react';
-import Table from '../../../components/table';
+import Breadcrumbs from '../../../components/breadcrumbs';
+import TableAccordion from '../../../components/table-accordion';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Checklist } from '../../../models/checklist';
+import ChecklistService from '../../../services/checklist-service';
 
-const title = ['id', 'section', 'detail', 'tool', 'procedure'];
+const title = ['id', 'detail', 'tool', 'procedure'];
 const content = [
   {
-    id: 1.1,
-    section: 'Information Gathering',
-    detail: 'Conduct ...',
-    tool: 'Tool A',
-    procedure: 'Do the following',
+    name: 'Section 1',
+    details: [
+      {
+        id: 'WEB-001',
+        detail: 'Detail',
+        tool: 'Tool',
+        procedure: 'Procedure',
+      },
+      {
+        id: 'WEB-002',
+        detail: 'Detail',
+        tool: 'Tool',
+        procedure: 'Procedure',
+      },
+    ],
   },
   {
-    id: 1.2,
-    section: 'Information Gathering',
-    detail: 'Conduct ...',
-    tool: 'Tool A',
-    procedure: 'Do the following',
+    name: 'Section 2',
+    details: [
+      {
+        id: 'WEB-001',
+        detail: 'Detail',
+        tool: 'Tool',
+        procedure: 'Procedure',
+      },
+      {
+        id: 'WEB-002',
+        detail: 'Detail',
+        tool: 'Tool',
+        procedure:
+          'Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure Procedure',
+      },
+    ],
   },
   {
-    id: 1.3,
-    section: 'Information Gathering',
-    detail: 'Conduct ...',
-    tool: 'Tool A',
-    procedure: 'Do the following',
+    name: 'Section 3',
+    details: [],
   },
   {
-    id: 2.1,
-    section: 'Information Gathering',
-    detail: 'Conduct ...',
-    tool: 'Tool A',
-    procedure: 'Do the following',
-  },
-  {
-    id: 3.1,
-    section: 'Information Gathering',
-    detail: 'Conduct ...',
-    tool: 'Tool A',
-    procedure: 'Do the following',
+    name: 'Section 4',
+    details: [],
   },
 ];
 
 const ManageChecklistShow = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [checklist, setChecklist] = useState<Checklist>();
+
+  async function fetchChecklist() {
+    if (id === undefined) {
+      return navigate('/');
+    }
+
+    if (checklist === undefined) {
+      const result = await ChecklistService.getOneChecklist(id);
+      setChecklist(result);
+    }
+  }
+
+  useEffect(() => {
+    fetchChecklist();
+  }, [id]);
+
+  const breadcrumbsPages = [
+    {
+      name: 'Checklists',
+      url: '/checklists',
+    },
+    {
+      name: `${checklist?.name}`,
+      url: `/checklists/${checklist?.id}/`,
+    },
+  ];
+
   return (
     <>
+      <Breadcrumbs pages={breadcrumbsPages}></Breadcrumbs>
       <div className="text-xl font-semibold">Checklist A</div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded">
-        <Table title={title} content={content} />
+      <div className="flex flex-col gap-2 sm:gap-4 bg-gray-100 rounded">
+        <TableAccordion
+          title={title}
+          content={content}
+          onCheckedFunction={() => {}}
+          onUncheckedFunction={() => {}}
+        ></TableAccordion>{' '}
       </div>
     </>
   );

@@ -13,7 +13,7 @@ const content = [
     title: 'Finding A',
     impactedSystem: 'Homepage',
     risk: 'High',
-    status: 'Fixing',
+    phase: 'Fixing',
     action: 'Action',
   },
   {
@@ -21,7 +21,7 @@ const content = [
     title: 'Finding B',
     impactedSystem: 'Homepage',
     risk: 'High',
-    status: 'Fixed',
+    phase: 'Fixed',
     action: 'Action',
   },
   {
@@ -29,7 +29,7 @@ const content = [
     title: 'Finding C',
     impactedSystem: 'Homepage',
     risk: 'High',
-    status: 'Confirmed',
+    phase: 'Confirmed',
     action: 'Action',
   },
   {
@@ -37,7 +37,7 @@ const content = [
     title: 'Finding D',
     impactedSystem: 'Homepage',
     risk: 'High',
-    status: 'Closed on Notes',
+    phase: 'Closed on Notes',
     action: 'Action',
   },
   {
@@ -45,14 +45,14 @@ const content = [
     title: 'Finding E',
     impactedSystem: 'Homepage',
     risk: 'High',
-    status: 'Revision',
+    phase: 'Revision',
     action: 'Action',
   },
 ];
 
-const title = ['id', 'title', 'impactedSystem', 'risk', 'status', 'action'];
+const title = ['id', 'title', 'impactedSystem', 'risk', 'phase', 'action'];
 
-const contentTitle = ['name', 'company', 'status', 'assignedUser'];
+const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectShow() {
   const params = useParams();

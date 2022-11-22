@@ -1,11 +1,10 @@
-import { GeneralData } from "./general-data"
+import { GeneralData } from './general-data';
 
 export type Project = GeneralData & {
   company: string;
   checklist: string;
-  status: string;
   phase: string;
   report: string;
   description: string;
   assignedUser?: string;
-}
+};
