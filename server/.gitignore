@@ -1,0 +1,11 @@
+vendor/*
+!vendor/vendor.json
+test
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work

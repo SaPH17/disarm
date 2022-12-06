@@ -1,11 +1,11 @@
 package models
 
 import (
-  	"gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 type User struct {
 	gorm.Model
-	username string `gorm:"size:255;not null;unique" json:"username"`
-	password string `gorm:"size:255;not null;" json:"password"`
+	Username string `gorm:"size:255;not null;unique" json:"username"`
+	Password string `gorm:"size:255;not null;" json:"password"`
 }
