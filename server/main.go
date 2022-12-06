@@ -1,21 +1,30 @@
 package main
 
 import (
+	"disarm/main/controllers"
+	"disarm/main/models"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
-  )
-  
-  func main() {
+)
+
+func main() {
+	models.ConnectDataBase()
+
 	r := gin.Default()
-  
-	api := r.Group("/api") 
+
+	api := r.Group("/api")
 	{
-		api.GET("/peha", func(c *gin.Context) {
+		api.POST("/peha", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
-				"peha": "memek",
+				"peha": "hape",
 			})
 		})
+		user := api.Group("/user")
+		{
+			user.POST("/add", controllers.AddUser)
+		}
 	}
 
-	r.Run(":3000")
-  }
+	r.Run(":8000")
+}
