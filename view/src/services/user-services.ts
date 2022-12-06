@@ -1,11 +1,11 @@
-import { users } from "../data/users";
+import { users } from '../data/users';
 
 export default class UserServices {
-  static getUsers(){
+  static getUsers() {
     return users;
   }
 
-  static getOneUser(id: string|number){
-    return users.find(user => (user.id as string) === (id as string));
+  static getOneUser(id: string | number) {
+    return users.find((user) => (user.id as string) === (id as string));
   }
 }

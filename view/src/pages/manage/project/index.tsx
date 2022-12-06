@@ -23,6 +23,11 @@ const items: ActionButtonItem[] = [
     name: 'Generate Report',
     url: '/',
   },
+  {
+    id: '3',
+    name: 'Delete Project',
+    url: '/',
+  },
 ];
 
 const title = ['name', 'company', 'checklist', 'phase', 'report'];

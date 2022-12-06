@@ -88,11 +88,6 @@ export default function ManageUserIndex() {
       >
         <div className="flex items-center gap-4">
           <div>
-            <Link to="/" className={'underline'}>
-              View All Findings
-            </Link>
-          </div>
-          <div>
             <Link
               to={`/users/${selectedUser[selectedUser.length - 1].id}/edit`}
             >
