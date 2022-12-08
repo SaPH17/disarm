@@ -15,7 +15,7 @@ func main() {
 	{
 		user := api.Group("/user")
 		{
-			user.POST("/add", controllers.AddUser)
+			user.POST("/create", controllers.CreateUser)
 		}
 	}
 
