@@ -1,7 +1,6 @@
 package database
 
 import (
-	"disarm/main/models"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +11,6 @@ import (
 )
 
 type Database interface {
-	Migrate() error
 	Get() *gorm.DB
 }
 
@@ -49,11 +47,6 @@ func init() {
 	}
 
 	DB = &database{instance: dbase}
-}
-
-func (db *database) Migrate() (err error) {
-	db.instance.AutoMigrate(&models.User{})
-	return
 }
 
 func (db *database) Get() (inst *gorm.DB) {
