@@ -11,18 +11,26 @@ func main() {
 
 	r := gin.Default()
 
-	auth := r.Group("/auth")
+	api := r.Group("/api")
+
+	auth := api.Group("/auth")
 	{
 		auth.POST("/login", controllers.AuthenticateUser)
 	}
 
-	api := r.Group("/api")
-	api.Use(middlewares.JwtAuthMiddleware())
+	apiWithMiddleware := api.Group("")
+	apiWithMiddleware.Use(middlewares.JwtAuthMiddleware())
 
-	user := api.Group("/user")
+	user := apiWithMiddleware.Group("/user")
 	{
 		user.POST("/create", controllers.CreateUser)
-		user.POST("/get", controllers.GetAllUser)
+		user.GET("/get", controllers.GetAllUser)
+	}
+
+	project := apiWithMiddleware.Group("/project")
+	{
+		project.POST("/create", controllers.CreateProject)
+		project.GET("/get", controllers.GetAllProject)
 	}
 
 	r.Run(":8000")
