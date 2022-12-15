@@ -13,17 +13,19 @@ func main() {
 
 	api := r.Group("/api")
 
-	api.Use(middlewares.JwtAuthMiddleware())
 	auth := api.Group("/auth")
 	{
 		auth.POST("/login", controllers.AuthenticateUser)
 	}
 
-	user := api.Group("/user")
+	apiWithMiddleware := api.Group("")
+	apiWithMiddleware.Use(middlewares.JwtAuthMiddleware())
+
+	user := apiWithMiddleware.Group("/user")
 	{
 		user.POST("/create", controllers.CreateUser)
-		user.POST("/get", controllers.GetAllUser)
+		user.GET("/get", controllers.GetAllUser)
 	}
-
+	
 	r.Run(":8000")
 }
