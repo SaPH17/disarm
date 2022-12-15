@@ -17,6 +17,7 @@ type userOrm struct {
 }
 
 type UserOrm interface {
+	// interface
 	Create(username string, password string) (User, error)
 	GetAll() ([]User, error)
 	GetOneByUsername(username string) (User, error)
@@ -30,6 +31,7 @@ func init() {
 	Users = &userOrm{instance: database.DB.Get()}
 }
 
+// interface functions
 func (o *userOrm) Create(username string, password string) (User, error) {
 	user := User{Username: username, Password: password}
 	result := o.instance.Create(&user)

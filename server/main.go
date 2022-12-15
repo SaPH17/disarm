@@ -11,13 +11,13 @@ func main() {
 
 	r := gin.Default()
 
-	api := r.Group("/api")
-
-	api.Use(middlewares.JwtAuthMiddleware())
-	auth := api.Group("/auth")
+	auth := r.Group("/auth")
 	{
 		auth.POST("/login", controllers.AuthenticateUser)
 	}
+
+	api := r.Group("/api")
+	api.Use(middlewares.JwtAuthMiddleware())
 
 	user := api.Group("/user")
 	{
