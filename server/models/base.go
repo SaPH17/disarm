@@ -12,9 +12,9 @@ import (
 //      gorm.Model
 //    }
 type Base struct {
-	ID        uuid.UUID  `gorm:"type:uuid;primarykey;"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID  `gorm:"type:uuid;primarykey;" json:"id"`
+	CreatedAt time.Time	`gorm:"type:time;" json:"createdAt"`
+	UpdatedAt time.Time`gorm:"type:time;" json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
