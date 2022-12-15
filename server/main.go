@@ -26,6 +26,12 @@ func main() {
 		user.POST("/create", controllers.CreateUser)
 		user.GET("/get", controllers.GetAllUser)
 	}
+
+	project := apiWithMiddleware.Group("/project")
+	{
+		project.POST("/create", controllers.CreateProject)
+		project.GET("/get", controllers.GetAllProject)
+	}
 	
 	r.Run(":8000")
 }
