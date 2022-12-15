@@ -10,9 +10,9 @@ type Finding struct {
 	Base
 	Title          string `gorm:"size:255;not null;" json:"title"`
 	Risk           string `gorm:"size:255;not null;" json:"risk"`
-	ImpactedSystem string `gorm:"size:255;not null;" json:"impactedSystem"`
-	ProjectId      string `gorm:"size:255;not null;" json:"projectId"`
-	ChecklistId    string `gorm:"size:255;not null;" json:"checklistId"`
+	ImpactedSystem string `gorm:"size:255;not null;" json:"impacted_system"`
+	ProjectId      string `gorm:"size:255;not null;" json:"project_id"`
+	ChecklistId    string `gorm:"size:255;not null;" json:"checklist_id"`
 	UserId         string `gorm:"size:255;not null;" json:"userId"`
 }
 

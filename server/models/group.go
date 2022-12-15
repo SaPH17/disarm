@@ -10,7 +10,7 @@ type Group struct {
 	gorm.Model
 	Name          string `gorm:"size:255;not null;" json:"name"`
 	Description   string `gorm:"size:255;not null;" json:"description"`
-	ParentGroupId string `gorm:"size:255;not null;" json:"parentGroupId"`
+	ParentGroupId string `gorm:"size:255;not null;" json:"parent_group_id"`
 	Permissions   string `gorm:"size:255;not null;" json:"permissions"`
 }
 
