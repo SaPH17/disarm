@@ -9,9 +9,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	uuid "github.com/satori/go.uuid"
 )
 
-func GenerateToken(uid uint) (string, error) {
+func GenerateToken(uid uuid.UUID) (string, error) {
 	token_lifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
 
 	if err != nil {
@@ -58,7 +59,7 @@ func ExtractToken(c *gin.Context) string {
 	return ""
 }
 
-func ExtractTokenID(c *gin.Context) (uint, error) {
+func ExtractTokenID(c *gin.Context) (uuid.UUID, error) {
 	tokenString := ExtractToken(c)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -70,18 +71,14 @@ func ExtractTokenID(c *gin.Context) (uint, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if ok && token.Valid {
-		uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["user_id"]), 10, 32)
-		if err != nil {
-			return 0, err
-		}
-		return uint(uid), nil
+		return uuid.FromStringOrNil(claims["user_id"].(string)), nil
 	}
 
-	return 0, nil
+	return uuid.Nil, nil
 }
