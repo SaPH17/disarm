@@ -9,8 +9,9 @@ import (
 
 type User struct {
 	Base
-	Username string `gorm:"size:255;not null;unique" json:"username"`
-	Password string `gorm:"size:255;not null;" json:"password"`
+	Username string  `gorm:"size:255;not null;unique" json:"username"`
+	Password string  `gorm:"size:255;not null;" json:"password"`
+	Groups   []Group `gorm:"many2many:user_groups"`
 }
 
 type userOrm struct {
