@@ -7,10 +7,10 @@ import (
 )
 
 type Group struct {
-	gorm.Model
+	Base
 	Name          string `gorm:"size:255;not null;" json:"name"`
 	Description   string `gorm:"size:255;not null;" json:"description"`
-	ParentGroupId string `gorm:"size:255;not null;" json:"parent_group_id"`
+	ParentGroupId string `gorm:"size:255;" json:"parent_group_id"`
 	Permissions   string `gorm:"size:255;not null;" json:"permissions"`
 }
 

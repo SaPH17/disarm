@@ -7,7 +7,7 @@ import (
 )
 
 type Project struct {
-	gorm.Model
+	Base
 	Name string `gorm:"size:255;not null;" json:"name"`
 	Company string `gorm:"size:255;not null;" json:"company"`
 	Phase string `gorm:"size:255;not null;" json:"phase"`

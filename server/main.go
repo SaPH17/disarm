@@ -2,7 +2,7 @@ package main
 
 import (
 	"disarm/main/controllers"
-	// "disarm/main/middlewares"
+	"disarm/main/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +19,7 @@ func main() {
 	}
 
 	apiWithMiddleware := api.Group("")
-	// apiWithMiddleware.Use(middlewares.JwtAuthMiddleware())
+	apiWithMiddleware.Use(middlewares.JwtAuthMiddleware())
 
 	user := apiWithMiddleware.Group("/users")
 	{
