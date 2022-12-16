@@ -51,6 +51,8 @@ func main() {
 		{
 			finding.GET("/", controllers.GetAllFinding)
 			finding.POST("/", controllers.CreateFinding)
+			finding.GET("/:id", controllers.GetFindingById)
+			finding.PUT("/:id", controllers.EditFinding)
 		}
 
 		checklist := apiWithJWT.Group("/checklists")
@@ -66,6 +68,14 @@ func main() {
 		{
 			log.GET("/", controllers.GetAllLog)
 			log.POST("/", controllers.CreateLog)
+		}
+
+		permission := apiWithJWT.Group("/permissions")
+		{
+			permission.GET("/", controllers.GetAllPermission)
+			permission.POST("/", controllers.CreatePermission)
+			permission.PUT("/:id", controllers.EditPermission)
+			permission.DELETE("/:id", controllers.DeletePermission)
 		}
 	}
 
