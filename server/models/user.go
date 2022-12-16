@@ -9,6 +9,7 @@ import (
 
 type User struct {
 	Base
+	Email string `gorm:"size:255;not null;unique" json:"email"`
 	Username string `gorm:"size:255;not null;unique" json:"username"`
 	Password string `gorm:"size:255;not null;" json:"password"`
 }
@@ -18,9 +19,9 @@ type userOrm struct {
 }
 
 type UserOrm interface {
-	Create(username string, password string) (User, error)
+	Create(email string, password string, username string) (User, error)
 	GetAll() ([]User, error)
-	GetOneByUsername(username string) (User, error)
+	GetOneByEmail(email string) (User, error)
 	GetOneById(id uuid.UUID) (User, error)
 }
 
@@ -31,8 +32,8 @@ func init() {
 	Users = &userOrm{instance: database.DB.Get()}
 }
 
-func (o *userOrm) Create(username string, password string) (User, error) {
-	user := User{Username: username, Password: password}
+func (o *userOrm) Create(email string, password string, username string) (User, error) {
+	user := User{Email: email, Username: username, Password: password}
 	result := o.instance.Create(&user)
 
 	return user, result.Error
@@ -45,9 +46,9 @@ func (o *userOrm) GetAll() ([]User, error) {
 	return users, result.Error
 }
 
-func (o *userOrm) GetOneByUsername(username string) (User, error) {
+func (o *userOrm) GetOneByEmail(email string) (User, error) {
 	var user User
-	err := o.instance.Model(User{}).Where("username = ?", username).Take(&user).Error
+	err := o.instance.Model(User{}).Where("email = ?", email).Take(&user).Error
 
 	return user, err
 }

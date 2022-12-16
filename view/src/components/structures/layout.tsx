@@ -1,8 +1,8 @@
 import AuthorizedLayout from './authorized-layout';
 import UnauthorizedLayout from './unauthorized-layout';
 
-export default function Example({ children }: any) {
-  let isLoggedIn: boolean = true;
+export default function Layout({ children }: any) {
+  let isLoggedIn: boolean = false;
 
   return (
     <div>

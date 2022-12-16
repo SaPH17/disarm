@@ -10,7 +10,8 @@ import (
 func main() {
 
 	r := gin.Default()
-
+	r.Use(middlewares.CORSMiddleware())
+	
 	api := r.Group("/api")
 
 	auth := api.Group("/auth")

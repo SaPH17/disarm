@@ -29,7 +29,7 @@ func GetCurrentUser(c *gin.Context) {
 
 func AuthenticateUser(c *gin.Context) {
 	var body struct {
-		Username string `json:"username" binding:"required"`
+		Email string `json:"email" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 
@@ -38,7 +38,7 @@ func AuthenticateUser(c *gin.Context) {
 		return
 	}
 
-	user, retrieveErr := models.Users.GetOneByUsername(body.Username)
+	user, retrieveErr := models.Users.GetOneByEmail(body.Email)
 
 	if retrieveErr != nil {
 		return
