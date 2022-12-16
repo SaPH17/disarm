@@ -38,10 +38,11 @@ func main() {
 			group.GET("/", controllers.GetAllGroup)
 			group.GET("/:id", controllers.GetGroupById)
 			group.PUT("/:id", controllers.EditGroup)
+			group.PUT("/:id/permissions", controllers.EditGroupPermission)
 			group.DELETE("/:id", controllers.DeleteGroup)
 			group.POST("/", controllers.CreateGroup)
 		}
-		
+
 		finding := apiWithJWT.Group("/findings")
 		{
 			finding.GET("/", controllers.GetAllFinding)

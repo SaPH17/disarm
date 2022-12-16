@@ -128,6 +128,45 @@ func EditGroup(c *gin.Context) {
 	})
 }
 
+func EditGroupPermission(c *gin.Context) {
+	id := c.Param("id")
+	var body struct {
+		Permissions string `json:"permissions" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	escapedId := html.EscapeString(strings.TrimSpace(id))
+	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
+
+	uuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUuid.Error(),
+		})
+		return
+	}
+
+	group, dbErr := models.Groups.EditPermission(uuid, escapedPermissions)
+
+	if dbErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": dbErr.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"group": group,
+	})
+}
+
 func DeleteGroup(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
