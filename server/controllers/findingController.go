@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 )
 
 func CreateFinding(c *gin.Context) {
@@ -33,7 +34,32 @@ func CreateFinding(c *gin.Context) {
 	escapedChecklistId := html.EscapeString(strings.TrimSpace(body.ChecklistId))
 	escapedUserId := html.EscapeString(strings.TrimSpace(body.UserId))
 
-	finding, dbErr := models.Findings.Create(escapedTitle, escapedRisk, escapedImpactedSystem, escapedProjectId, escapedChecklistId, escapedUserId)
+	projectUuid, errProject := uuid.FromString(escapedProjectId)
+	checklistUuid, errChecklist := uuid.FromString(escapedChecklistId)
+	userUuid, errUser := uuid.FromString(escapedUserId)
+
+	if errProject != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errProject.Error(),
+		})
+		return
+	}
+
+	if errChecklist != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errChecklist.Error(),
+		})
+		return
+	}
+
+	if errUser != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUser.Error(),
+		})
+		return
+	}
+
+	finding, dbErr := models.Findings.Create(escapedTitle, escapedRisk, escapedImpactedSystem, projectUuid, checklistUuid, userUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

@@ -3,17 +3,21 @@ package models
 import (
 	"disarm/main/database"
 
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
 type Finding struct {
 	Base
-	Title          string `gorm:"size:255;not null;" json:"title"`
-	Risk           string `gorm:"size:255;not null;" json:"risk"`
-	ImpactedSystem string `gorm:"size:255;not null;" json:"impacted_system"`
-	ProjectId      string `gorm:"size:255;not null;" json:"project_id"`
-	ChecklistId    string `gorm:"size:255;not null;" json:"checklist_id"`
-	UserId         string `gorm:"size:255;not null;" json:"userId"`
+	Title          string    `gorm:"size:255;not null;" json:"title"`
+	Risk           string    `gorm:"size:255;not null;" json:"risk"`
+	ImpactedSystem string    `gorm:"size:255;not null;" json:"impacted_system"`
+	ProjectId      uuid.UUID `gorm:"type:uuid;" json:"project_id"`
+	ChecklistId    uuid.UUID `gorm:"type:uuid;" json:"checklist_id"`
+	UserId         uuid.UUID `gorm:"type:uuid;" json:"userId"`
+	Project        Project
+	Checklist      Checklist
+	User           User
 }
 
 type findingOrm struct {
@@ -21,7 +25,7 @@ type findingOrm struct {
 }
 
 type FindingOrm interface {
-	Create(title string, risk string, impactedSystem string, projectId string, checklistId string, userId string) (Finding, error)
+	Create(title string, risk string, impactedSystem string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error)
 	GetAll() ([]Finding, error)
 }
 
@@ -32,7 +36,7 @@ func init() {
 	Findings = &findingOrm{instance: database.DB.Get()}
 }
 
-func (o *findingOrm) Create(title string, risk string, impactedSystem string, projectId string, checklistId string, userId string) (Finding, error) {
+func (o *findingOrm) Create(title string, risk string, impactedSystem string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error) {
 	finding := Finding{Title: title, Risk: risk, ImpactedSystem: impactedSystem, ProjectId: projectId, ChecklistId: checklistId, UserId: userId}
 	result := o.instance.Create(&finding)
 

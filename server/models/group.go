@@ -3,15 +3,16 @@ package models
 import (
 	"disarm/main/database"
 
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
 type Group struct {
 	Base
-	Name          string `gorm:"size:255;not null;" json:"name"`
-	Description   string `gorm:"size:255;not null;" json:"description"`
-	ParentGroupId string `gorm:"size:255;" json:"parent_group_id"`
-	Permissions   string `gorm:"size:255;not null;" json:"permissions"`
+	Name          string    `gorm:"size:255;not null;" json:"name"`
+	Description   string    `gorm:"size:255;not null;" json:"description"`
+	ParentGroupId uuid.UUID `gorm:"type:uuid;" json:"parent_group_id"`
+	Permissions   string    `gorm:"size:255;not null;" json:"permissions"`
 }
 
 type groupOrm struct {
@@ -19,7 +20,7 @@ type groupOrm struct {
 }
 
 type GroupOrm interface {
-	Create(name string, description string, parentGroupId string, permissions string) (Group, error)
+	Create(name string, description string, parentGroupId uuid.UUID, permissions string) (Group, error)
 	GetAll() ([]Group, error)
 }
 
@@ -30,7 +31,7 @@ func init() {
 	Groups = &groupOrm{instance: database.DB.Get()}
 }
 
-func (o *groupOrm) Create(name string, description string, parentGroupId string, permissions string) (Group, error) {
+func (o *groupOrm) Create(name string, description string, parentGroupId uuid.UUID, permissions string) (Group, error) {
 	group := Group{Name: name, Description: description, ParentGroupId: parentGroupId, Permissions: permissions}
 	result := o.instance.Create(&group)
 
