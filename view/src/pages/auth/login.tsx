@@ -2,9 +2,10 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import InputText from '../../components/input-text/input-text';
 import PrimaryButton from "../../components/primary-button";
-import { LoginFormData, LoginHandlers } from "../../handlers/auth/login-handlers";
-import { toast } from 'react-toastify'
-
+import { LoginFormData, LoginHandlers } from "../../handlers/auth/login-handler";
+import { toast } from 'react-toastify';
+import { useAtom } from 'jotai';
+import authAtom from "../../atoms/atom";
 /*
   This example requires Tailwind CSS v2.0+ 
   
@@ -23,12 +24,18 @@ import { toast } from 'react-toastify'
 */
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const [auth, setAuth] = useAtom(authAtom);
   const navigate = useNavigate();
   
   const handleLoginFormSubmit = async (data: LoginFormData) => {
     try {
       await toast.promise(LoginHandlers.handleLoginFormSubmit(data), {
-        success: 'Successfully Login!',
+        success: {
+          render({data} : any){
+            setAuth(data);
+            return 'Successfully Login!';
+          }
+        },
         error: {
           render({data} : any){
             return data.message;
@@ -36,6 +43,7 @@ export default function Login() {
         },
         pending: 'Waiting for Login!'
       });
+      
       return navigate('/users');
     } catch (e) { }
   }

@@ -6,4 +6,10 @@ export default class AuthServices {
       withCredentials: true
     });
   }
+
+  static checkLogin(){
+    return axios.get(`${process.env.REACT_APP_API_URL}/auth/check-login`, {
+      withCredentials: true
+    });
+  }
 }
