@@ -51,6 +51,21 @@ func main() {
 			finding.GET("/", controllers.GetAllFinding)
 			finding.POST("/", controllers.CreateFinding)
 		}
+
+		checklist := apiWithJWT.Group("/checklists")
+		{
+			checklist.GET("/", controllers.GetAllChecklist)
+			checklist.POST("/", controllers.CreateChecklist)
+			checklist.GET("/:id", controllers.GetChecklistById)
+			checklist.PUT("/:id", controllers.EditChecklist)
+			checklist.DELETE("/:id", controllers.DeleteChecklist)
+		}
+
+		log := apiWithJWT.Group("/logs")
+		{
+			log.GET("/", controllers.GetAllLog)
+			log.POST("/", controllers.CreateLog)
+		}
 	}
 
 	r.Run(":8000")
