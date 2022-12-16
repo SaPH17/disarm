@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthServices from "../../services/auth-services";
 import InputText from '../../components/input-text/input-text';
 import PrimaryButton from "../../components/primary-button";
@@ -23,8 +23,15 @@ import { LoginFormData, LoginHandlers } from "../../handlers/auth/login-handlers
 */
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const navigate = useNavigate();
+  
+  const handleLoginFormSubmit = async (data: LoginFormData) => {
+    await LoginHandlers.handleLoginFormSubmit(data);
+    return navigate('/users');
+  }
+  
   return (
-    <div className="flex flex-col justify-center min-h-screen py-12 bg-gray-50 sm:px-6 lg:px-8" onSubmit={handleSubmit(LoginHandlers.handleLoginFormSubmit)}>
+    <div className="flex flex-col justify-center min-h-screen py-12 bg-gray-50 sm:px-6 lg:px-8" onSubmit={handleSubmit(handleLoginFormSubmit)}>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img
           className="w-auto h-12 mx-auto"

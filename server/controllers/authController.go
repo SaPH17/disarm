@@ -3,9 +3,14 @@ package controllers
 import (
 	"disarm/main/models"
 	"disarm/main/utils/token"
+	"log"
 	"net/http"
+	"os"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -57,6 +62,22 @@ func AuthenticateUser(c *gin.Context) {
 		return
 	}
 
+	envErr := godotenv.Load(".env")
+
+	if envErr != nil {
+		log.Fatalf("[!] error loading env file")
+		return
+	}
+
+	token_lifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
+
+	if err != nil {
+		return
+	}
+	
+	t := &http.Cookie{ Name: "token", Value: token, Expires: time.Now().Add(time.Hour * time.Duration(token_lifespan)), HttpOnly: true, }
+	
+	http.SetCookie(c.Writer, t)
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
