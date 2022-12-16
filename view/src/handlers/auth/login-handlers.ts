@@ -10,8 +10,6 @@ export class LoginHandlers {
     try {
       const result = (await AuthServices.login(data)).data;
       console.log(result);
-    } catch (e) {
-
-    }
+    } catch (e) { }
   }
 }
