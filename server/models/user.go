@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"disarm/main/database"
 
 	uuid "github.com/satori/go.uuid"
@@ -9,9 +10,10 @@ import (
 
 type User struct {
 	Base
-	Email    string `gorm:"size:255;not null;unique" json:"email"`
-	Username string `gorm:"size:255;not null;unique" json:"username"`
-	Password string `gorm:"size:255;not null;" json:"password"`
+	Email              string         `gorm:"size:255;not null;unique" json:"email"`
+	Username           string         `gorm:"size:255;not null;unique" json:"username"`
+	Password           string         `gorm:"size:255;not null;" json:"password"`
+	DirectSupervisorId sql.NullString `gorm:"size:255;" json:"direct_supervisor_id"`
 }
 
 type userOrm struct {
@@ -19,7 +21,7 @@ type userOrm struct {
 }
 
 type UserOrm interface {
-	Create(email string, password string, username string) (User, error)
+	Create(email string, password string, username string, directSupervisorId sql.NullString) (User, error)
 	GetAll() ([]User, error)
 	GetOneByEmail(email string) (User, error)
 	GetOneById(id uuid.UUID) (User, error)
@@ -32,8 +34,8 @@ func init() {
 	Users = &userOrm{instance: database.DB.Get()}
 }
 
-func (o *userOrm) Create(email string, password string, username string) (User, error) {
-	user := User{Email: email, Username: username, Password: password}
+func (o *userOrm) Create(email string, password string, username string, directSupervisorId sql.NullString) (User, error) {
+	user := User{Email: email, Username: username, Password: password, DirectSupervisorId: directSupervisorId}
 	result := o.instance.Create(&user)
 
 	return user, result.Error

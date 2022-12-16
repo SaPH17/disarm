@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"disarm/main/models"
 	"html"
 	"net/http"
@@ -30,7 +31,13 @@ func CreateGroup(c *gin.Context) {
 	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
 
-	group, dbErr := models.Groups.Create(escapedName, escapedDescription, escapedParentGroupId, escapedPermissions)
+	parentGroupId := sql.NullString{String: escapedParentGroupId, Valid: true}
+
+	if len(escapedParentGroupId) == 0 {
+		parentGroupId = sql.NullString{String: escapedParentGroupId, Valid: false}
+	}
+
+	group, dbErr := models.Groups.Create(escapedName, escapedDescription, parentGroupId, escapedPermissions)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -105,6 +112,12 @@ func EditGroup(c *gin.Context) {
 	escapedDescription := html.EscapeString(strings.TrimSpace(body.Description))
 	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 
+	parentGroupId := sql.NullString{String: escapedParentGroupId, Valid: true}
+
+	if len(escapedParentGroupId) == 0 {
+		parentGroupId = sql.NullString{String: escapedParentGroupId, Valid: false}
+	}
+
 	uuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
@@ -114,7 +127,7 @@ func EditGroup(c *gin.Context) {
 		return
 	}
 
-	group, dbErr := models.Groups.Edit(uuid, escapedName, escapedDescription, escapedParentGroupId)
+	group, dbErr := models.Groups.Edit(uuid, escapedName, escapedDescription, parentGroupId)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
