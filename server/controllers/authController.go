@@ -75,7 +75,7 @@ func AuthenticateUser(c *gin.Context) {
 		return
 	}
 	
-	t := &http.Cookie{ Name: "token", Value: token, Expires: time.Now().Add(time.Hour * time.Duration(token_lifespan)), HttpOnly: true, }
+	t := &http.Cookie{ Name: "token", Value: token, Expires: time.Now().Add(time.Hour * time.Duration(token_lifespan)), HttpOnly: true, Path: "/" }
 	
 	http.SetCookie(c.Writer, t)
 	c.JSON(http.StatusOK, gin.H{"token": token})
