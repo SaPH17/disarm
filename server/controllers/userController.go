@@ -12,7 +12,7 @@ import (
 
 func CreateUser(c *gin.Context) {
 	var body struct {
-		Email string `json:"email" binding:"required"`
+		Email    string `json:"email" binding:"required"`
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
@@ -61,4 +61,8 @@ func GetAllUser(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"users": users,
 	})
+}
+
+func GetUserById(c *gin.Context) {
+
 }

@@ -11,7 +11,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(middlewares.CORSMiddleware())
-	
+
 	api := r.Group("/api")
 
 	auth := api.Group("/auth")
@@ -37,6 +37,9 @@ func main() {
 	group := apiWithMiddleware.Group("/groups")
 	{
 		group.GET("/", controllers.GetAllGroup)
+		group.GET("/:id", controllers.GetGroupById)
+		group.PUT("/:id", controllers.EditGroup)
+		group.DELETE("/:id", controllers.DeleteGroup)
 		group.POST("/", controllers.CreateGroup)
 	}
 	finding := apiWithMiddleware.Group("/findings")
