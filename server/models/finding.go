@@ -27,6 +27,8 @@ type findingOrm struct {
 type FindingOrm interface {
 	Create(title string, risk string, impactedSystem string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error)
 	GetAll() ([]Finding, error)
+	GetOneById(id uuid.UUID) (Finding, error)
+	Edit(id uuid.UUID, title string, risk string, impactedSystem string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error)
 }
 
 var Findings FindingOrm
@@ -48,4 +50,25 @@ func (o *findingOrm) GetAll() ([]Finding, error) {
 	result := o.instance.Find(&findings)
 
 	return findings, result.Error
+}
+
+func (o *findingOrm) GetOneById(id uuid.UUID) (Finding, error) {
+	var finding Finding
+	err := o.instance.Model(Finding{}).Where("id = ?", id).Take(&finding).Error
+
+	return finding, err
+}
+
+func (o *findingOrm) Edit(id uuid.UUID, title string, risk string, impactedSystem string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error) {
+	var finding Finding
+	err := o.instance.Model(Finding{}).Where("id = ?", id).Take(&finding).Error
+	finding.Title = title
+	finding.Risk = risk
+	finding.ImpactedSystem = impactedSystem
+	finding.ProjectId = projectId
+	finding.ChecklistId = checklistId
+	finding.UserId = userId
+	o.instance.Save(finding)
+
+	return finding, err
 }
