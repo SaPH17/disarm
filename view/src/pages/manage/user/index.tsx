@@ -44,6 +44,7 @@ export default function ManageUserIndex() {
 
   async function fetchUsers() {
     const result = await UserServices.getUsers();
+    console.log((await UserServices.getNewUsers()).data);
     setUsers(result);
   }
 
@@ -54,7 +55,7 @@ export default function ManageUserIndex() {
   return (
     <>
       <div className="text-xl font-semibold">Manage User</div>
-      <div className="flex flex-row gap-2 sm:gap-4 justify-between">
+      <div className="flex flex-row justify-between gap-2 sm:gap-4">
         <Link to="/users/create">
           <PrimaryButton content="Create User" />
         </Link>
