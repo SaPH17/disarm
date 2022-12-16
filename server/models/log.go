@@ -20,6 +20,8 @@ type logOrm struct {
 }
 
 type LogOrm interface {
+	Create(endpoint string, payload string, userId uuid.UUID) (Log, error)
+	GetAll() ([]Log, error)
 }
 
 var Logs LogOrm
@@ -27,4 +29,18 @@ var Logs LogOrm
 func init() {
 	database.DB.Get().AutoMigrate(&Log{})
 	Logs = &logOrm{instance: database.DB.Get()}
+}
+
+func (o *logOrm) Create(endpoint string, payload string, userId uuid.UUID) (Log, error) {
+	log := Log{Endpoint: endpoint, Payload: payload, UserId: userId}
+	result := o.instance.Create(&log)
+
+	return log, result.Error
+}
+
+func (o *logOrm) GetAll() ([]Log, error) {
+	var logs []Log
+	result := o.instance.Find(&logs)
+
+	return logs, result.Error
 }
