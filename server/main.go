@@ -17,6 +17,7 @@ func main() {
 		auth := api.Group("/auth")
 		{
 			auth.POST("/login", controllers.AuthenticateUser)
+			auth.GET("/check-login", controllers.CheckLoggedInUser)
 		}
 		apiWithJWT := api.Group("")
 		apiWithJWT.Use(middlewares.JwtAuthMiddleware())

@@ -14,6 +14,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func CheckLoggedInUser(c *gin.Context) {
+	user_id, err := token.ExtractTokenID(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success", "data": user_id})
+}
+
 func GetCurrentUser(c *gin.Context) {
 	user_id, err := token.ExtractTokenID(c)
 

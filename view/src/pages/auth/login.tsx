@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import AuthServices from "../../services/auth-services";
+import { useNavigate } from "react-router-dom";
 import InputText from '../../components/input-text/input-text';
 import PrimaryButton from "../../components/primary-button";
 import { LoginFormData, LoginHandlers } from "../../handlers/auth/login-handlers";
+import { toast } from 'react-toastify'
 
 /*
   This example requires Tailwind CSS v2.0+ 
@@ -26,8 +26,18 @@ export default function Login() {
   const navigate = useNavigate();
   
   const handleLoginFormSubmit = async (data: LoginFormData) => {
-    await LoginHandlers.handleLoginFormSubmit(data);
-    return navigate('/users');
+    try {
+      await toast.promise(LoginHandlers.handleLoginFormSubmit(data), {
+        success: 'Successfully Login!',
+        error: {
+          render({data} : any){
+            return data.message;
+          }
+        },
+        pending: 'Waiting for Login!'
+      });
+      return navigate('/users');
+    } catch (e) { }
   }
   
   return (
