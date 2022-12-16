@@ -25,6 +25,9 @@ func main() {
 		{
 			user.GET("/", controllers.GetAllUser)
 			user.POST("/", controllers.CreateUser)
+			user.GET("/:id", controllers.GetUserById)
+			user.PUT("/:id", controllers.EditUser)
+			user.DELETE("/:id", controllers.DeleteUser)
 		}
 
 		project := apiWithJWT.Group("/projects")
@@ -36,11 +39,11 @@ func main() {
 		group := apiWithJWT.Group("/groups")
 		{
 			group.GET("/", controllers.GetAllGroup)
+			group.POST("/", controllers.CreateGroup)
 			group.GET("/:id", controllers.GetGroupById)
 			group.PUT("/:id", controllers.EditGroup)
 			group.PUT("/:id/permissions", controllers.EditGroupPermission)
 			group.DELETE("/:id", controllers.DeleteGroup)
-			group.POST("/", controllers.CreateGroup)
 		}
 
 		finding := apiWithJWT.Group("/findings")

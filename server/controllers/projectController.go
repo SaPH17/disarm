@@ -11,9 +11,9 @@ import (
 
 func CreateProject(c *gin.Context) {
 	var body struct {
-		Name string `json:"name" binding:"required"`
+		Name    string `json:"name" binding:"required"`
 		Company string `json:"company" binding:"required"`
-		Phase string `json:"phase" binding:"required"`
+		Phase   string `json:"phase" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

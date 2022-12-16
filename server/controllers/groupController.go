@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"database/sql"
 	"disarm/main/models"
+	"disarm/main/utils"
 	"html"
 	"net/http"
 	"strings"
@@ -31,11 +31,7 @@ func CreateGroup(c *gin.Context) {
 	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
 
-	parentGroupId := sql.NullString{String: escapedParentGroupId, Valid: true}
-
-	if len(escapedParentGroupId) == 0 {
-		parentGroupId = sql.NullString{String: escapedParentGroupId, Valid: false}
-	}
+	parentGroupId := utils.GetNullableString(escapedParentGroupId)
 
 	group, dbErr := models.Groups.Create(escapedName, escapedDescription, parentGroupId, escapedPermissions)
 
@@ -112,11 +108,7 @@ func EditGroup(c *gin.Context) {
 	escapedDescription := html.EscapeString(strings.TrimSpace(body.Description))
 	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 
-	parentGroupId := sql.NullString{String: escapedParentGroupId, Valid: true}
-
-	if len(escapedParentGroupId) == 0 {
-		parentGroupId = sql.NullString{String: escapedParentGroupId, Valid: false}
-	}
+	parentGroupId := utils.GetNullableString(escapedParentGroupId)
 
 	uuid, errUuid := uuid.FromString(escapedId)
 
