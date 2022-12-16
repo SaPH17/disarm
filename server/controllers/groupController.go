@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 )
 
 func CreateGroup(c *gin.Context) {
@@ -29,7 +30,16 @@ func CreateGroup(c *gin.Context) {
 	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
 
-	group, dbErr := models.Groups.Create(escapedName, escapedDescription, escapedParentGroupId, escapedPermissions)
+	groupUuid, errGroup := uuid.FromString(escapedParentGroupId)
+
+	if errGroup != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errGroup.Error(),
+		})
+		return
+	}
+
+	group, dbErr := models.Groups.Create(escapedName, escapedDescription, groupUuid, escapedPermissions)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

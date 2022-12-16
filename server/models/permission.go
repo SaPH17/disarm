@@ -3,16 +3,17 @@ package models
 import (
 	"disarm/main/database"
 
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
 type Permission struct {
 	Base
-	PermissionActionId string               `gorm:"size:255;not null;" json:"permission_action_id"`
-	PermissionAction   PermissionAction     `gorm:"size:255;not null;" json:"permission_action"`
-	ObjectTypeId       string               `gorm:"size:255;not null;" json:"object_type_id"`
-	ObjectType         PermissionObjectType `gorm:"size:255;not null;" json:"object_type"`
-	ObjectId           string               `gorm:"size:255;not null;" json:"object_id"`
+	PermissionActionId uuid.UUID `gorm:"type:uuid;" json:"permission_action_id"`
+	ObjectTypeId       uuid.UUID `gorm:"type:uuid;" json:"object_type_id"`
+	ObjectId           string    `gorm:"size:255;not null;" json:"object_id"`
+	PermissionAction   PermissionAction
+	ObjectType         PermissionObjectType
 }
 
 type permissionOrm struct {

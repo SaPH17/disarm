@@ -3,14 +3,17 @@ package models
 import (
 	"disarm/main/database"
 
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
 type Project struct {
 	Base
-	Name string `gorm:"size:255;not null;" json:"name"`
-	Company string `gorm:"size:255;not null;" json:"company"`
-	Phase string `gorm:"size:255;not null;" json:"phase"`
+	Name        string    `gorm:"size:255;not null;" json:"name"`
+	Company     string    `gorm:"size:255;not null;" json:"company"`
+	Phase       string    `gorm:"size:255;not null;" json:"phase"`
+	ChecklistId uuid.UUID `gorm:"type:uuid;" json:"checklist_id"`
+	Checklist   Checklist
 }
 
 type projectOrm struct {
