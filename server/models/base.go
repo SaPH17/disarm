@@ -2,19 +2,21 @@ package models
 
 import (
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
-	"github.com/satori/go.uuid"
 )
 
 // Model a basic GoLang struct which includes the following fields: ID, CreatedAt, UpdatedAt, DeletedAt
 // It may be embedded into your model or you may build your own model without it
-//    type User struct {
-//      gorm.Model
-//    }
+//
+//	type User struct {
+//	  gorm.Model
+//	}
 type Base struct {
-	ID        uuid.UUID  `gorm:"type:uuid;primarykey;" json:"id"`
-	CreatedAt time.Time	`gorm:"type:time;" json:"created_at"`
-	UpdatedAt time.Time`gorm:"type:time;" json:"updated_at"`
+	ID        uuid.UUID      `gorm:"type:uuid;primarykey;" json:"id"`
+	CreatedAt time.Time      `gorm:"type:time;" json:"created_at"`
+	UpdatedAt time.Time      `gorm:"type:time;" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
