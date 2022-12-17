@@ -8,9 +8,11 @@ import (
 
 type Group struct {
 	Base
-	Name        string `gorm:"size:255;not null;unique" json:"username"`
-	Description string `gorm:"size:255;not null;unique" json:"description"`
-	Users       []User `gorm:"many2many:user_groups"`
+	Name          string `gorm:"size:255;not null;unique" json:"username"`
+	Description   string `gorm:"size:255;not null;unique" json:"description"`
+	ParentGroupId string `gorm:"size:255;not null;" json:"parent_group_id"`
+	Permissions   string `gorm:"size:255;not null;" json:"permissions"`
+	Users         []User `gorm:"many2many:user_groups"`
 }
 
 type groupOrm struct {
@@ -19,10 +21,9 @@ type groupOrm struct {
 
 type GroupOrm interface {
 	// interface
-	// Create(username string, password string) (User, error)
-	// GetAll() ([]User, error)
-	// GetOneByUsername(username string) (User, error)
-	// GetOneById(id uuid.UUID) (User, error)
+
+	Create(name string, description string, parentGroupId string, permissions string) (Group, error)
+	GetAll() ([]Group, error)
 }
 
 var Groups GroupOrm
@@ -32,31 +33,16 @@ func init() {
 	Groups = &groupOrm{instance: database.DB.Get()}
 }
 
-// interface functions
-// func (o *groupOrm) Create(username string, password string) (User, error) {
-// 	user := User{Username: username, Password: password}
-// 	result := o.instance.Create(&user)
+func (o *groupOrm) Create(name string, description string, parentGroupId string, permissions string) (Group, error) {
+	group := Group{Name: name, Description: description, ParentGroupId: parentGroupId, Permissions: permissions}
+	result := o.instance.Create(&group)
 
-// 	return user, result.Error
-// }
+	return group, result.Error
+}
 
-// func (o *groupOrm) GetAll() ([]User, error) {
-// 	var users []User
-// 	result := o.instance.Find(&users)
+func (o *groupOrm) GetAll() ([]Group, error) {
+	var groups []Group
+	result := o.instance.Find(&groups)
 
-// 	return users, result.Error
-// }
-
-// func (o *groupOrm) GetOneByUsername(username string) (User, error) {
-// 	var user User
-// 	err := o.instance.Model(User{}).Where("username = ?", username).Take(&user).Error
-
-// 	return user, err
-// }
-
-// func (o *groupOrm) GetOneById(id uuid.UUID) (User, error) {
-// 	var user User
-// 	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error
-
-// 	return user, err
-// }
+	return groups, result.Error
+}

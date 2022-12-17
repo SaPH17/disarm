@@ -21,16 +21,27 @@ func main() {
 	apiWithMiddleware := api.Group("")
 	// apiWithMiddleware.Use(middlewares.JwtAuthMiddleware())
 
-	user := apiWithMiddleware.Group("/user")
+	user := apiWithMiddleware.Group("/users")
 	{
-		user.POST("/create", controllers.CreateUser)
-		user.GET("/get", controllers.GetAllUser)
+		user.GET("/", controllers.GetAllUser)
+		user.POST("/", controllers.CreateUser)
 	}
 
-	project := apiWithMiddleware.Group("/project")
+	project := apiWithMiddleware.Group("/projects")
 	{
-		project.POST("/create", controllers.CreateProject)
-		project.GET("/get", controllers.GetAllProject)
+		project.GET("/", controllers.GetAllProject)
+		project.POST("/", controllers.CreateProject)
+	}
+
+	group := apiWithMiddleware.Group("/groups")
+	{
+		group.GET("/", controllers.GetAllGroup)
+		group.POST("/", controllers.CreateGroup)
+	}
+	finding := apiWithMiddleware.Group("/findings")
+	{
+		finding.GET("/", controllers.GetAllFinding)
+		finding.POST("/", controllers.CreateFinding)
 	}
 
 	r.Run(":8000")
