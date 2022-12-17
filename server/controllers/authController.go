@@ -3,11 +3,27 @@ package controllers
 import (
 	"disarm/main/models"
 	"disarm/main/utils/token"
+	"log"
 	"net/http"
+	"os"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func CheckLoggedInUser(c *gin.Context) {
+	user_id, err := token.ExtractTokenID(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success", "data": user_id})
+}
 
 func GetCurrentUser(c *gin.Context) {
 	user_id, err := token.ExtractTokenID(c)
@@ -29,7 +45,7 @@ func GetCurrentUser(c *gin.Context) {
 
 func AuthenticateUser(c *gin.Context) {
 	var body struct {
-		Username string `json:"username" binding:"required"`
+		Email string `json:"email" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 
@@ -38,7 +54,7 @@ func AuthenticateUser(c *gin.Context) {
 		return
 	}
 
-	user, retrieveErr := models.Users.GetOneByUsername(body.Username)
+	user, retrieveErr := models.Users.GetOneByEmail(body.Email)
 
 	if retrieveErr != nil {
 		return
@@ -57,7 +73,23 @@ func AuthenticateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	envErr := godotenv.Load(".env")
+
+	if envErr != nil {
+		log.Fatalf("[!] error loading env file")
+		return
+	}
+
+	token_lifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
+
+	if err != nil {
+		return
+	}
+	
+	t := &http.Cookie{ Name: "token", Value: token, Expires: time.Now().Add(time.Hour * time.Duration(token_lifespan)), HttpOnly: true, Path: "/" }
+	
+	http.SetCookie(c.Writer, t)
+	c.JSON(http.StatusOK, gin.H{"token": token, "id": user.ID, "expires": time.Now().Add(time.Hour * time.Duration(token_lifespan))})
 }
 
 func VerifyPassword(password string, hashed string) error {

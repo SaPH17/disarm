@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -51,12 +50,17 @@ func ExtractToken(c *gin.Context) string {
 		return token
 	}
 
-	bearerToken := c.Request.Header.Get("Authorization")
-	if len(strings.Split(bearerToken, " ")) == 2 {
-		return strings.Split(bearerToken, " ")[1]
+	// bearerToken := c.Request.Header.Get("Authorization")
+	// if len(strings.Split(bearerToken, " ")) == 2 {
+	// 	return strings.Split(bearerToken, " ")[1]
+	// }
+
+	cookie, err := c.Request.Cookie("token")
+	if err != nil {
+		return ""
 	}
 
-	return ""
+	return cookie.Value
 }
 
 func ExtractTokenID(c *gin.Context) (uuid.UUID, error) {
