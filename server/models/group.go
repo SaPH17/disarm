@@ -10,6 +10,7 @@ import (
 
 type Group struct {
 	Base
+	Users         []User         `gorm:"many2many:user_groups"`
 	Name          string         `gorm:"size:255;not null;" json:"name"`
 	Description   string         `gorm:"size:255;not null;" json:"description"`
 	ParentGroupId sql.NullString `gorm:"size:255;" json:"parent_group_id"`
