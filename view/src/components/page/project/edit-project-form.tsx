@@ -140,7 +140,9 @@ export default function EditProjectForm() {
           </label>
           <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
             <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-              <SelectBox items={checklists} defaultValue={'Select Standard'} />
+              {
+                checklists && <SelectBox items={checklists} defaultValue={'Select Standard'} />
+              }
             </div>
             <span className="text-gray-500 underline cursor-pointer hover:text-gray-700">
               Create a new standard
