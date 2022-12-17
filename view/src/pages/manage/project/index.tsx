@@ -36,14 +36,10 @@ const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectIndex() {
   const { data } = useQuery('projects', ProjectServices.getProjects);
-
-  const projects = () => {
-    if(!data) return [];
-    return data.map((project: Project) => ({
-      ...project,
-      checklist: project.Checklist?.name
-    }));
-  }
+  const projects = data?.map((project: Project) => ({
+    ...project,
+    checklist: project.Checklist?.name
+  })) || [];
 
   const [selectedProject, setSelectedProject] = useState<Project[]>([
     defaultProject,
@@ -67,7 +63,7 @@ export default function ManageProjectIndex() {
         <div className="text-lg font-semibold">Projects</div>
         <TableCheckbox
           title={title}
-          content={projects() as object[]}
+          content={projects as object[]}
           onCheckedFunction={(project: any) => {
             setSelectedProject([...selectedProject, project]);
           }}

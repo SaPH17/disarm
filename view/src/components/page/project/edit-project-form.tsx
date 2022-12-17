@@ -36,18 +36,13 @@ export default function EditProjectForm() {
   );
   const { data: usersData } = useQuery('users', UserServices.getUsers);
 
-  const project = () => {
-    if (!projectData) return null;
-    return projectData;
-  };
+  const project = projectData || [];
 
-  const users = () => {
-    if (!usersData) return null;
-    return usersData.map((user: User) => ({
-      id: user.id,
-      name: user.username
-    }));
-  };
+  const users = usersData?.map((user: User) => ({
+    id: user.id,
+    name: user.username,
+    email: user.email
+  })) || null;
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>();
@@ -60,14 +55,14 @@ export default function EditProjectForm() {
   } = useForm<ProjectFormData>();
 
   useEffect(() => {
-    if (!project()) return;
-    reset(project());
+    if (!project) return;
+    reset(project);
   }, [projectData]);
 
   useEffect(() => {
-    if (!users()) return;
-    const x = users();
-    setAvailableUsers(users());
+    if (!users) return;
+    const x = users;
+    setAvailableUsers(users);
   }, [usersData]);
 
   function getCurrentUser(item: any) {
@@ -85,7 +80,7 @@ export default function EditProjectForm() {
   function resetAssignedUserState(tempSelectedUser: User[]) {
     setSelectedUsers(tempSelectedUser);
     setAvailableUsers(
-      users()!.filter(
+      users!.filter(
         (user: User) =>
           !tempSelectedUser.find((selectedUser) => selectedUser.id === user.id)
       )
@@ -96,7 +91,7 @@ export default function EditProjectForm() {
     console.log(data);
   }
 
-  return project() && users() ? (
+  return project && users ? (
     <form
       className="space-y-8"
       onSubmit={handleSubmit(handleCreateProjectButton)}
@@ -135,11 +130,11 @@ export default function EditProjectForm() {
           >
             Standard
           </label>
-          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
-            <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+          <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
+            <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
               <SelectBox items={items} defaultValue={'Select Standard'} />
             </div>
-            <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
+            <span className="text-gray-500 underline cursor-pointer hover:text-gray-700">
               Create a new standard
             </span>
           </div>
@@ -152,22 +147,25 @@ export default function EditProjectForm() {
           >
             Assigned User
           </label>
-          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
-            <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-              <SelectBox
-                items={availableUsers as GeneralData[]}
-                defaultValue={'Select User'}
-                // onClickFunction={getCurrentUser}
-              />
+          <div className="flex flex-col gap-4 mt-1 sm:mt-0 sm:col-span-2">
+            <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
+              {
+                availableUsers && <SelectBox
+                  items={availableUsers as GeneralData[]}
+                  defaultValue={'Select User'}
+                onClickFunction={getCurrentUser}
+                />
+              }
+
             </div>
-            <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
-              {/* {selectedUsers.map((selectedUser, index) => (
+            <div className="flex flex-col w-full max-w-lg gap-2 border-gray-300 rounded-md sm:text-sm">
+              {selectedUsers && selectedUsers.map((selectedUser, index) => (
                 <UserCard
                   key={index}
                   user={selectedUser}
                   onClickFunction={removeCurrentUser}
                 />
-              ))} */}
+              ))}
             </div>
           </div>
         </div>

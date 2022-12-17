@@ -17,21 +17,18 @@ const contentTitle = ['name', 'groups', 'assignedProjects', 'email', 'directSupe
 
 export default function ManageUserIndex() {
   const { data } = useQuery('users', UserServices.getUsers);
+  const users = data?.map((r: User) => ({
+    id: r.id,
+    email: r.email,
+    name: r.username,
+    directSupervisor: (r.direct_supervisor_id as any).Valid
+      ? (r.direct_supervisor_id).String
+      : '-',
+    groups: 'Group A',
+    assignedProjects: '-',
+  })) || [];
 
-  const users = () => {
-    if(!data) return [];
-    return data.map((r: User) => ({
-      id: r.id,
-      email: r.email,
-      name: r.username,
-      directSupervisor: (r.direct_supervisor_id as any).Valid
-        ? (r.direct_supervisor_id).String
-        : '-',
-      groups: 'Group A',
-      assignedProjects: '-',
-    }))
-  }
- 
+
   const [selectedUser, setSelectedUser] = useState<User[]>([{
     ...defaultUser
   }]);
@@ -67,10 +64,10 @@ export default function ManageUserIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Users</div>
-        {users() && (
+        {users && (
           <TableCheckbox
             title={title}
-            content={users() as object[]}
+            content={users as object[]}
             onCheckedFunction={(user: any) => {
               setSelectedUser([...selectedUser, user]);
             }}

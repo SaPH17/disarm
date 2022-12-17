@@ -58,15 +58,12 @@ const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 export default function ManageProjectShow() {
   const params = useParams();
   const { data } = useQuery(`project/${params.id}`, () => ProjectServices.getOneProject(params.id));
-  const project = () => {
-    if (!data) return null;
-    return data;
-  }
+  const project = data || [];
 
-  return project() ? (
+  return project ? (
     <>
       <div className="flex flex-row justify-between">
-        <div className="text-xl font-semibold">{project().name}</div>
+        <div className="text-xl font-semibold">{project.name}</div>
         <Link to={`/projects/${params.id}/edit`}>
           <PrimaryButton content="Edit Project" />
         </Link>
@@ -74,18 +71,18 @@ export default function ManageProjectShow() {
       <SelectedDetail
         title={'Project Detail'}
         contentTitle={contentTitle}
-        content={project()}
+        content={project}
       />
       <div className="flex flex-row justify-end gap-4">
         <PrimaryButton content="Insert Finding" />
         <button
           type="button"
-          className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Download Report
         </button>
       </div>
-      <div className="flex flex-col gap-2 sm:gap-4 p-2 sm:p-4 bg-gray-100 rounded border-4 border-dashed ">
+      <div className="flex flex-col gap-2 p-2 bg-gray-100 border-4 border-dashed rounded sm:gap-4 sm:p-4 ">
         <div className="text-lg font-semibold">Findings</div>
         <Table title={title} content={content} />
       </div>
