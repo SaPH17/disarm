@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionButton, {
@@ -13,25 +13,33 @@ import UserServices from '../../../services/user-services';
 
 const title = ['name', 'groups'];
 
-const contentTitle = ['name', 'groups', 'assignedProjects', 'email', 'directSupervisor'];
+const contentTitle = [
+  'name',
+  'groups',
+  'assignedProjects',
+  'email',
+  'directSupervisor',
+];
 
 export default function ManageUserIndex() {
   const { data } = useQuery('users', UserServices.getUsers);
-  const users = data?.map((r: User) => ({
-    id: r.id,
-    email: r.email,
-    name: r.username,
-    directSupervisor: (r.direct_supervisor_id as any).Valid
-      ? (r.direct_supervisor_id).String
-      : '-',
-    groups: 'Group A',
-    assignedProjects: '-',
-  })) || [];
+  const users =
+    data?.map((r: User) => ({
+      id: r.id,
+      email: r.email,
+      name: r.username,
+      directSupervisor: (r.direct_supervisor_id as any).Valid
+        ? r.direct_supervisor_id.String
+        : '-',
+      groups: 'Group A',
+      assignedProjects: '-',
+    })) || [];
 
-
-  const [selectedUser, setSelectedUser] = useState<User[]>([{
-    ...defaultUser
-  }]);
+  const [selectedUser, setSelectedUser] = useState<User[]>([
+    {
+      ...defaultUser,
+    },
+  ]);
   const navigate = useNavigate();
   const items: ActionButtonItem[] = [
     {

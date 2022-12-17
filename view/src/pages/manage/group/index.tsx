@@ -10,6 +10,7 @@ import { Group } from '../../../models/group';
 import GroupServices from '../../../services/group-services';
 import TableCheckbox from '../../../components/table-checkbox';
 import { defaultGroup } from '../../../data/default-values';
+import { useQuery } from 'react-query';
 
 const title = ['name', 'description'];
 
@@ -29,18 +30,18 @@ const contentTitle = [
 ];
 
 export default function ManageGroupIndex() {
-  const [groups, setGroups] = useState<Group[]>();
+  const { data } = useQuery('groups', GroupServices.getGroups);
+  const groups =
+    data?.map((r: Group) => ({
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      directParentGroup: r.directParentGroup,
+      permissions: r.permissions,
+    })) || [];
+
   const [selectedGroup, setSelectedGroup] = useState<Group[]>([defaultGroup]);
   const navigate = useNavigate();
-
-  async function fetchGroups() {
-    const result = await GroupServices.getGroups();
-    setGroups(result);
-  }
-
-  useEffect(() => {
-    fetchGroups();
-  }, []);
 
   return (
     <>
