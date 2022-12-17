@@ -35,6 +35,9 @@ func main() {
 		{
 			project.GET("/", controllers.GetAllProject)
 			project.POST("/", controllers.CreateProject)
+			project.GET("/:id", controllers.GetProjectById)
+			project.PUT("/:id", controllers.EditProject)
+			project.DELETE("/:id", controllers.DeleteProject)
 		}
 
 		group := apiWithJWT.Group("/groups")
@@ -76,6 +79,13 @@ func main() {
 			permission.POST("/", controllers.CreatePermission)
 			permission.PUT("/:id", controllers.EditPermission)
 			permission.DELETE("/:id", controllers.DeletePermission)
+		}
+
+		report := apiWithJWT.Group("/reports")
+		{
+			report.GET("/", controllers.GetAllReport)
+			report.POST("/", controllers.CreateReport)
+			report.GET("/:id", controllers.GetReportById)
 		}
 	}
 

@@ -14,6 +14,8 @@ type Project struct {
 	Phase       string    `gorm:"size:255;not null;" json:"phase"`
 	ChecklistId uuid.UUID `gorm:"type:uuid;" json:"checklist_id"`
 	Checklist   Checklist
+	Reports     []Report
+	Findings    []Finding
 }
 
 type projectOrm struct {
@@ -21,9 +23,11 @@ type projectOrm struct {
 }
 
 type ProjectOrm interface {
-	Create(name string, company string, phase string) (Project, error)
+	Create(name string, company string, phase string, checklistId uuid.UUID) (Project, error)
 	GetAll() ([]Project, error)
-	GetOneById(id uint) (Project, error)
+	GetOneById(id uuid.UUID) (Project, error)
+	Edit(id uuid.UUID, name string, company string, phase string, checklistId uuid.UUID) (Project, error)
+	Delete(id uuid.UUID) (bool, error)
 }
 
 var Projects ProjectOrm
@@ -33,8 +37,8 @@ func init() {
 	Projects = &projectOrm{instance: database.DB.Get()}
 }
 
-func (o *projectOrm) Create(name string, company string, phase string) (Project, error) {
-	project := Project{Name: name, Company: company, Phase: phase}
+func (o *projectOrm) Create(name string, company string, phase string, checklistId uuid.UUID) (Project, error) {
+	project := Project{Name: name, Company: company, Phase: phase, ChecklistId: checklistId}
 	result := o.instance.Create(&project)
 
 	return project, result.Error
@@ -47,9 +51,29 @@ func (o *projectOrm) GetAll() ([]Project, error) {
 	return projects, result.Error
 }
 
-func (o *projectOrm) GetOneById(id uint) (Project, error) {
+func (o *projectOrm) GetOneById(id uuid.UUID) (Project, error) {
 	var project Project
 	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
 
 	return project, err
+}
+
+func (o *projectOrm) Edit(id uuid.UUID, name string, company string, phase string, checklistId uuid.UUID) (Project, error) {
+	var project Project
+	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
+	project.Name = name
+	project.Company = company
+	project.Phase = phase
+	project.ChecklistId = checklistId
+	o.instance.Save(project)
+
+	return project, err
+}
+
+func (o *projectOrm) Delete(id uuid.UUID) (bool, error) {
+	var project Project
+	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
+	o.instance.Delete(&project)
+
+	return true, err
 }
