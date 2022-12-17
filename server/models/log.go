@@ -40,7 +40,7 @@ func (o *logOrm) Create(endpoint string, payload string, userId uuid.UUID) (Log,
 
 func (o *logOrm) GetAll() ([]Log, error) {
 	var logs []Log
-	result := o.instance.Find(&logs)
+	result := o.instance.Preload("User").Find(&logs)
 
 	return logs, result.Error
 }

@@ -43,7 +43,7 @@ func (o *permissionOrm) Create(permissionActionId uuid.UUID, objectTypeId uuid.U
 
 func (o *permissionOrm) GetAll() ([]Permission, error) {
 	var permissions []Permission
-	result := o.instance.Find(&permissions)
+	result := o.instance.Preload("PermissionAction").Preload("ObjectType").Find(&permissions)
 
 	return permissions, result.Error
 }

@@ -40,14 +40,14 @@ func (o *reportOrm) Create(file string, projectId uuid.UUID) (Report, error) {
 
 func (o *reportOrm) GetAll() ([]Report, error) {
 	var reports []Report
-	result := o.instance.Find(&reports)
+	result := o.instance.Preload("Project").Find(&reports)
 
 	return reports, result.Error
 }
 
 func (o *reportOrm) GetOneById(id uuid.UUID) (Report, error) {
 	var report Report
-	err := o.instance.Model(Report{}).Where("id = ?", id).Take(&report).Error
+	err := o.instance.Preload("Project").Model(Report{}).Where("id = ?", id).Take(&report).Error
 
 	return report, err
 }
