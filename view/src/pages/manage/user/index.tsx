@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionButton, {
   ActionButtonItem,
@@ -10,19 +11,30 @@ import { defaultUser } from '../../../data/default-values';
 import { User } from '../../../models/user';
 import UserServices from '../../../services/user-services';
 
-const title = ['name', 'groups', 'status'];
+const title = ['name', 'groups'];
 
-const contentTitle = [
-  'name',
-  'status',
-  'groups',
-  'assignedProjects',
-  'directSupervisor',
-];
+const contentTitle = ['name', 'groups', 'assignedProjects', 'email', 'directSupervisor'];
 
 export default function ManageUserIndex() {
-  const [users, setUsers] = useState<User[]>();
-  const [selectedUser, setSelectedUser] = useState<User[]>([defaultUser]);
+  const { data } = useQuery('users', UserServices.getUsers);
+
+  const users = () => {
+    if(!data) return [];
+    return data.map((r: User) => ({
+      id: r.id,
+      email: r.email,
+      name: r.username,
+      directSupervisor: (r.direct_supervisor_id as any).Valid
+        ? (r.direct_supervisor_id).String
+        : '-',
+      groups: 'Group A',
+      assignedProjects: '-',
+    }))
+  }
+ 
+  const [selectedUser, setSelectedUser] = useState<User[]>([{
+    ...defaultUser
+  }]);
   const navigate = useNavigate();
   const items: ActionButtonItem[] = [
     {
@@ -42,16 +54,6 @@ export default function ManageUserIndex() {
     },
   ];
 
-  async function fetchUsers() {
-    const result = await UserServices.getUsers();
-    console.log((await UserServices.getNewUsers()).data);
-    setUsers(result);
-  }
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   return (
     <>
       <div className="text-xl font-semibold">Manage User</div>
@@ -65,10 +67,10 @@ export default function ManageUserIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Users</div>
-        {users && (
+        {users() && (
           <TableCheckbox
             title={title}
-            content={users as object[]}
+            content={users() as object[]}
             onCheckedFunction={(user: any) => {
               setSelectedUser([...selectedUser, user]);
             }}

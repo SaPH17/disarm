@@ -56,9 +56,9 @@ const CreateGroupForm = () => {
   }
 
   async function fetchUsers() {
-    const result = await UserServices.getUsers();
-    setAvailableUsers(result);
-    setUsers(result);
+    // const result = await UserServices.getUsers();
+    // setAvailableUsers(result);
+    // setUsers(result);
   }
 
   useEffect(() => {

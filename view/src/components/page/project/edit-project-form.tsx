@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
+import { projects } from '../../../data/projects';
 import { ProjectFormData } from '../../../models/forms/project-form-data';
 import { GeneralData } from '../../../models/general-data';
 import { Project } from '../../../models/project';
@@ -28,20 +30,45 @@ const items: GeneralData[] = [
 ];
 
 export default function EditProjectForm() {
-  const { id } = useParams();
-  const [users, setUsers] = useState<User[]>();
+  const params = useParams();
+  const { data: projectData } = useQuery(`project/${params.id}`, () =>
+    ProjectServices.getOneProject(params.id)
+  );
+  const { data: usersData } = useQuery('users', UserServices.getUsers);
+
+  const project = () => {
+    if (!projectData) return null;
+    return projectData;
+  };
+
+  const users = () => {
+    if (!usersData) return null;
+    return usersData.map((user: User) => ({
+      id: user.id,
+      name: user.username
+    }));
+  };
+
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>();
 
-  const [project, setProject] = useState<Project>();
-
-  const navigate = useNavigate();
   const {
     register,
     reset,
     formState: { errors },
     handleSubmit,
   } = useForm<ProjectFormData>();
+
+  useEffect(() => {
+    if (!project()) return;
+    reset(project());
+  }, [projectData]);
+
+  useEffect(() => {
+    if (!users()) return;
+    const x = users();
+    setAvailableUsers(users());
+  }, [usersData]);
 
   function getCurrentUser(item: any) {
     const tempSelectedUser = [...selectedUsers, item];
@@ -58,8 +85,8 @@ export default function EditProjectForm() {
   function resetAssignedUserState(tempSelectedUser: User[]) {
     setSelectedUsers(tempSelectedUser);
     setAvailableUsers(
-      users!.filter(
-        (user) =>
+      users()!.filter(
+        (user: User) =>
           !tempSelectedUser.find((selectedUser) => selectedUser.id === user.id)
       )
     );
@@ -69,31 +96,7 @@ export default function EditProjectForm() {
     console.log(data);
   }
 
-  async function fetchUsers() {
-    const result = await UserServices.getUsers();
-    setAvailableUsers(result);
-    setUsers(result);
-  }
-
-  async function fetchProject() {
-    if (id === undefined) {
-      return navigate('/');
-    }
-
-    if (project === undefined) {
-      const result = await ProjectServices.getOneProject(id);
-      setProject(result);
-    }
-
-    reset(project);
-  }
-
-  useEffect(() => {
-    fetchUsers();
-    fetchProject();
-  }, [id, project]);
-
-  return users ? (
+  return project() && users() ? (
     <form
       className="space-y-8"
       onSubmit={handleSubmit(handleCreateProjectButton)}
@@ -154,17 +157,17 @@ export default function EditProjectForm() {
               <SelectBox
                 items={availableUsers as GeneralData[]}
                 defaultValue={'Select User'}
-                onClickFunction={getCurrentUser}
+                // onClickFunction={getCurrentUser}
               />
             </div>
             <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
-              {selectedUsers.map((selectedUser, index) => (
+              {/* {selectedUsers.map((selectedUser, index) => (
                 <UserCard
                   key={index}
                   user={selectedUser}
                   onClickFunction={removeCurrentUser}
                 />
-              ))}
+              ))} */}
             </div>
           </div>
         </div>

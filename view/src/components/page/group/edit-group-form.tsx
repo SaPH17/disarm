@@ -38,19 +38,19 @@ const EditGroupForm = ({ group }: any) => {
   }
 
   async function fetchUsers() {
-    const result = await UserServices.getUsers();
-    const mappedUser = result.map((user) => {
-      return {
-        ...user,
-        action: (
-          <XIcon
-            className="w-5 h-5 cursor-pointer"
-            onClick={() => deleteUser(user)}
-          />
-        ),
-      };
-    });
-    setUsers(mappedUser);
+    // const result = await UserServices.getUsers();
+    // const mappedUser = result.map((user) => {
+    //   return {
+    //     ...user,
+    //     action: (
+    //       <XIcon
+    //         className="w-5 h-5 cursor-pointer"
+    //         onClick={() => deleteUser(user)}
+    //       />
+    //     ),
+    //   };
+    // });
+    // setUsers(mappedUser);
   }
 
   useEffect(() => {

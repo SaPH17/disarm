@@ -4,7 +4,6 @@ import authAtom from "../../atoms/atom";
 
 export function RolesAuthRoute({ roles }: { roles: string[] }) {
     const [auth, setAuth] = useAtom(authAtom);
-    console.log(auth);
 
     const canAccess = roles.includes((auth ? 'auth' : 'guest'));
 

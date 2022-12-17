@@ -35,6 +35,7 @@ func main() {
 		{
 			project.GET("/", controllers.GetAllProject)
 			project.POST("/", controllers.CreateProject)
+			project.GET("/:id", controllers.GetProjectById)
 		}
 
 		group := apiWithJWT.Group("/groups")

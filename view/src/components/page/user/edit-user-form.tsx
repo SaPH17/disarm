@@ -33,8 +33,8 @@ export default function EditUserForm() {
     }
 
     if (user === undefined) {
-      const result = await UserService.getOneUser(id);
-      setUser(result);
+      // const result = await UserService.getOneUser(id);
+      // setUser(result);
     }
 
     reset(user);

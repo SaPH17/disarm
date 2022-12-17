@@ -11,6 +11,7 @@ import { Project } from '../../../models/project';
 import { defaultProject } from '../../../data/default-values';
 import SelectedDetail from '../../../components/selected-detail';
 import { Link } from 'react-router-dom';
+import { useQuery } from 'react-query';
 
 const items: ActionButtonItem[] = [
   {
@@ -34,7 +35,16 @@ const title = ['name', 'company', 'checklist', 'phase', 'report'];
 const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectIndex() {
-  const [projects, setProjects] = useState<Project[]>();
+  const { data } = useQuery('projects', ProjectServices.getProjects);
+
+  const projects = () => {
+    if(!data) return [];
+    return data.map((project: Project) => ({
+      ...project,
+      checklist: project.Checklist?.name
+    }));
+  }
+
   const [selectedProject, setSelectedProject] = useState<Project[]>([
     defaultProject,
   ]);
@@ -43,22 +53,6 @@ export default function ManageProjectIndex() {
   function handleRedirectToProjectDetail(project: any) {
     navigate('/projects/' + project.id);
   }
-
-  async function fetchProjects() {
-    const result = await ProjectServices.getProjects();
-    const addedResult = result.map((v) => {
-      return {
-        ...v,
-        assignedUser: 'Bambang, Mamang, Revaldi, Mijaya',
-      };
-    });
-
-    setProjects(addedResult);
-  }
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
 
   return projects ? (
     <>
@@ -73,7 +67,7 @@ export default function ManageProjectIndex() {
         <div className="text-lg font-semibold">Projects</div>
         <TableCheckbox
           title={title}
-          content={projects as object[]}
+          content={projects() as object[]}
           onCheckedFunction={(project: any) => {
             setSelectedProject([...selectedProject, project]);
           }}

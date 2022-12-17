@@ -1,25 +1,24 @@
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { RolesAuthRoute } from './components/routes/roles-auth-route';
+import Layout from './components/structures/layout';
 import Login from './pages/auth/login';
 import Dashboard from './pages/dashboard';
-import Layout from './components/structures/layout';
-import ManageUserIndex from './pages/manage/user';
-import ManageUserCreate from './pages/manage/user/create';
-import ManageProjectCreate from './pages/manage/project/create';
-import ManageProjectIndex from './pages/manage/project';
-import ManageProjectShow from './pages/manage/project/show';
-import ManageGroupIndex from './pages/manage/group';
 import ManageChecklistIndex from './pages/manage/checklist';
+import ManageChecklistCreate from './pages/manage/checklist/create';
 import ManageChecklistShow from './pages/manage/checklist/show';
 import ManageFindingIndex from './pages/manage/finding';
-import ManageGroupShow from './pages/manage/group/show';
+import ManageGroupIndex from './pages/manage/group';
 import ManageGroupCreate from './pages/manage/group/create';
-import ManageUserEdit from './pages/manage/user/edit';
-import ManageProjectEdit from './pages/manage/project/edit';
-import ManageGroupEditPermission from './pages/manage/group/edit-permission';
-import ManageChecklistCreate from './pages/manage/checklist/create';
 import ManageGroupEdit from './pages/manage/group/edit';
-import { RolesAuthRoute } from './components/routes/roles-auth-route';
+import ManageGroupEditPermission from './pages/manage/group/edit-permission';
+import ManageProjectIndex from './pages/manage/project';
+import ManageProjectCreate from './pages/manage/project/create';
+import ManageProjectEdit from './pages/manage/project/edit';
+import ManageProjectShow from './pages/manage/project/show';
+import ManageUserIndex from './pages/manage/user';
+import ManageUserCreate from './pages/manage/user/create';
+import ManageUserEdit from './pages/manage/user/edit';
 
 function App() {
   return (

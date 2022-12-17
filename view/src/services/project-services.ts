@@ -1,11 +1,17 @@
-import { projects } from "../data/projects";
+import axios from "axios";
 
 export default class ProjectServices {
-  static getProjects(){
-    return projects;
+  static async getProjects(){
+    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/projects/`, {
+      withCredentials: true
+    });
+    return data.projects;
   }
 
-  static getOneProject(id: string|number){
-    return projects.find(project => (project.id as string) === (id as string));
+  static async getOneProject(id: any){
+    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/projects/${id}`, {
+      withCredentials: true
+    });
+    return data.project;
   }
 }

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Project } from '../../../models/project';
 import ProjectServices from '../../../services/project-services';
 import { Link } from 'react-router-dom';
+import { useQuery } from 'react-query';
 
 const content = [
   {
@@ -56,33 +57,16 @@ const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectShow() {
   const params = useParams();
-  const navigate = useNavigate();
-  const [project, setProject] = useState<Project>();
-
-  async function fetchProject() {
-    const id = params.id;
-    if (id === undefined) {
-      return navigate('/');
-    }
-
-    if (project === undefined) {
-      const result = await ProjectServices.getOneProject(id);
-      const addedResult: any = {
-        ...result,
-        assignedUser: 'Bambang, Mamang, Revaldi, Mijaya',
-      };
-      setProject(addedResult);
-    }
+  const { data } = useQuery(`project/${params.id}`, () => ProjectServices.getOneProject(params.id));
+  const project = () => {
+    if (!data) return null;
+    return data;
   }
 
-  useEffect(() => {
-    fetchProject();
-  }, [project]);
-
-  return project ? (
+  return project() ? (
     <>
       <div className="flex flex-row justify-between">
-        <div className="text-xl font-semibold">{project.name}</div>
+        <div className="text-xl font-semibold">{project().name}</div>
         <Link to={`/projects/${params.id}/edit`}>
           <PrimaryButton content="Edit Project" />
         </Link>
@@ -90,7 +74,7 @@ export default function ManageProjectShow() {
       <SelectedDetail
         title={'Project Detail'}
         contentTitle={contentTitle}
-        content={project}
+        content={project()}
       />
       <div className="flex flex-row justify-end gap-4">
         <PrimaryButton content="Insert Finding" />

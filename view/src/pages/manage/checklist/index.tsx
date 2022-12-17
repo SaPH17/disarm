@@ -32,7 +32,7 @@ const contentTitle = [
 export default function ManageChecklistIndex() {
   const [checklists, setChecklists] = useState<Checklist[]>();
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>([
-    defaultChecklist,
+    // defaultChecklist,
   ]);
   const navigate = useNavigate();
 

@@ -6,11 +6,11 @@ export const defaultProject: Project = {
   id: -1,
   name: '-',
   company: '-',
-  checklist: '-',
   phase: '-',
   report: '-',
   description: '-',
-  assignedUser: '-',
+  created_at: '-',
+  updated_at: '-'
 };
 
 export const defaultGroup: Group = {
@@ -23,12 +23,17 @@ export const defaultGroup: Group = {
 
 export const defaultUser: User = {
   id: -1,
+  email: '-',
+  username: '-',
   name: '-',
-  status: '-',
+  direct_supervisor_id: {
+    Valid: false,
+    String: ''
+  },
   groups: '-',
   assignedProjects: '-',
-  directSupervisor: '-',
-};
+  directSupervisor: '-'
+}
 
 export const defaultChecklist = {
   id: -1,

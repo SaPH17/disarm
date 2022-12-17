@@ -1,11 +1,13 @@
 import { GeneralData } from './general-data';
+import { User } from './user';
 
 export type Checklist = GeneralData & {
-  createdBy: string;
-  createdAt: Date | string;
-  lastModified: Date | string;
+  created_at: Date | string;
+  updated_at: Date | string;
   status: string;
   sections: ChecklistSection[];
+  sections: string;
+  User?: User;
 };
 
 export type ChecklistSection = {

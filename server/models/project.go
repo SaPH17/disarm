@@ -3,6 +3,7 @@ package models
 import (
 	"disarm/main/database"
 
+
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -23,7 +24,9 @@ type projectOrm struct {
 type ProjectOrm interface {
 	Create(name string, company string, phase string) (Project, error)
 	GetAll() ([]Project, error)
-	GetOneById(id uint) (Project, error)
+	GetOneById(id uuid.UUID) (Project, error)
+	Edit(id uuid.UUID, name string, company string, phase string) (Project, error)
+	Delete(id uuid.UUID) (bool, error)
 }
 
 var Projects ProjectOrm
@@ -47,9 +50,28 @@ func (o *projectOrm) GetAll() ([]Project, error) {
 	return projects, result.Error
 }
 
-func (o *projectOrm) GetOneById(id uint) (Project, error) {
+func (o *projectOrm) GetOneById(id uuid.UUID) (Project, error) {
 	var project Project
 	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
 
 	return project, err
+}
+
+func (o *projectOrm) Edit(id uuid.UUID, name string, company string, phase string) (Project, error) {
+	var project Project
+	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
+	project.Name = name
+	project.Company = company
+	project.Phase = phase
+	o.instance.Save(project)
+
+	return project, err
+}
+
+func (o *projectOrm) Delete(id uuid.UUID) (bool, error) {
+	var project Project
+	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
+	o.instance.Delete(&project)
+
+	return true, err
 }

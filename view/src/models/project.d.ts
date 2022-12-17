@@ -1,10 +1,12 @@
+import { Checklist } from './checklist';
 import { GeneralData } from './general-data';
 
 export type Project = GeneralData & {
   company: string;
-  checklist: string;
   phase: string;
   report: string;
   description: string;
-  assignedUser?: string;
+  Checklist?: Checklist;
+  created_at: Date | string;
+  updated_at: Date | string;
 };
