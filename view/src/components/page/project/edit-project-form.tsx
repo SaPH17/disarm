@@ -3,10 +3,12 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { projects } from '../../../data/projects';
+import { Checklist } from '../../../models/checklist';
 import { ProjectFormData } from '../../../models/forms/project-form-data';
 import { GeneralData } from '../../../models/general-data';
 import { Project } from '../../../models/project';
 import { User } from '../../../models/user';
+import ChecklistServices from '../../../services/checklist-service';
 import ProjectServices from '../../../services/project-services';
 import UserServices from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
@@ -35,6 +37,7 @@ export default function EditProjectForm() {
     ProjectServices.getOneProject(params.id)
   );
   const { data: usersData } = useQuery('users', UserServices.getUsers);
+  const { data: checklistsData } = useQuery('checklists', ChecklistServices.getChecklists);
 
   const project = projectData || [];
 
@@ -42,6 +45,11 @@ export default function EditProjectForm() {
     id: user.id,
     name: user.username,
     email: user.email
+  })) || null;
+
+  const checklists = checklistsData?.map((checklist: Checklist) => ({
+    id: checklist.id,
+    name: checklist.name,
   })) || null;
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
@@ -132,7 +140,7 @@ export default function EditProjectForm() {
           </label>
           <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
             <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-              <SelectBox items={items} defaultValue={'Select Standard'} />
+              <SelectBox items={checklists} defaultValue={'Select Standard'} />
             </div>
             <span className="text-gray-500 underline cursor-pointer hover:text-gray-700">
               Create a new standard
