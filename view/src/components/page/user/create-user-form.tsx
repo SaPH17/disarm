@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { UserFormData } from '../../../models/forms/user-form-data';
 import { GeneralData } from '../../../models/general-data';
@@ -11,7 +12,16 @@ import SelectBox from '../../select-box';
 import GroupCard from './group-card';
 
 export default function CreateUserForm() {
-  const [groups, setGroups] = useState<Group[]>();
+  const { data: groupsData } = useQuery('groups', GroupServices.getGroups);
+  const groups =
+    groupsData?.map((r: Group) => ({
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      directParentGroup: r.directParentGroup,
+      permissions: r.permissions,
+    })) || [];
+
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
   const [availableGroups, setAvailableGroups] = useState<Group[]>();
   const {
@@ -36,7 +46,7 @@ export default function CreateUserForm() {
     setSelectedGroups(tempSelectedGroup);
     setAvailableGroups(
       groups!.filter(
-        (group) =>
+        (group: Group) =>
           !tempSelectedGroup.find(
             (selectedGroup) => selectedGroup.id === group.id
           )
@@ -48,27 +58,22 @@ export default function CreateUserForm() {
     console.log(data);
   }
 
-  async function fetchGroups() {
-    const result = await GroupServices.getGroups();
-    setGroups(result);
-    setAvailableGroups(result);
-  }
-
   useEffect(() => {
-    fetchGroups();
-  }, []);
+    if (!groupsData) return;
+    setAvailableGroups(groups);
+  }, [groupsData])
 
   return groups ? (
     <form className="space-y-8" onSubmit={handleSubmit(handleCreateUserButton)}>
       <div className="space-y-6 sm:space-y-5">
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText
-            id="name"
-            name="name"
-            label="Name"
+            id="username"
+            name="username"
+            label="Username"
             type="text"
             errors={errors}
-            register={register('name', {
+            register={register('username', {
               required: 'Name is required.',
             })}
           />
@@ -107,20 +112,22 @@ export default function CreateUserForm() {
           >
             Groups
           </label>
-          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 mt-1 sm:mt-0 sm:col-span-2">
             <div className="flex flex-col gap-2">
-              <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                <SelectBox
-                  defaultValue="Select Group"
-                  items={availableGroups as GeneralData[]}
-                  onClickFunction={getCurrentGroup}
-                />
+              <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
+                {
+                  availableGroups && <SelectBox
+                    defaultValue="Select Group"
+                    items={availableGroups as GeneralData[]}
+                    onClickFunction={getCurrentGroup}
+                  />
+                }
               </div>
-              <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline w-fit">
+              <span className="text-gray-500 underline cursor-pointer hover:text-gray-700 w-fit">
                 <Link to="/groups/create">Create a new group</Link>
               </span>
             </div>
-            <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
+            <div className="flex flex-col w-full max-w-lg gap-2 border-gray-300 rounded-md sm:text-sm">
               {selectedGroups.map((selectedGroup, index) => (
                 <GroupCard
                   key={index}

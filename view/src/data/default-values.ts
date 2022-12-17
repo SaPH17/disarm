@@ -38,9 +38,11 @@ export const defaultUser: User = {
 export const defaultChecklist = {
   id: -1,
   name: '-',
-  createdBy: '-',
-  createdAt: '-',
+  created_at: '-',
+  updated_at: '-',
   lastModified: '-',
+  createdBy: '-',
   status: '-',
   sections: [],
+  createdAt: '-'
 };

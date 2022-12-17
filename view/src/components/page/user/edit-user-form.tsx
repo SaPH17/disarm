@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useQuery } from 'react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { UserFormData } from '../../../models/forms/user-form-data';
 import { GeneralData } from '../../../models/general-data';
 import { Group } from '../../../models/group';
 import { User } from '../../../models/user';
 import GroupServices from '../../../services/group-services';
+import UserServices from '../../../services/user-services';
 import UserService from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
@@ -13,43 +15,26 @@ import SelectBox from '../../select-box';
 import GroupCard from './group-card';
 
 export default function EditUserForm() {
-  const [groups, setGroups] = useState<Group[]>();
+  const params = useParams();
+  const { data: userData } = useQuery(`users/${params.id}`, () => UserServices.getOneUser(params.id));
+  const { data: usersData } = useQuery(`users`, UserServices.getUsers);
+  
+  const user = {
+    ...userData,
+    
+  } || null;
+  const users = usersData?.filter((u: User) => u.id !== user.id) || null;
+  console.log(users);
+  
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
   const [availableGroups, setAvailableGroups] = useState<Group[]>();
-  const { id } = useParams();
-  const [user, setUser] = useState<User>();
 
-  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm<UserFormData>();
-
-  async function fetchUser() {
-    if (id === undefined) {
-      return navigate('/');
-    }
-
-    if (user === undefined) {
-      // const result = await UserService.getOneUser(id);
-      // setUser(result);
-    }
-
-    reset(user);
-  }
-
-  async function fetchGroups() {
-    const result = await GroupServices.getGroups();
-    setGroups(result);
-    setAvailableGroups(result);
-  }
-
-  useEffect(() => {
-    fetchGroups();
-    fetchUser();
-  }, [id, user]);
 
   function getCurrentGroup(item: any) {
     const tempSelectedGroup = [...selectedGroups, item];
@@ -65,32 +50,37 @@ export default function EditUserForm() {
 
   function resetAssignedGroupState(tempSelectedGroup: Group[]) {
     setSelectedGroups(tempSelectedGroup);
-    setAvailableGroups(
-      groups!.filter(
-        (group) =>
-          !tempSelectedGroup.find(
-            (selectedGroup) => selectedGroup.id === group.id
-          )
-      )
-    );
+    // setAvailableGroups(
+    //   groups!.filter(
+    //     (group) =>
+    //       !tempSelectedGroup.find(
+    //         (selectedGroup) => selectedGroup.id === group.id
+    //       )
+    //   )
+    // );
   }
 
   function handleCreateUserButton(data: UserFormData) {
     console.log(data);
   }
 
-  return user && groups ? (
+  useEffect(() => {
+    if (!user) return;
+    reset(user);
+  }, [userData]);
+  
+  return user ? (
     <form className="space-y-8" onSubmit={handleSubmit(handleCreateUserButton)}>
       <div className="space-y-6 sm:space-y-5">
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText
-            id="name"
-            name="name"
-            label="Name"
+            id="username"
+            name="username"
+            label="Username"
             type="text"
             errors={errors}
-            register={register('name', {
-              required: 'Name is required.',
+            register={register('username', {
+              required: 'Username is required.',
             })}
           />
         </div>
@@ -129,9 +119,9 @@ export default function EditUserForm() {
             >
               Groups
             </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-1 sm:mt-0 sm:col-span-2">
               <div className="flex flex-col gap-2">
-                <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
                   <SelectBox
                     defaultValue="Select Group"
                     items={availableGroups as GeneralData[]}
@@ -139,12 +129,12 @@ export default function EditUserForm() {
                   />
                 </div>
                 <Link to="/groups/create">
-                  <span className="text-gray-500 hover:text-gray-700 cursor-pointer underline">
+                  <span className="text-gray-500 underline cursor-pointer hover:text-gray-700">
                     Create a new group
                   </span>
                 </Link>
               </div>
-              <div className="max-w-lg w-full sm:text-sm border-gray-300 rounded-md flex flex-col gap-2">
+              <div className="flex flex-col w-full max-w-lg gap-2 border-gray-300 rounded-md sm:text-sm">
                 {selectedGroups.map((selectedGroup, index) => (
                   <GroupCard
                     key={index}

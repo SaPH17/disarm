@@ -1,27 +1,42 @@
-import { XIcon } from '@heroicons/react/outline';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { GroupFormData } from '../../../models/forms/group-form-data';
 import { GeneralData } from '../../../models/general-data';
 import { Group } from '../../../models/group';
 import { User } from '../../../models/user';
 import GroupServices from '../../../services/group-services';
 import UserServices from '../../../services/user-services';
+import { toReadableDate } from '../../../utils/functions/dates';
 import InputText from '../../input-text/input-text';
 import SelectBox from '../../select-box';
 import AssignedUserTable from './assigned-user-table';
 
-const EditGroupForm = ({ group }: any) => {
-  const [users, setUsers] = useState<User[]>();
-  const [groups, setGroups] = useState<Group[]>();
+const EditGroupForm = ({ group }: { group: Group }) => {
+  const { data: usersData } = useQuery('users', UserServices.getUsers);
+  const { data: groupsData } = useQuery('groups', GroupServices.getGroups);
 
-  const { id } = useParams();
+  const users = usersData?.map((user: User) => ({
+    id: user.id,
+    name: user.username,
+    email: user.email,
+    dateCreated: toReadableDate(new Date(user.created_at || '')),
+  })) || null;
+
+  const groups =
+    groupsData?.map((r: Group) => ({
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      directParentGroup: r.directParentGroup,
+      permissions: r.permissions,
+    })) || null;
 
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm<GroupFormData>();
 
   function handleCreateGroupButton(data: GroupFormData) {
@@ -32,31 +47,10 @@ const EditGroupForm = ({ group }: any) => {
     console.log(user);
   }
 
-  async function fetchGroups() {
-    const result = await GroupServices.getGroups();
-    setGroups(result);
-  }
-
-  async function fetchUsers() {
-    // const result = await UserServices.getUsers();
-    // const mappedUser = result.map((user) => {
-    //   return {
-    //     ...user,
-    //     action: (
-    //       <XIcon
-    //         className="w-5 h-5 cursor-pointer"
-    //         onClick={() => deleteUser(user)}
-    //       />
-    //     ),
-    //   };
-    // });
-    // setUsers(mappedUser);
-  }
-
   useEffect(() => {
-    fetchGroups();
-    fetchUsers();
-  }, [id, group]);
+    if (!group) return;
+    reset(group);
+  }, [group]);
 
   return groups && users ? (
     <div className="flex flex-col gap-4">
@@ -78,7 +72,7 @@ const EditGroupForm = ({ group }: any) => {
             />
           </div>
 
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start  sm:pt-5">
+          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
             <InputText
               id="description"
               name="description"
@@ -98,8 +92,8 @@ const EditGroupForm = ({ group }: any) => {
             >
               Parent Group
             </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
-              <div className="block max-w-lg w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+            <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
+              <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
                 <SelectBox
                   items={groups as GeneralData[]}
                   defaultValue={'None'}

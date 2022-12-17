@@ -9,7 +9,11 @@ export default class UserServices {
     return data.users;
   }
 
-  static getOneUser(id: string | number) {
-    return users.find((user) => (user.id as string) === (id as string));
+  static async getOneUser(id: string | number | undefined) {
+    if (id === undefined) return null;
+    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/users/${id}`, {
+      withCredentials: true
+    });
+    return data.user;
   }
 }
