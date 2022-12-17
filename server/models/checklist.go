@@ -44,14 +44,14 @@ func (o *checklistOrm) Create(name string, status string, createdBy uuid.UUID, s
 
 func (o *checklistOrm) GetAll() ([]Checklist, error) {
 	var checklists []Checklist
-	result := o.instance.Find(&checklists)
+	result := o.instance.Preload("User").Find(&checklists)
 
 	return checklists, result.Error
 }
 
 func (o *checklistOrm) GetOneById(id uuid.UUID) (Checklist, error) {
 	var checklist Checklist
-	err := o.instance.Model(Checklist{}).Where("id = ?", id).Take(&checklist).Error
+	err := o.instance.Preload("User").Model(Checklist{}).Where("id = ?", id).Take(&checklist).Error
 
 	return checklist, err
 }
