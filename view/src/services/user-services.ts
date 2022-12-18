@@ -16,4 +16,10 @@ export default class UserServices {
     });
     return data.user;
   }
+
+  static async createUser(body: object){
+    return axios.post(`${process.env.REACT_APP_API_URL}/users/`, body, {
+      withCredentials: true
+    });
+  }
 }

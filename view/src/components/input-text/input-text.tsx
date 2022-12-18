@@ -11,6 +11,8 @@ export type InputTextData = {
   register?: UseFormRegisterReturn<any>;
   onChange?: Function;
   disabled?: boolean;
+  listId?: string;
+  datalist?: JSX.Element;
 };
 
 const InputText = ({
@@ -23,6 +25,8 @@ const InputText = ({
   register,
   onChange = () => {},
   disabled = false,
+  listId,
+  datalist
 }: InputTextData) => {
   return (
     <>
@@ -41,8 +45,9 @@ const InputText = ({
           onChange={(e) => onChange(e.target.value)}
           className={`block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md`}
           disabled={disabled}
+          { ...(listId !== undefined && { list: listId })}
         />
-
+        { datalist }
         {errors && <FormErrorMessage name={name} errors={errors} />}
       </div>
     </>

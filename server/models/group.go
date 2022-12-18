@@ -10,7 +10,6 @@ import (
 
 type Group struct {
 	Base
-	Users         []User         `gorm:"many2many:user_groups"`
 	Name          string         `gorm:"size:255;not null;" json:"name"`
 	Description   string         `gorm:"size:255;not null;" json:"description"`
 	ParentGroupId sql.NullString `gorm:"size:255;" json:"parent_group_id"`
@@ -25,6 +24,7 @@ type GroupOrm interface {
 	Create(name string, description string, parentGroupId sql.NullString, permissions string) (Group, error)
 	GetAll() ([]Group, error)
 	GetOneById(id uuid.UUID) (Group, error)
+	GetManyByIds(ids []uuid.UUID) ([]Group, error)
 	Edit(id uuid.UUID, name string, description string, parentGroupId sql.NullString) (Group, error)
 	EditPermission(id uuid.UUID, permissions string) (Group, error)
 	Delete(id uuid.UUID) (bool, error)
@@ -56,6 +56,13 @@ func (o *groupOrm) GetOneById(id uuid.UUID) (Group, error) {
 	err := o.instance.Model(Group{}).Where("id = ?", id).Take(&group).Error
 
 	return group, err
+}
+
+func (o *groupOrm) GetManyByIds(ids []uuid.UUID) ([]Group, error) {
+	var groups []Group
+	err := o.instance.Model(Group{}).Where("id IN ?", ids).Find(&groups).Error
+
+	return groups, err
 }
 
 func (o *groupOrm) Edit(id uuid.UUID, name string, description string, parentGroupId sql.NullString) (Group, error) {

@@ -14,10 +14,11 @@ import (
 
 func CreateUser(c *gin.Context) {
 	var body struct {
-		Email              string `json:"email" binding:"required"`
-		Username           string `json:"username" binding:"required"`
-		Password           string `json:"password" binding:"required"`
-		DirectSupervisorId string `json:"directSupervisorId"`
+		Email           string `json:"email" binding:"required"`
+		Username        string `json:"username" binding:"required"`
+		Password        string `json:"password"`
+		SupervisorEmail string `json:"directSupervisor"`
+		Groups			[]string `json:"groups"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -29,9 +30,25 @@ func CreateUser(c *gin.Context) {
 
 	escapedUsername := html.EscapeString(strings.TrimSpace(body.Username))
 	escapedEmail := html.EscapeString(strings.TrimSpace(body.Email))
-	escapedDirectSupervisorId := html.EscapeString(strings.TrimSpace(body.DirectSupervisorId))
+	escapedDirectSupervisorEmail := html.EscapeString(strings.TrimSpace(body.SupervisorEmail))
 
-	directSupervisorId := utils.GetNullableString(escapedDirectSupervisorId)
+	directSupervisorId := utils.GetNullableString(escapedDirectSupervisorEmail)
+
+	if escapedDirectSupervisorEmail != "" {
+		user, dbErr := models.Users.GetOneByEmail(escapedDirectSupervisorEmail)
+
+		if dbErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": dbErr.Error(),
+			})
+			return
+		}
+		directSupervisorId = utils.GetNullableString(user.ID.String())
+	}
+
+	if body.Password == "" {
+		body.Password = "password"
+	}
 
 	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
 	if hashingErr != nil {
@@ -41,7 +58,25 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, dbErr := models.Users.Create(escapedEmail, string(hashedPassword), escapedUsername, directSupervisorId)
+	var groups []models.Group
+
+	if len(body.Groups) > 0 {
+		var dbGroupErr error;
+		var groupIds []uuid.UUID;
+		for _, element := range body.Groups {
+			groupIds = append(groupIds, uuid.FromStringOrNil(element))
+		}
+		groups, dbGroupErr = models.Groups.GetManyByIds(groupIds)
+
+		if dbGroupErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": dbGroupErr,
+			})
+			return
+		}
+	}
+
+	user, dbErr := models.Users.Create(escapedEmail, string(hashedPassword), escapedUsername, directSupervisorId, groups)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

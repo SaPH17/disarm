@@ -26,7 +26,7 @@ type userOrm struct {
 }
 
 type UserOrm interface {
-	Create(email string, password string, username string, directSupervisorId sql.NullString) (User, error)
+	Create(email string, password string, username string, directSupervisorId sql.NullString, groups []Group) (User, error)
 	GetAll() ([]User, error)
 	GetOneByEmail(email string) (User, error)
 	GetOneById(id uuid.UUID) (User, error)
@@ -48,8 +48,12 @@ func init() {
 	fmt.Println(err)
 }
 
-func (o *userOrm) Create(email string, password string, username string, directSupervisorId sql.NullString) (User, error) {
-	user := User{Email: email, Username: username, Password: password, DirectSupervisorId: directSupervisorId}
+func (o *userOrm) Create(email string, password string, username string, directSupervisorId sql.NullString, groups []Group) (User, error) {
+	user := User{Email: email, Username: username, Password: password, DirectSupervisorId: directSupervisorId }
+
+	database.DB.Get().Model(&user).Association("Groups").Append(groups)
+	fmt.Println(user)
+
 	result := o.instance.Create(&user)
 
 	return user, result.Error
@@ -57,7 +61,7 @@ func (o *userOrm) Create(email string, password string, username string, directS
 
 func (o *userOrm) GetAll() ([]User, error) {
 	var users []User
-	result := o.instance.Find(&users)
+	result := o.instance.Preload("Groups").Find(&users)
 
 	return users, result.Error
 }
