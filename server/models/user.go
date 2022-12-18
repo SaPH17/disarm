@@ -49,12 +49,9 @@ func init() {
 }
 
 func (o *userOrm) Create(email string, password string, username string, directSupervisorId sql.NullString, groups []Group) (User, error) {
-	user := User{Email: email, Username: username, Password: password, DirectSupervisorId: directSupervisorId }
+	user := User{Email: email, Username: username, Password: password, DirectSupervisorId: directSupervisorId, Groups: groups }
 
-	database.DB.Get().Model(&user).Association("Groups").Append(groups)
-	fmt.Println(user)
-
-	result := o.instance.Create(&user)
+	result := o.instance.Omit("Groups.*").Create(&user)
 
 	return user, result.Error
 }
