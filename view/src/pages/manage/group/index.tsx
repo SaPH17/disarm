@@ -55,7 +55,7 @@ export default function ManageGroupIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Groups</div>
-        {groups && (
+        {/* {groups && (
           <TableCheckbox
             title={title}
             content={groups as object[]}
@@ -69,7 +69,7 @@ export default function ManageGroupIndex() {
               navigate(`/groups/${group.id}`);
             }}
           />
-        )}
+        )} */}
       </div>
 
       <SelectedDetail

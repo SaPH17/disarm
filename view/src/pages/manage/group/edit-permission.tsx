@@ -78,13 +78,13 @@ const ManageGroupEditPermission = () => {
               Clear Permission
             </div>
           </div>
-          <TableCheckbox
+          {/* <TableCheckbox
             title={title}
             content={permission}
             onCheckedFunction={() => {}}
             onUncheckedFunction={() => {}}
             isCheckOnRowClick={true}
-          />
+          /> */}
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { checklists } from '../data/checklist';
 
 export type TableData = {
   title: string[];
@@ -7,6 +8,8 @@ export type TableData = {
   onUncheckedFunction: Function;
   onClickFunction?: Function;
   isCheckOnRowClick?: Boolean;
+  selectedData: object[],
+  setSelectedData: React.Dispatch<React.SetStateAction<any[]>>
 };
 
 function toPascalCase(text: string) {
@@ -29,30 +32,26 @@ export default function TableCheckbox({
   onUncheckedFunction,
   onClickFunction = () => { },
   isCheckOnRowClick = false,
+  selectedData,
+  setSelectedData
 }: TableData) {
-  const [isCheckedAll, setIsCheckedAll] = useState(false);
-  const [checkedList, setCheckedList] = useState<String[]>([]);
-
   const handleCheckAll = (e: any) => {
-    setIsCheckedAll(!isCheckedAll);
-
-    if (!isCheckedAll) {
-      setCheckedList(
-        Array.from({ length: content.length }, (_, i) => `check-${i}`)
-      );
+    if (content.length === selectedData.length){
+      setSelectedData([]);
       return;
     }
 
-    setCheckedList([]);
+    setSelectedData([...content]);
   };
 
-  const handleCheck = (e: any, id: String, item: any) => {
-    if (!checkedList.includes(id)) {
-      setCheckedList([...checkedList, id]);
+  const handleCheck = (e: any, item: any) => {
+    const data = selectedData.map(data => (data as any).id);
+    if (!data.includes(item.id)) {
+      setSelectedData([...selectedData, item]);
       return;
     }
 
-    setCheckedList(checkedList.filter((item) => item !== id));
+    setSelectedData(selectedData.filter(data => (data as any).id !== item.id));
   };
 
   return (
@@ -67,7 +66,7 @@ export default function TableCheckbox({
                     <div className='px-3'>
                       <input
                         id="check-all"
-                        checked={isCheckedAll}
+                        checked={selectedData.length === content.length}
                         onChange={handleCheckAll}
                         type="checkbox"
                         className="flex w-4 h-4 mx-auto text-blue-600 bg-gray-100 border-gray-300 rounded mx- focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -96,7 +95,7 @@ export default function TableCheckbox({
                           return;
                         }
                         if (isCheckOnRowClick) {
-                          handleCheck(e, `check-${contentIndex}`, c);
+                          handleCheck(e, c);
                         }
                         onCheckedFunction(c);
                       }}
@@ -109,11 +108,9 @@ export default function TableCheckbox({
                           <input
                             type="checkbox"
                             onChange={(e) => {
-                              handleCheck(e, `check-${contentIndex}`, c);
+                              handleCheck(e, c);
                             }}
-                            checked={checkedList.includes(
-                              `check-${contentIndex}`
-                            )}
+                            checked={selectedData.map(data => (data as any).id).includes((c as any).id)}
                             className="flex w-4 h-4 mx-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                           /></div>
                       </td>
