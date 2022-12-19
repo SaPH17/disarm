@@ -18,7 +18,7 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Delete Group',
-    onClickFunction: () => { }
+    onClickFunction: () => {},
   },
 ];
 
@@ -64,9 +64,6 @@ export default function ManageGroupIndex() {
             }}
             onUncheckedFunction={(group: any) => {
               setSelectedGroup(selectedGroup.filter((item) => item !== group));
-            }}
-            onClickFunction={(group: any) => {
-              navigate(`/groups/${group.id}`);
             }}
           />
         )}

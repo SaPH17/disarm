@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { UserFormData } from '../../../models/forms/user-form-data';
 import { GeneralData } from '../../../models/general-data';
 import { Group } from '../../../models/group';
 import { User } from '../../../models/user';
-import GroupServices from '../../../services/group-services';
 import UserServices from '../../../services/user-services';
-import UserService from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
@@ -16,16 +14,18 @@ import GroupCard from './group-card';
 
 export default function EditUserForm() {
   const params = useParams();
-  const { data: userData } = useQuery(`users/${params.id}`, () => UserServices.getOneUser(params.id));
+  const { data: userData } = useQuery(`users/${params.id}`, () =>
+    UserServices.getOneUser(params.id)
+  );
   const { data: usersData } = useQuery(`users`, UserServices.getUsers);
-  
-  const user = {
-    ...userData,
-    
-  } || null;
+
+  const user =
+    {
+      ...userData,
+    } || null;
   const users = usersData?.filter((u: User) => u.id !== user.id) || null;
   console.log(users);
-  
+
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
   const [availableGroups, setAvailableGroups] = useState<Group[]>();
 
@@ -68,7 +68,7 @@ export default function EditUserForm() {
     if (!user) return;
     reset(user);
   }, [userData]);
-  
+
   return user ? (
     <form className="space-y-8" onSubmit={handleSubmit(handleCreateUserButton)}>
       <div className="space-y-6 sm:space-y-5">
@@ -148,7 +148,7 @@ export default function EditUserForm() {
         )}
       </div>
       <div className="flex flex-row justify-end">
-        <PrimaryButton content="Create User" type="submit" />
+        <PrimaryButton content="Edit User" type="submit" />
       </div>
     </form>
   ) : (

@@ -1,5 +1,4 @@
 import { UserFormData } from "../../models/forms/user-form-data";
-import AuthServices from "../../services/auth-services";
 import UserServices from "../../services/user-services";
 
 export class CreateUserHandler {

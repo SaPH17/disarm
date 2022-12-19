@@ -11,16 +11,20 @@ import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
 import UserCard from '../project/user-card';
+import FormErrorMessage from '../../input-text/form-error-message';
+import { toast } from 'react-toastify';
+import { GroupHandler } from '../../../handlers/group/group-handler';
 
 const CreateGroupForm = () => {
   const { data: usersData } = useQuery('users', UserServices.getUsers);
   const { data: groupsData } = useQuery('groups', GroupServices.getGroups);
 
-  const users = usersData?.map((user: User) => ({
-    id: user.id,
-    name: user.username,
-    email: user.email
-  })) || null;
+  const users =
+    usersData?.map((user: User) => ({
+      id: user.id,
+      name: user.username,
+      email: user.email,
+    })) || null;
 
   const groups =
     groupsData?.map((r: Group) => ({
@@ -31,7 +35,6 @@ const CreateGroupForm = () => {
       permissions: r.permissions,
     })) || null;
 
-
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>();
 
@@ -39,17 +42,20 @@ const CreateGroupForm = () => {
     register,
     formState: { errors },
     handleSubmit,
+    setValue,
   } = useForm<GroupFormData>();
 
   function getCurrentUser(item: any) {
     const tempSelectedUser = [...selectedUsers, item];
     resetAssignedUserState(tempSelectedUser);
+    setValue('assignedUser', true);
   }
 
   function removeCurrentUser(user: any) {
     const tempSelectedUser = selectedUsers.filter(
       (selectedUser) => selectedUser.id !== user.id
     );
+    if (!tempSelectedUser.length) setValue('assignedUser', false);
     resetAssignedUserState(tempSelectedUser);
   }
 
@@ -64,13 +70,29 @@ const CreateGroupForm = () => {
   }
 
   function handleCreateGroupButton(data: GroupFormData) {
-    console.log(data);
+    try {
+      toast.promise(
+        GroupHandler.handleCreateGroupFormSubmit(
+          data,
+          selectedUsers.map((user) => user.id) as string[]
+        ),
+        {
+          success: 'Successfully create new group',
+          pending: 'Waiting for create new group!',
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        }
+      );
+    } catch (e) {}
   }
 
   useEffect(() => {
     if (!usersData) return;
     setAvailableUsers(users);
-  }, [usersData])
+  }, [usersData]);
 
   return groups && users ? (
     <form
@@ -104,21 +126,35 @@ const CreateGroupForm = () => {
           />
         </div>
 
-        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label
-            htmlFor="country"
-            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-          >
-            Parent Group
-          </label>
-          <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
-            <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-              <SelectBox
-                items={groups as GeneralData[]}
-                defaultValue={'None'}
-              />
-            </div>
-          </div>
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
+          <InputText
+            id="parent-group"
+            name="parentGroup"
+            label="Parent Group"
+            type="text"
+            datalist={
+              <datalist id="parent-groups">
+                {groups &&
+                  groups.map((group: Group) => {
+                    return <option key={group.id} value={group.name}></option>;
+                  })}
+                <option value=""></option>
+              </datalist>
+            }
+            listId={'parent-groups'}
+            errors={errors}
+            register={register('parentGroup', {
+              validate: (name) => {
+                if (name === '') {
+                  return true;
+                }
+                return groups.filter((group: Group) => group.name === name)
+                  .length !== 1
+                  ? 'Parent group is invalid'
+                  : true;
+              },
+            })}
+          />
         </div>
 
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -130,15 +166,21 @@ const CreateGroupForm = () => {
           </label>
           <div className="flex flex-col gap-4 mt-1 sm:mt-0 sm:col-span-2">
             <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-              {
-                availableUsers && <SelectBox
-                  items={availableUsers as GeneralData[]}
-                  defaultValue={'Select User'}
-                  onClickFunction={getCurrentUser}
-                />
-              }
+              {availableUsers && (
+                <>
+                  <SelectBox
+                    items={availableUsers as GeneralData[]}
+                    defaultValue={'Select User'}
+                    onClickFunction={getCurrentUser}
+                  />
+                  {errors && (
+                    <FormErrorMessage name={'assignedUser'} errors={errors} />
+                  )}
+                </>
+              )}
             </div>
             <div className="flex flex-col w-full max-w-lg gap-2 border-gray-300 rounded-md sm:text-sm">
+              <input type="hidden" {...register('assignedUser')} />
               {selectedUsers.map((selectedUser, index) => (
                 <UserCard
                   key={index}

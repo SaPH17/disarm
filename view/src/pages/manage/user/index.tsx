@@ -31,16 +31,16 @@ export default function ManageUserIndex() {
   const { data, refetch } = useQuery('users', UserServices.getUsers);
   const users =
     data?.map((r: User) => {
-      return ({
+      return {
         id: r.id,
         email: r.email,
         name: r.username,
         directSupervisor: (r.direct_supervisor_id as any).Valid
           ? r.direct_supervisor_id.String
           : '-',
-        groups: r.Groups?.map((group: Group) => group.name).join(", ") || '-',
+        groups: r.Groups?.map((group: Group) => group.name).join(', ') || '-',
         assignedProjects: '-',
-      })
+      };
     }) || [];
 
   const [selectedUser, setSelectedUser] = useState<User[]>([
@@ -55,23 +55,25 @@ export default function ManageUserIndex() {
       name: 'Delete User',
       onClickFunction: () => {
         if (!selectedUser.filter((user: User) => user.id !== -1).length) return;
-        setOpenDeletePopup(true)
-      }
+        setOpenDeletePopup(true);
+      },
     },
     {
       id: '2',
       name: 'Add to Group',
-      onClickFunction: () => { }
+      onClickFunction: () => {},
     },
     {
       id: '3',
       name: 'Assign to Project',
-      onClickFunction: () => { }
+      onClickFunction: () => {},
     },
   ];
 
   function deleteUsers() {
-    const ids = selectedUser.filter((user: User) => user.id !== -1).map((user: User) => user.id);
+    const ids = selectedUser
+      .filter((user: User) => user.id !== -1)
+      .map((user: User) => user.id);
     try {
       toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(ids), {
         success: `Successfully delete ${ids.length} user(s)!`,
@@ -79,13 +81,11 @@ export default function ManageUserIndex() {
         error: {
           render({ data }: any) {
             return data.message;
-          }
-        }
-      })
+          },
+        },
+      });
       refetch();
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   return (
@@ -106,7 +106,6 @@ export default function ManageUserIndex() {
             title={title}
             content={users as object[]}
             onCheckedFunction={(user: any) => {
-              console.log('here');
               setSelectedUser([...selectedUser, user]);
             }}
             onUncheckedFunction={(user: any) => {
@@ -135,7 +134,13 @@ export default function ManageUserIndex() {
         </div>
       </SelectedDetail>
       {
-        <DeletePopup title='Delete Users' selectedData={selectedUser.filter((user: User) => user.id !== -1)} onClickFunction={deleteUsers} open={openDeletePopup} setOpen={setOpenDeletePopup} />
+        <DeletePopup
+          title="Delete Users"
+          selectedData={selectedUser.filter((user: User) => user.id !== -1)}
+          onClickFunction={deleteUsers}
+          open={openDeletePopup}
+          setOpen={setOpenDeletePopup}
+        />
       }
     </>
   );

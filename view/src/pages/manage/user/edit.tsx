@@ -1,4 +1,4 @@
-import EditUserForm from "../../../components/page/user/edit-user-form";
+import EditUserForm from '../../../components/page/user/edit-user-form';
 
 export default function ManageUserEdit() {
   return (

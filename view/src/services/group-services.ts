@@ -15,4 +15,11 @@ export default class GroupServices {
     });
     return data.group;
   }
+
+  static async createGroup(body: object){
+    console.log(body)
+    return axios.post(`${process.env.REACT_APP_API_URL}/groups/`, body, {
+      withCredentials: true
+    });
+  }
 }

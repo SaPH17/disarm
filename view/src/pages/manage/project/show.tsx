@@ -1,9 +1,7 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import SelectedDetail from '../../../components/selected-detail';
 import Table from '../../../components/table';
 import PrimaryButton from '../../../components/primary-button';
-import { useEffect, useState } from 'react';
-import { Project } from '../../../models/project';
 import ProjectServices from '../../../services/project-services';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
@@ -57,7 +55,9 @@ const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectShow() {
   const params = useParams();
-  const { data } = useQuery(`project/${params.id}`, () => ProjectServices.getOneProject(params.id));
+  const { data } = useQuery(`project/${params.id}`, () =>
+    ProjectServices.getOneProject(params.id)
+  );
   const project = data || [];
 
   return project ? (
@@ -74,7 +74,9 @@ export default function ManageProjectShow() {
         content={project}
       />
       <div className="flex flex-row justify-end gap-4">
-        <PrimaryButton content="Insert Finding" />
+        <Link to={`/projects/${params.id}/insert-finding`}>
+          <PrimaryButton content="Insert Finding" />
+        </Link>
         <button
           type="button"
           className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

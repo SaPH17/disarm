@@ -33,7 +33,7 @@ export default function CreateUserForm() {
     usersData?.map((r: User) => ({
       id: r.id,
       username: r.username,
-      email: r.email
+      email: r.email,
     })) || [];
 
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
@@ -42,7 +42,7 @@ export default function CreateUserForm() {
     register,
     formState: { errors },
     handleSubmit,
-    setValue
+    setValue,
   } = useForm<UserFormData>();
 
   function getCurrentGroup(item: any) {
@@ -52,11 +52,11 @@ export default function CreateUserForm() {
   }
 
   function removeCurrentGroup(group: any) {
-    const tempSelectedUser = selectedGroups.filter(
+    const tempSelectedGroup = selectedGroups.filter(
       (selectedGroup) => selectedGroup.id !== group.id
     );
-    if (!tempSelectedUser.length) setValue('selectedGroup', false);
-    resetAssignedGroupState(tempSelectedUser);
+    if (!tempSelectedGroup.length) setValue('selectedGroup', false);
+    resetAssignedGroupState(tempSelectedGroup);
   }
 
   function resetAssignedGroupState(tempSelectedGroup: Group[]) {
@@ -73,22 +73,28 @@ export default function CreateUserForm() {
 
   async function handleCreateUserButton(data: UserFormData) {
     try {
-      toast.promise(CreateUserHandler.handleCreateUserFormSubmit(data, (selectedGroups.map(group => group.id) as string[])), {
-        success: "Successfully create new user",
-        pending: "Waiting for create new user!",
-        error: {
-          render({data} : any){
-            return data.message;
-          }
-        },
-      })
+      toast.promise(
+        CreateUserHandler.handleCreateUserFormSubmit(
+          data,
+          selectedGroups.map((group) => group.id) as string[]
+        ),
+        {
+          success: 'Successfully create new user',
+          pending: 'Waiting for create new user!',
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        }
+      );
     } catch (e) {}
   }
 
   useEffect(() => {
     if (!groupsData) return;
     setAvailableGroups(groups);
-  }, [groupsData])
+  }, [groupsData]);
 
   return groups ? (
     <form className="space-y-8" onSubmit={handleSubmit(handleCreateUserButton)}>
@@ -103,9 +109,11 @@ export default function CreateUserForm() {
             register={register('username', {
               required: 'Username is required.',
               validate: (username) => {
-                const countUser = users.filter((user: User) => user.username === username).length;
+                const countUser = users.filter(
+                  (user: User) => user.username === username
+                ).length;
                 return countUser ? 'Username must be unique' : true;
-              }
+              },
             })}
           />
         </div>
@@ -120,9 +128,11 @@ export default function CreateUserForm() {
             register={register('email', {
               required: 'Email is required.',
               validate: (email) => {
-                const countUser = users.filter((user: User) => user.email === email).length;
+                const countUser = users.filter(
+                  (user: User) => user.email === email
+                ).length;
                 return countUser ? 'Email must be unique' : true;
-              }
+              },
             })}
           />
         </div>
@@ -134,12 +144,11 @@ export default function CreateUserForm() {
             label="Direct Supervisor"
             type="email"
             datalist={
-              <datalist id='direct-supervisors'>
-                {
-                  users && users.map((user: User) => {
-                    return <option key={user.id} value={user.email}></option>
-                  })
-                }
+              <datalist id="direct-supervisors">
+                {users &&
+                  users.map((user: User) => {
+                    return <option key={user.id} value={user.email}></option>;
+                  })}
                 <option value=""></option>
               </datalist>
             }
@@ -148,9 +157,13 @@ export default function CreateUserForm() {
             register={register('directSupervisor', {
               required: 'Direct Supervisor is required.',
               validate: (email) => {
-                const countUser = users.filter((user: User) => user.email === email).length;
-                return !countUser ? 'Direct supervisor email is not existsx' : true;
-              }
+                const countUser = users.filter(
+                  (user: User) => user.email === email
+                ).length;
+                return !countUser
+                  ? 'Direct supervisor email is not exists'
+                  : true;
+              },
             })}
           />
         </div>
@@ -165,29 +178,35 @@ export default function CreateUserForm() {
           <div className="flex flex-col gap-4 mt-1 sm:mt-0 sm:col-span-2">
             <div className="flex flex-col gap-2">
               <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-                {
-                  availableGroups &&
+                {availableGroups && (
                   <>
                     <SelectBox
                       defaultValue="Select Group"
                       items={availableGroups as GeneralData[]}
                       onClickFunction={getCurrentGroup}
                     />
-                    {errors && <FormErrorMessage name={'selectedGroup'} errors={errors} />}
+                    {errors && (
+                      <FormErrorMessage
+                        name={'selectedGroup'}
+                        errors={errors}
+                      />
+                    )}
                   </>
-                }
-
+                )}
               </div>
               <span className="text-gray-500 underline cursor-pointer hover:text-gray-700 w-fit">
                 <Link to="/groups/create">Create a new group</Link>
               </span>
             </div>
             <div className="flex flex-col w-full max-w-lg gap-2 border-gray-300 rounded-md sm:text-sm">
-              <input type="hidden" {...register('selectedGroup', {
-                validate: (value) => {
-                  return !value ? 'You must select a group' : true;
-                }
-              })} />
+              <input
+                type="hidden"
+                {...register('selectedGroup', {
+                  validate: (value) => {
+                    return !value ? 'You must select a group' : true;
+                  },
+                })}
+              />
               {selectedGroups.map((selectedGroup, index) => (
                 <GroupCard
                   key={index}
