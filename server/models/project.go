@@ -3,7 +3,6 @@ package models
 import (
 	"disarm/main/database"
 
-
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -47,14 +46,14 @@ func (o *projectOrm) Create(name string, company string, phase string, checklist
 
 func (o *projectOrm) GetAll() ([]Project, error) {
 	var projects []Project
-	result := o.instance.Find(&projects)
+	result := o.instance.Preload("Checklist").Find(&projects)
 
 	return projects, result.Error
 }
 
 func (o *projectOrm) GetOneById(id uuid.UUID) (Project, error) {
 	var project Project
-	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
+	err := o.instance.Model(Project{}).Preload("Checklist").Where("id = ?", id).Take(&project).Error
 
 	return project, err
 }
