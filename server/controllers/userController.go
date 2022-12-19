@@ -14,11 +14,11 @@ import (
 
 func CreateUser(c *gin.Context) {
 	var body struct {
-		Email           string `json:"email" binding:"required"`
-		Username        string `json:"username" binding:"required"`
-		Password        string `json:"password"`
-		SupervisorEmail string `json:"directSupervisor"`
-		Groups			[]string `json:"groups"`
+		Email           string   `json:"email" binding:"required"`
+		Username        string   `json:"username" binding:"required"`
+		Password        string   `json:"password"`
+		SupervisorEmail string   `json:"directSupervisor"`
+		Groups          []string `json:"groups"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -61,8 +61,8 @@ func CreateUser(c *gin.Context) {
 	var groups []models.Group
 
 	if len(body.Groups) > 0 {
-		var dbGroupErr error;
-		var groupIds []uuid.UUID;
+		var dbGroupErr error
+		var groupIds []uuid.UUID
 		for _, element := range body.Groups {
 			groupIds = append(groupIds, uuid.FromStringOrNil(element))
 		}
@@ -206,7 +206,7 @@ func DeleteUser(c *gin.Context) {
 
 func DeleteUserByIds(c *gin.Context) {
 	var body struct {
-		Ids              []string `json:"ids" binding:"required"`
+		Ids []string `json:"ids" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

@@ -10,7 +10,7 @@ import (
 
 type Group struct {
 	Base
-	Name          string         `gorm:"size:255;not null;" json:"name"`
+	Name          string         `gorm:"size:255;not null;unique" json:"name"`
 	Description   string         `gorm:"size:255;not null;" json:"description"`
 	ParentGroupId sql.NullString `gorm:"size:255;" json:"parent_group_id"`
 	Permissions   string         `gorm:"size:255;not null;" json:"permissions"`
