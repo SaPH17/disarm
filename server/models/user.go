@@ -52,16 +52,16 @@ func init() {
 }
 
 func (o *userOrm) Create(email string, password string, username string, supervisor *User, groups []Group) (User, error) {
-	user := User{Email: email, Username: username, Password: password, Supervisor: supervisor, Groups: groups}
+	user := User{Email: email, Username: username, Password: password, SupervisorID: (*uuid.UUID)(&supervisor.ID), Groups: groups}
 
-	result := o.instance.Omit("Groups.*").Omit("Supervisor").Create(&user)
+	result := o.instance.Omit("Groups.*", "Supervisor").Create(&user)
 
 	return user, result.Error
 }
 
 func (o *userOrm) GetAll() ([]User, error) {
 	var users []User
-	result := o.instance.Preload("Groups").Find(&users)
+	result := o.instance.Preload("Groups").Preload("Supervisor").Find(&users)
 
 	return users, result.Error
 }
