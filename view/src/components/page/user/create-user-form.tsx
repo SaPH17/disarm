@@ -146,8 +146,8 @@ export default function CreateUserForm() {
             listId={'direct-supervisors'}
             errors={errors}
             register={register('directSupervisor', {
-              required: 'Direct Supervisor is required.',
               validate: (email) => {
+                if (!email) return true;
                 const countUser = users.filter((user: User) => user.email === email).length;
                 return !countUser ? 'Direct supervisor email is not existsx' : true;
               }

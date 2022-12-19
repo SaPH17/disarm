@@ -31,13 +31,12 @@ export default function ManageUserIndex() {
   const { data, refetch } = useQuery('users', UserServices.getUsers);
   const users =
     data?.map((r: User) => {
+      console.log(r)
       return ({
         id: r.id,
         email: r.email,
         name: r.username,
-        directSupervisor: (r.direct_supervisor_id as any).Valid
-          ? r.direct_supervisor_id.String
-          : '-',
+        directSupervisor: '-',
         groups: r.Groups?.map((group: Group) => group.name).join(", ") || '-',
         assignedProjects: '-',
       })
