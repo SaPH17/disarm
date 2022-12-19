@@ -195,14 +195,6 @@ export default function CreateUserForm() {
               </span>
             </div>
             <div className="flex flex-col w-full max-w-lg gap-2 border-gray-300 rounded-md sm:text-sm">
-              <input
-                type="hidden"
-                {...register('selectedGroup', {
-                  validate: (value) => {
-                    return !value ? 'You must select a group' : true;
-                  },
-                })}
-              />
               {selectedGroups.map((selectedGroup, index) => (
                 <GroupCard
                   key={index}

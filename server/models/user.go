@@ -52,7 +52,12 @@ func init() {
 }
 
 func (o *userOrm) Create(email string, password string, username string, supervisor *User, groups []Group) (User, error) {
-	user := User{Email: email, Username: username, Password: password, SupervisorID: (*uuid.UUID)(&supervisor.ID), Groups: groups}
+	var supervisorId *uuid.UUID = nil
+	if supervisor.ID != uuid.Nil {
+		supervisorId = (*uuid.UUID)(&supervisor.ID)
+	}
+
+	user := User{Email: email, Username: username, Password: password, SupervisorID: (*uuid.UUID)(supervisorId), Groups: groups}
 
 	result := o.instance.Omit("Groups.*", "Supervisor").Create(&user)
 

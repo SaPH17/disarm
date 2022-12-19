@@ -35,7 +35,7 @@ export default function ManageUserIndex() {
         id: r.id,
         email: r.email,
         name: r.username,
-        directSupervisor: '-',
+        directSupervisor: r.Supervisor?.username || '-',
         groups: r.Groups?.map((group: Group) => group.name).join(", ") || '-',
         assignedProjects: '-',
       });

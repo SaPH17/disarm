@@ -90,9 +90,9 @@ const CreateGroupForm = () => {
   }
 
   useEffect(() => {
-    if (!usersData) return;
+    if (!users) return;
     setAvailableUsers(users);
-  }, [usersData]);
+  }, [users]);
 
   return groups && users ? (
     <form

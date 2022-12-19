@@ -26,10 +26,7 @@ export const defaultUser: User = {
   email: '-',
   username: '-',
   name: '-',
-  direct_supervisor_id: {
-    Valid: false,
-    String: ''
-  },
+  supervisor_id: '-',
   groups: '-',
   assignedProjects: '-',
   directSupervisor: '-'
