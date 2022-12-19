@@ -3,24 +3,19 @@ import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Group } from '../../../models/group';
 import GroupServices from '../../../services/group-services';
 import TableCheckbox from '../../../components/table-checkbox';
 import { defaultGroup } from '../../../data/default-values';
 import { useQuery } from 'react-query';
+import { User } from '../../../models/user';
+import { toast } from 'react-toastify';
+import { GroupHandler } from '../../../handlers/group/group-handler';
+import DeletePopup from '../../../components/popup/delete-popup';
 
 const title = ['name', 'description'];
-
-const items: ActionButtonItem[] = [
-  {
-    id: '1',
-    name: 'Delete Group',
-    onClickFunction: () => {},
-  },
-];
 
 const contentTitle = [
   'name',
@@ -30,7 +25,23 @@ const contentTitle = [
 ];
 
 export default function ManageGroupIndex() {
-  const { data } = useQuery('groups', GroupServices.getGroups);
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<Group[]>([]);
+  const [activeGroup, setACtiveGroup] = useState<Group>(defaultGroup);
+  const items: ActionButtonItem[] = [
+    {
+      id: '1',
+      name: 'Delete Group',
+      onClickFunction: () => {
+        if (!selectedGroup) return;
+        if (!selectedGroup.filter((group: Group) => group.id !== -1).length)
+          return;
+        setOpenDeletePopup(true);
+      },
+    },
+  ];
+
+  const { data, refetch } = useQuery('groups', GroupServices.getGroups);
   const groups =
     data?.map((r: Group) => ({
       id: r.id,
@@ -40,9 +51,22 @@ export default function ManageGroupIndex() {
       permissions: r.permissions,
     })) || [];
 
-  const [selectedGroup, setSelectedGroup] = useState<Group[]>([defaultGroup]);
-  const [activeGroup, setACtiveGroup] = useState<Group>(defaultGroup);
-  const navigate = useNavigate();
+  function deleteGroups() {
+    if (!selectedGroup) return;
+    const ids = selectedGroup.map((group: Group) => group.id);
+    try {
+      toast.promise(GroupHandler.handleDeleteGroupSubmit(ids), {
+        success: `Successfully delete ${ids.length} group(s)!`,
+        pending: `Waiting for delete ${ids.length} group(s)!`,
+        error: {
+          render({ data }: any) {
+            return data.message;
+          },
+        },
+      });
+      refetch();
+    } catch (e) {}
+  }
 
   return (
     <>
@@ -63,7 +87,7 @@ export default function ManageGroupIndex() {
             setSelectedData={setSelectedGroup}
             content={groups as object[]}
             onRowClickFunction={(group: any) => {
-              setSelectedGroup([...selectedGroup, group]);
+              setACtiveGroup(group);
             }}
           />
         )}
@@ -72,28 +96,33 @@ export default function ManageGroupIndex() {
       <SelectedDetail
         title={'Group Detail'}
         contentTitle={contentTitle}
-        content={selectedGroup[selectedGroup.length - 1]}
+        content={activeGroup}
       >
         <div className="flex items-center gap-4">
           <div>
             <Link
-              to={`/groups/${
-                selectedGroup[selectedGroup.length - 1].id
-              }/edit-permission`}
+              to={`/groups/${activeGroup.id}/edit-permission`}
               className={'underline'}
             >
               Edit Permission
             </Link>
           </div>
           <div>
-            <Link
-              to={`/groups/${selectedGroup[selectedGroup.length - 1].id}/edit`}
-            >
+            <Link to={`/groups/${activeGroup.id}/edit`}>
               <PrimaryButton content="Edit" />
             </Link>
           </div>
         </div>
       </SelectedDetail>
+      {selectedGroup && (
+        <DeletePopup
+          title="Delete Users"
+          selectedData={selectedGroup}
+          onClickFunction={deleteGroups}
+          open={openDeletePopup}
+          setOpen={setOpenDeletePopup}
+        />
+      )}
     </>
   );
 }

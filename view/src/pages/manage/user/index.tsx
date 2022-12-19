@@ -83,8 +83,6 @@ export default function ManageUserIndex() {
     } catch (e) {}
   }
 
-  console.log(selectedUser);
-
   return (
     <>
       <div className="text-xl font-semibold">Manage User</div>

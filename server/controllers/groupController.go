@@ -3,7 +3,6 @@ package controllers
 import (
 	"disarm/main/models"
 	"disarm/main/utils"
-	"fmt"
 	"html"
 	"net/http"
 	"strings"
@@ -36,19 +35,14 @@ func CreateGroup(c *gin.Context) {
 	parentGroupId := utils.GetNullableString(escapedParentGroupId)
 
 	var users []models.User
-	fmt.Println("asdasd")
-	fmt.Println(body.Users)
 
 	if len(body.Users) > 0 {
-		fmt.Println("qweqeqqqe")
 		var dbUserErr error
 		var userIds []uuid.UUID
 		for _, element := range body.Users {
 			userIds = append(userIds, uuid.FromStringOrNil(element))
 		}
-		fmt.Println(userIds)
 		users, dbUserErr = models.Users.GetManyByIds(userIds)
-		fmt.Println(users)
 		if dbUserErr != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": dbUserErr,

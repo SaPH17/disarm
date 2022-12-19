@@ -17,9 +17,15 @@ export default class GroupServices {
   }
 
   static async createGroup(body: object){
-    console.log(body)
     return axios.post(`${process.env.REACT_APP_API_URL}/groups/`, body, {
       withCredentials: true
+    });
+  }
+
+  static async deleteUserByIds(body: object){
+    return axios.delete(`${process.env.REACT_APP_API_URL}/groups/`, {
+      withCredentials: true,
+      data: body
     });
   }
 }
