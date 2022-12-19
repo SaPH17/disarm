@@ -15,7 +15,7 @@ func CreateProject(c *gin.Context) {
 		Name        string `json:"name" binding:"required"`
 		Company     string `json:"company" binding:"required"`
 		Phase       string `json:"phase" binding:"required"`
-		ChecklistId string `json:"checklistId" binding:"required"`
+		ChecklistId string `json:"checklist_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -98,7 +98,7 @@ func EditProject(c *gin.Context) {
 		Name        string `json:"name" binding:"required"`
 		Company     string `json:"company" binding:"required"`
 		Phase       string `json:"phase" binding:"required"`
-		ChecklistId string `json:"checklistId" binding:"required"`
+		ChecklistId string `json:"checklist_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

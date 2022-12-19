@@ -14,10 +14,10 @@ func CreateFinding(c *gin.Context) {
 	var body struct {
 		Title          string `json:"title" binding:"required"`
 		Risk           string `json:"risk" binding:"required"`
-		ImpactedSystem string `json:"impactedSystem" binding:"required"`
-		ProjectId      string `json:"projectId" binding:"required"`
-		ChecklistId    string `json:"checklistId" binding:"required"`
-		UserId         string `json:"userId" binding:"required"`
+		ImpactedSystem string `json:"impacted_system" binding:"required"`
+		ProjectId      string `json:"project_id" binding:"required"`
+		ChecklistId    string `json:"checklist_id" binding:"required"`
+		UserId         string `json:"user_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -119,10 +119,10 @@ func EditFinding(c *gin.Context) {
 	var body struct {
 		Title          string `json:"title" binding:"required"`
 		Risk           string `json:"risk" binding:"required"`
-		ImpactedSystem string `json:"impactedSystem" binding:"required"`
-		ProjectId      string `json:"projectId" binding:"required"`
-		ChecklistId    string `json:"checklistId" binding:"required"`
-		UserId         string `json:"userId" binding:"required"`
+		ImpactedSystem string `json:"impacted_system" binding:"required"`
+		ProjectId      string `json:"project_id" binding:"required"`
+		ChecklistId    string `json:"checklist_id" binding:"required"`
+		UserId         string `json:"user_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

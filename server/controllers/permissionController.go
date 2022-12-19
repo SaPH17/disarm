@@ -12,9 +12,9 @@ import (
 
 func CreatePermission(c *gin.Context) {
 	var body struct {
-		PermissionActionId string `json:"permisionActionId" binding:"required"`
-		ObjectTypeId       string `json:"objectTypeId" binding:"required"`
-		ObjectId           string `json:"objectId" binding:"required"`
+		PermissionActionId string `json:"permission_action_id" binding:"required"`
+		ObjectTypeId       string `json:"object_type_id" binding:"required"`
+		ObjectId           string `json:"object_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -77,9 +77,9 @@ func GetAllPermission(c *gin.Context) {
 func EditPermission(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		PermissionActionId string `json:"permisionActionId" binding:"required"`
-		ObjectTypeId       string `json:"objectTypeId" binding:"required"`
-		ObjectId           string `json:"objectId" binding:"required"`
+		PermissionActionId string `json:"permission_action_id" binding:"required"`
+		ObjectTypeId       string `json:"object_type_id" binding:"required"`
+		ObjectId           string `json:"object_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

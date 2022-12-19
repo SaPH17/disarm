@@ -99,7 +99,7 @@ func EditChecklist(c *gin.Context) {
 	var body struct {
 		Name      string `json:"name" binding:"required"`
 		Status    string `json:"status" binding:"required"`
-		CreatedBy string `json:"createdBy" binding:"required"`
+		CreatedBy string `json:"created_by" binding:"required"`
 		Sections  string `json:"sections" binding:"required"`
 	}
 

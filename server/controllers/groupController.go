@@ -15,9 +15,9 @@ func CreateGroup(c *gin.Context) {
 	var body struct {
 		Name          string   `json:"name" binding:"required"`
 		Description   string   `json:"description" binding:"required"`
-		ParentGroupId string   `json:"parentGroupId"`
+		ParentGroupId string   `json:"parent_group_id"`
 		Permissions   string   `json:"permissions" binding:"required"`
-		Users         []string `json:"assignedUser"`
+		Users         []string `json:"assigned_user"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -109,9 +109,10 @@ func GetGroupById(c *gin.Context) {
 func EditGroup(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Name          string `json:"name" binding:"required"`
-		Description   string `json:"description" binding:"required"`
-		ParentGroupId string `json:"parentGroupId"`
+		Name          string   `json:"name" binding:"required"`
+		Description   string   `json:"description" binding:"required"`
+		ParentGroupId string   `json:"parent_group_id"`
+		Users         []string `json:"assigned_user"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -193,7 +194,7 @@ func EditGroupPermission(c *gin.Context) {
 func DeleteGroup(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	uuid, errUuid := uuid.FromString(escapedId)
+	idUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -202,7 +203,40 @@ func DeleteGroup(c *gin.Context) {
 		return
 	}
 
-	result, dbErr := models.Groups.Delete(uuid)
+	uuids := []uuid.UUID{idUuid}
+
+	result, dbErr := models.Groups.Delete(uuids)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"result": result,
+	})
+}
+
+func DeleteGroupByIds(c *gin.Context) {
+	var body struct {
+		Ids []string `json:"ids" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var parsedUuids []uuid.UUID
+	for _, element := range body.Ids {
+		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	}
+
+	result, dbErr := models.Groups.Delete(parsedUuids)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

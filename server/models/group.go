@@ -29,7 +29,7 @@ type GroupOrm interface {
 	GetManyByIds(ids []uuid.UUID) ([]Group, error)
 	Edit(id uuid.UUID, name string, description string, parentGroupId sql.NullString) (Group, error)
 	EditPermission(id uuid.UUID, permissions string) (Group, error)
-	Delete(id uuid.UUID) (bool, error)
+	Delete(ids []uuid.UUID) (bool, error)
 }
 
 var Groups GroupOrm
@@ -88,9 +88,9 @@ func (o *groupOrm) EditPermission(id uuid.UUID, permissions string) (Group, erro
 	return group, err
 }
 
-func (o *groupOrm) Delete(id uuid.UUID) (bool, error) {
+func (o *groupOrm) Delete(ids []uuid.UUID) (bool, error) {
 	var group Group
-	err := o.instance.Model(Group{}).Where("id = ?", id).Take(&group).Error
+	err := o.instance.Model(Group{}).Where("id IN ?", ids).Take(&group).Error
 	o.instance.Delete(&group)
 
 	return true, err

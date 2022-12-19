@@ -13,7 +13,7 @@ import (
 func CreateReport(c *gin.Context) {
 	var body struct {
 		File      string `json:"file" binding:"required"`
-		ProjectId string `json:"projectId" binding:"required"`
+		ProjectId string `json:"project_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

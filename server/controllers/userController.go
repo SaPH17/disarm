@@ -207,7 +207,7 @@ func EditUser(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	uuid, errUuid := uuid.FromString(escapedId)
+	idUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -216,7 +216,9 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	result, dbErr := models.Users.Delete(uuid)
+	uuids := []uuid.UUID{idUuid}
+
+	result, dbErr := models.Users.Delete(uuids)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -247,7 +249,7 @@ func DeleteUserByIds(c *gin.Context) {
 		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
 	}
 
-	result, dbErr := models.Users.DeleteManyByIds(parsedUuids)
+	result, dbErr := models.Users.Delete(parsedUuids)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
