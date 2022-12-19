@@ -14,4 +14,16 @@ export class GroupHandler {
           throw e;
         }
       }
+
+    static async handleDeleteGroupSubmit(selectedData: (string | number)[]) {
+      const body = {
+        ids: selectedData
+      }
+      console.log(body)
+      try {
+        return (await GroupServices.deleteUserByIds(body)).data;
+      } catch (e) {
+        throw e;
+      }
+    }
 }
