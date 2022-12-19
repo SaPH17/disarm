@@ -18,7 +18,7 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Delete Group',
-    url: '/',
+    onClickFunction: () => { }
   },
 ];
 
@@ -46,7 +46,7 @@ export default function ManageGroupIndex() {
   return (
     <>
       <div className="text-xl font-semibold">Manage Group</div>
-      <div className="flex flex-row gap-2 sm:gap-4 justify-between">
+      <div className="flex flex-row justify-between gap-2 sm:gap-4">
         <Link to="/groups/create">
           <PrimaryButton content="Create Group" />
         </Link>

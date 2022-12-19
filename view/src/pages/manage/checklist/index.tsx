@@ -16,7 +16,7 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Delete Checklist',
-    url: '/',
+    onClickFunction: () => { }
   },
 ];
 

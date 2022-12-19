@@ -32,6 +32,7 @@ type UserOrm interface {
 	GetOneById(id uuid.UUID) (User, error)
 	Edit(id uuid.UUID, email string, password string, username string, directSupervisorId sql.NullString) (User, error)
 	Delete(id uuid.UUID) (bool, error)
+	DeleteManyByIds(ids []uuid.UUID) (bool, error)
 }
 
 var Users UserOrm
@@ -93,6 +94,14 @@ func (o *userOrm) Delete(id uuid.UUID) (bool, error) {
 	var user User
 	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error
 	o.instance.Delete(&user)
+
+	return true, err
+}
+
+func (o *userOrm) DeleteManyByIds(ids []uuid.UUID) (bool, error) {
+	var users []User
+	err := o.instance.Model(User{}).Where("id IN ?", ids).Find(&users).Error
+	o.instance.Delete(&users)
 
 	return true, err
 }

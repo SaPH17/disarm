@@ -27,7 +27,7 @@ export default function TableCheckbox({
   content,
   onCheckedFunction,
   onUncheckedFunction,
-  onClickFunction = () => {},
+  onClickFunction = () => { },
   isCheckOnRowClick = false,
 }: TableData) {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
@@ -58,26 +58,28 @@ export default function TableCheckbox({
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200">
+        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div className="overflow-hidden border-b border-gray-200 shadow">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="py-3">
-                    <input
-                      id="check-all"
-                      checked={isCheckedAll}
-                      onChange={handleCheckAll}
-                      type="checkbox"
-                      className="flex mx-auto w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
+                    <div className='px-3'>
+                      <input
+                        id="check-all"
+                        checked={isCheckedAll}
+                        onChange={handleCheckAll}
+                        type="checkbox"
+                        className="flex w-4 h-4 mx-auto text-blue-600 bg-gray-100 border-gray-300 rounded mx- focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      />
+                    </div>
                   </th>
                   {title.map((t) => {
                     return (
                       <th
                         key={t}
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider"
+                        className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500"
                       >
                         {toPascalCase(t)}
                       </th>
@@ -99,21 +101,21 @@ export default function TableCheckbox({
                         onCheckedFunction(c);
                       }}
                       key={contentIndex}
-                      className={`${
-                        contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      } cursor-pointer hover:bg-gray-200`}
+                      className={`${contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        } cursor-pointer hover:bg-gray-200`}
                     >
                       <td className="py-4">
-                        <input
-                          type="checkbox"
-                          onChange={(e) => {
-                            handleCheck(e, `check-${contentIndex}`, c);
-                          }}
-                          checked={checkedList.includes(
-                            `check-${contentIndex}`
-                          )}
-                          className="flex mx-auto w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        />
+                        <div className="px-3">
+                          <input
+                            type="checkbox"
+                            onChange={(e) => {
+                              handleCheck(e, `check-${contentIndex}`, c);
+                            }}
+                            checked={checkedList.includes(
+                              `check-${contentIndex}`
+                            )}
+                            className="flex w-4 h-4 mx-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          /></div>
                       </td>
                       {title.map((t, titleIndex) => {
                         return (
@@ -129,9 +131,8 @@ export default function TableCheckbox({
                             {titleIndex === 0 ? (
                               <span
                                 onClick={(e) => onClickFunction(c)}
-                                className={`${
-                                  titleIndex === 0 ? 'hover:underline' : ''
-                                }`}
+                                className={`${titleIndex === 0 ? 'hover:underline' : ''
+                                  }`}
                               >
                                 {(c as any)[t]}
                               </span>

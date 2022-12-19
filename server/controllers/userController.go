@@ -203,3 +203,34 @@ func DeleteUser(c *gin.Context) {
 		"result": result,
 	})
 }
+
+func DeleteUserByIds(c *gin.Context) {
+	var body struct {
+		Ids              []string `json:"ids" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var parsedUuids []uuid.UUID
+	for _, element := range body.Ids {
+		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	}
+
+	result, dbErr := models.Users.DeleteManyByIds(parsedUuids)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"result": result,
+	})
+}

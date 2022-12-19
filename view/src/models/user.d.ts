@@ -1,4 +1,5 @@
 import { GeneralData } from "./general-data";
+import { Group } from "./group";
 
 export type User = GeneralData & {
   groups: string;
@@ -9,6 +10,7 @@ export type User = GeneralData & {
   email: string;
   username: string;
   directSupervisor?: string;
+  Groups? : Group[];
 }
 
 export type UserSupervisor = {

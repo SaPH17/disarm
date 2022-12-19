@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
+import DeletePopup from '../../../components/popup/delete-popup';
 import PrimaryButton from '../../../components/primary-button';
 import SelectedDetail from '../../../components/selected-detail';
 import TableCheckbox from '../../../components/table-checkbox';
 import { defaultUser } from '../../../data/default-values';
+import { DeleteUsersHandler } from '../../../handlers/user/delete-user-handler';
+import { Group } from '../../../models/group';
 import { User } from '../../../models/user';
 import UserServices from '../../../services/user-services';
 
-const title = ['name', 'groups'];
+const title = ['name', 'email', 'groups'];
 
 const contentTitle = [
   'name',
@@ -22,42 +26,67 @@ const contentTitle = [
 ];
 
 export default function ManageUserIndex() {
-  const { data } = useQuery('users', UserServices.getUsers);
+  const navigate = useNavigate();
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const { data, refetch } = useQuery('users', UserServices.getUsers);
   const users =
-    data?.map((r: User) => ({
-      id: r.id,
-      email: r.email,
-      name: r.username,
-      directSupervisor: (r.direct_supervisor_id as any).Valid
-        ? r.direct_supervisor_id.String
-        : '-',
-      groups: 'Group A',
-      assignedProjects: '-',
-    })) || [];
+    data?.map((r: User) => {
+      return ({
+        id: r.id,
+        email: r.email,
+        name: r.username,
+        directSupervisor: (r.direct_supervisor_id as any).Valid
+          ? r.direct_supervisor_id.String
+          : '-',
+        groups: r.Groups?.map((group: Group) => group.name).join(", ") || '-',
+        assignedProjects: '-',
+      })
+    }) || [];
 
   const [selectedUser, setSelectedUser] = useState<User[]>([
     {
       ...defaultUser,
     },
   ]);
-  const navigate = useNavigate();
+
   const items: ActionButtonItem[] = [
     {
       id: '1',
       name: 'Delete User',
-      url: '/',
+      onClickFunction: () => {
+        if (!selectedUser.filter((user: User) => user.id !== -1).length) return;
+        setOpenDeletePopup(true)
+      }
     },
     {
       id: '2',
       name: 'Add to Group',
-      url: '/',
+      onClickFunction: () => { }
     },
     {
       id: '3',
       name: 'Assign to Project',
-      url: '/',
+      onClickFunction: () => { }
     },
   ];
+
+  function deleteUsers() {
+    const ids = selectedUser.filter((user: User) => user.id !== -1).map((user: User) => user.id);
+    try {
+      toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(ids), {
+        success: `Successfully delete ${ids.length} user(s)!`,
+        pending: `Waiting for delete ${ids.length} user(s)!`,
+        error: {
+          render({ data }: any) {
+            return data.message;
+          }
+        }
+      })
+      refetch();
+    } catch (e) {
+
+    }
+  }
 
   return (
     <>
@@ -77,6 +106,7 @@ export default function ManageUserIndex() {
             title={title}
             content={users as object[]}
             onCheckedFunction={(user: any) => {
+              console.log('here');
               setSelectedUser([...selectedUser, user]);
             }}
             onUncheckedFunction={(user: any) => {
@@ -104,6 +134,9 @@ export default function ManageUserIndex() {
           </div>
         </div>
       </SelectedDetail>
+      {
+        <DeletePopup title='Delete Users' selectedData={selectedUser.filter((user: User) => user.id !== -1)} onClickFunction={deleteUsers} open={openDeletePopup} setOpen={setOpenDeletePopup} />
+      }
     </>
   );
 }

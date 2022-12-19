@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { CreateUserHandler } from '../../../handlers/user/create-user-handler';
 import { UserFormData } from '../../../models/forms/user-form-data';
 import { GeneralData } from '../../../models/general-data';
@@ -72,7 +73,15 @@ export default function CreateUserForm() {
 
   async function handleCreateUserButton(data: UserFormData) {
     try {
-      await CreateUserHandler.handleCreateUserFormSubmit(data, (selectedGroups.map(group => group.id) as string[]));
+      toast.promise(CreateUserHandler.handleCreateUserFormSubmit(data, (selectedGroups.map(group => group.id) as string[])), {
+        success: "Successfully create new user",
+        pending: "Waiting for create new user!",
+        error: {
+          render({data} : any){
+            return data.message;
+          }
+        },
+      })
     } catch (e) {}
   }
 

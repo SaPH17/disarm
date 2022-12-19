@@ -17,17 +17,17 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Add User',
-    url: '/',
+    onClickFunction: () => { }
   },
   {
     id: '2',
     name: 'Generate Report',
-    url: '/',
+    onClickFunction: () => { }
   },
   {
     id: '3',
     name: 'Delete Project',
-    url: '/',
+    onClickFunction: () => { }
   },
 ];
 
