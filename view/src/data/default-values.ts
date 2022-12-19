@@ -18,6 +18,7 @@ export const defaultGroup: Group = {
   name: '-',
   description: '-',
   permissions: '-',
+  users: [],
   directParentGroup: '-',
 };
 

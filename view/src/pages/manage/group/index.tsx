@@ -10,7 +10,6 @@ import GroupServices from '../../../services/group-services';
 import TableCheckbox from '../../../components/table-checkbox';
 import { defaultGroup } from '../../../data/default-values';
 import { useQuery } from 'react-query';
-import { User } from '../../../models/user';
 import { toast } from 'react-toastify';
 import { GroupHandler } from '../../../handlers/group/group-handler';
 import DeletePopup from '../../../components/popup/delete-popup';

@@ -157,9 +157,13 @@ export default function CreateUserForm() {
             register={register('directSupervisor', {
               validate: (email) => {
                 if (!email) return true;
-                const countUser = users.filter((user: User) => user.email === email).length;
-                return !countUser ? 'Direct supervisor email is not existsx' : true;
-              }
+                const countUser = users.filter(
+                  (user: User) => user.email === email
+                ).length;
+                return !countUser
+                  ? 'Direct supervisor email is not existsx'
+                  : true;
+              },
             })}
           />
         </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionButton, {
-  ActionButtonItem
+  ActionButtonItem,
 } from '../../../components/action-button';
 import PrimaryButton from '../../../components/primary-button';
 import SelectedDetail from '../../../components/selected-detail';
@@ -16,7 +16,7 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Delete Checklist',
-    onClickFunction: () => { }
+    onClickFunction: () => {},
   },
 ];
 
@@ -32,18 +32,20 @@ const contentTitle = [
 
 export default function ManageChecklistIndex() {
   const navigate = useNavigate();
-  const { data: checklistsData } = useQuery('checklists', ChecklistServices.getChecklists);
+  const { data: checklistsData } = useQuery(
+    'checklists',
+    ChecklistServices.getChecklists
+  );
 
-  const checklists = checklistsData?.map((checklist: Checklist) => ({
-    ...checklist,
-    lastModified: toReadableDateTime(new Date(checklist.updated_at)),
-    createdBy: checklist.User?.username || '-',
-    createdAt: toReadableDateTime(new Date(checklist.created_at))
-  })) || null;
-
-  const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>([
-    defaultChecklist,
-  ]);
+  const checklists =
+    checklistsData?.map((checklist: Checklist) => ({
+      ...checklist,
+      lastModified: toReadableDateTime(new Date(checklist.updated_at)),
+      createdBy: checklist.User?.username || '-',
+      createdAt: toReadableDateTime(new Date(checklist.created_at)),
+    })) || null;
+  const [activeChecklist, setActiveChecklist] = useState<Checklist>(defaultChecklist);
+  const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>([]);
 
   return checklists ? (
     <>
@@ -56,34 +58,30 @@ export default function ManageChecklistIndex() {
       </div>
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Checklists</div>
-        {
-          // checklists && <TableCheckbox
-          //   title={title}
-          //   content={checklists as object[]}
-          //   onCheckedFunction={(checklist: any) => {
-          //     setSelectedChecklist([...selectedChecklist, checklist]);
-          //   }}
-          //   onUncheckedFunction={(checklist: any) => {
-          //     setSelectedChecklist(
-          //       selectedChecklist.filter((item) => item !== checklist)
-          //     );
-          //   }}
-          //   onClickFunction={(checklist: any) => {
-          //     navigate(`/checklists/${checklist.id}`);
-          //   }}
-          // />
-        }
+        {checklists && (
+          <TableCheckbox
+            title={title}
+            content={checklists as object[]}
+            selectedData={selectedChecklist}
+            setSelectedData={setSelectedChecklist}
+            onRowClickFunction={(checklist: any) => {
+              setActiveChecklist(checklist);
+            }}
+            onClickFunction={(checklist: any) => {
+              navigate(`/checklists/${checklist.id}`);
+            }}
+          />
+        )}
       </div>
 
       <SelectedDetail
         title={'Checklist Detail'}
         contentTitle={contentTitle}
-        content={selectedChecklist[selectedChecklist.length - 1]}
+        content={activeChecklist}
       >
         <div className="flex items-center gap-4">
           <Link
-            to={`/checklists/${selectedChecklist[selectedChecklist.length - 1].id
-              }`}
+            to={`/checklists/${activeChecklist.id}`}
             className={'underline'}
           >
             View Detail
@@ -91,10 +89,7 @@ export default function ManageChecklistIndex() {
           <Link to="/" className={'underline'}>
             Apply to Project
           </Link>
-          <Link
-            to={`/checklists/${selectedChecklist[selectedChecklist.length - 1].id
-              }/edit`}
-          >
+          <Link to={`/checklists/${activeChecklist.id}/edit`}>
             <PrimaryButton content="Edit" />
           </Link>
         </div>

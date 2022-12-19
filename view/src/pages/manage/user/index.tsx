@@ -31,14 +31,14 @@ export default function ManageUserIndex() {
   const { data, refetch } = useQuery('users', UserServices.getUsers);
   const users =
     data?.map((r: User) => {
-      return ({
+      return {
         id: r.id,
         email: r.email,
         name: r.username,
         directSupervisor: r.Supervisor?.username || '-',
-        groups: r.Groups?.map((group: Group) => group.name).join(", ") || '-',
+        groups: r.Groups?.map((group: Group) => group.name).join(', ') || '-',
         assignedProjects: '-',
-      });
+      };
     }) || [];
 
   const [activeUser, setActiveUser] = useState<User>(defaultUser);
