@@ -57,21 +57,21 @@ export default function ManageChecklistIndex() {
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Checklists</div>
         {
-          checklists && <TableCheckbox
-            title={title}
-            content={checklists as object[]}
-            onCheckedFunction={(checklist: any) => {
-              setSelectedChecklist([...selectedChecklist, checklist]);
-            }}
-            onUncheckedFunction={(checklist: any) => {
-              setSelectedChecklist(
-                selectedChecklist.filter((item) => item !== checklist)
-              );
-            }}
-            onClickFunction={(checklist: any) => {
-              navigate(`/checklists/${checklist.id}`);
-            }}
-          />
+          // checklists && <TableCheckbox
+          //   title={title}
+          //   content={checklists as object[]}
+          //   onCheckedFunction={(checklist: any) => {
+          //     setSelectedChecklist([...selectedChecklist, checklist]);
+          //   }}
+          //   onUncheckedFunction={(checklist: any) => {
+          //     setSelectedChecklist(
+          //       selectedChecklist.filter((item) => item !== checklist)
+          //     );
+          //   }}
+          //   onClickFunction={(checklist: any) => {
+          //     navigate(`/checklists/${checklist.id}`);
+          //   }}
+          // />
         }
       </div>
 

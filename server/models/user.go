@@ -14,11 +14,12 @@ import (
 
 type User struct {
 	Base
-	Groups             []Group        `gorm:"many2many:user_groups"`
-	Email              string         `gorm:"size:255;not null;unique" json:"email"`
-	Username           string         `gorm:"size:255;not null;unique" json:"username"`
-	Password           string         `gorm:"size:255;not null;" json:"password"`
-	DirectSupervisorId sql.NullString `gorm:"size:255;" json:"direct_supervisor_id"`
+	Groups       []Group    `gorm:"many2many:user_groups"`
+	Email        string     `gorm:"size:255;not null;unique" json:"email"`
+	Username     string     `gorm:"size:255;not null;unique" json:"username"`
+	Password     string     `gorm:"size:255;not null;" json:"password"`
+	SupervisorID *uuid.UUID `gorm:"type:uuid;" json:"supervisor_id"`
+	Supervisor   *User      `gorm:"foreignkey:SupervisorID"`
 }
 
 type userOrm struct {
@@ -26,7 +27,7 @@ type userOrm struct {
 }
 
 type UserOrm interface {
-	Create(email string, password string, username string, directSupervisorId sql.NullString, groups []Group) (User, error)
+	Create(email string, password string, username string, supervisor *User, groups []Group) (User, error)
 	GetAll() ([]User, error)
 	GetOneByEmail(email string) (User, error)
 	GetOneById(id uuid.UUID) (User, error)
@@ -50,10 +51,10 @@ func init() {
 	fmt.Println(err)
 }
 
-func (o *userOrm) Create(email string, password string, username string, directSupervisorId sql.NullString, groups []Group) (User, error) {
-	user := User{Email: email, Username: username, Password: password, DirectSupervisorId: directSupervisorId, Groups: groups}
+func (o *userOrm) Create(email string, password string, username string, supervisor *User, groups []Group) (User, error) {
+	user := User{Email: email, Username: username, Password: password, Supervisor: supervisor, Groups: groups}
 
-	result := o.instance.Omit("Groups.*").Create(&user)
+	result := o.instance.Omit("Groups.*").Omit("Supervisor").Create(&user)
 
 	return user, result.Error
 }
@@ -92,7 +93,6 @@ func (o *userOrm) Edit(id uuid.UUID, email string, password string, username str
 	user.Email = email
 	user.Password = password
 	user.Username = username
-	user.DirectSupervisorId = directSupervisorId
 	o.instance.Save(user)
 
 	return user, err
@@ -126,7 +126,8 @@ func (s *UsersSeeder) Seed(db *gorm.DB) error {
 	var users []User
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("root"), bcrypt.DefaultCost)
 
-	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword), DirectSupervisorId: sql.NullString{String: "", Valid: false}})
+	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword)})
+	// ,DirectSupervisorId: sql.NullString{String: "", Valid: false}}
 
 	return db.CreateInBatches(users, s.Configuration.Rows).Error
 }

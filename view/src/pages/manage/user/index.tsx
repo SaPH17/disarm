@@ -43,17 +43,15 @@ export default function ManageUserIndex() {
       };
     }) || [];
 
-  const [selectedUser, setSelectedUser] = useState<User[]>([
-    {
-      ...defaultUser,
-    },
-  ]);
+  const [activeUser, setActiveUser] = useState<User>(defaultUser);
+  const [selectedUser, setSelectedUser] = useState<User[]>([]);
 
   const items: ActionButtonItem[] = [
     {
       id: '1',
       name: 'Delete User',
       onClickFunction: () => {
+        if (!selectedUser) return;
         if (!selectedUser.filter((user: User) => user.id !== -1).length) return;
         setOpenDeletePopup(true);
       },
@@ -71,9 +69,8 @@ export default function ManageUserIndex() {
   ];
 
   function deleteUsers() {
-    const ids = selectedUser
-      .filter((user: User) => user.id !== -1)
-      .map((user: User) => user.id);
+    if (!selectedUser) return;
+    const ids = selectedUser.map((user: User) => user.id);
     try {
       toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(ids), {
         success: `Successfully delete ${ids.length} user(s)!`,
@@ -104,12 +101,15 @@ export default function ManageUserIndex() {
         {users && (
           <TableCheckbox
             title={title}
+            selectedData={selectedUser}
+            setSelectedData={setSelectedUser}
             content={users as object[]}
             onCheckedFunction={(user: any) => {
               setSelectedUser([...selectedUser, user]);
+              setActiveUser(user);
             }}
             onUncheckedFunction={(user: any) => {
-              setSelectedUser(selectedUser.filter((item) => item !== user));
+              // setactiveUser(activeUser.filter((item) => item !== user));
             }}
             onClickFunction={(user: any) => {
               navigate(`/users/${user.id}`);
@@ -121,27 +121,25 @@ export default function ManageUserIndex() {
       <SelectedDetail
         title={'User Detail'}
         contentTitle={contentTitle}
-        content={selectedUser[selectedUser.length - 1]}
+        content={activeUser}
       >
         <div className="flex items-center gap-4">
           <div>
-            <Link
-              to={`/users/${selectedUser[selectedUser.length - 1].id}/edit`}
-            >
+            <Link to={`/users/${activeUser.id}/edit`}>
               <PrimaryButton content="Edit" />
             </Link>
           </div>
         </div>
       </SelectedDetail>
-      {
+      {selectedUser && (
         <DeletePopup
           title="Delete Users"
-          selectedData={selectedUser.filter((user: User) => user.id !== -1)}
+          selectedData={selectedUser}
           onClickFunction={deleteUsers}
           open={openDeletePopup}
           setOpen={setOpenDeletePopup}
         />
-      }
+      )}
     </>
   );
 }

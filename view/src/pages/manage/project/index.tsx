@@ -61,7 +61,7 @@ export default function ManageProjectIndex() {
       </div>
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Projects</div>
-        <TableCheckbox
+        {/* <TableCheckbox
           title={title}
           content={projects as object[]}
           onCheckedFunction={(project: any) => {
@@ -73,7 +73,7 @@ export default function ManageProjectIndex() {
             );
           }}
           onClickFunction={handleRedirectToProjectDetail}
-        />
+        /> */}
       </div>
 
       <SelectedDetail

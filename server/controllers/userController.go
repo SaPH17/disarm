@@ -32,10 +32,11 @@ func CreateUser(c *gin.Context) {
 	escapedEmail := html.EscapeString(strings.TrimSpace(body.Email))
 	escapedDirectSupervisorEmail := html.EscapeString(strings.TrimSpace(body.SupervisorEmail))
 
-	directSupervisorId := utils.GetNullableString(escapedDirectSupervisorEmail)
+	var supervisor models.User
+	var dbErr error
 
 	if escapedDirectSupervisorEmail != "" {
-		user, dbErr := models.Users.GetOneByEmail(escapedDirectSupervisorEmail)
+		supervisor, dbErr = models.Users.GetOneByEmail(escapedDirectSupervisorEmail)
 
 		if dbErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -43,7 +44,6 @@ func CreateUser(c *gin.Context) {
 			})
 			return
 		}
-		directSupervisorId = utils.GetNullableString(user.ID.String())
 	}
 
 	if body.Password == "" {
@@ -76,7 +76,7 @@ func CreateUser(c *gin.Context) {
 		}
 	}
 
-	user, dbErr := models.Users.Create(escapedEmail, string(hashedPassword), escapedUsername, directSupervisorId, groups)
+	user, dbErr := models.Users.Create(escapedEmail, string(hashedPassword), escapedUsername, &supervisor, groups)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -108,7 +108,7 @@ func GetAllUser(c *gin.Context) {
 func GetUserById(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	uuid, errUuid := uuid.FromString(escapedId)
+	currentUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -117,7 +117,7 @@ func GetUserById(c *gin.Context) {
 		return
 	}
 
-	user, dbErr := models.Users.GetOneById(uuid)
+	user, dbErr := models.Users.GetOneById(currentUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -126,8 +126,34 @@ func GetUserById(c *gin.Context) {
 		return
 	}
 
+	// if !user.DirectSupervisorId.Valid {
+	// 	c.JSON(200, gin.H{
+	// 		"user": user,
+	// 	})
+
+	// 	return
+	// }
+	// parentUuid, errParentUuid := uuid.FromString(user.DirectSupervisorId.String)
+
+	// if errParentUuid != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"error": errParentUuid.Error(),
+	// 	})
+	// 	return
+	// }
+
+	// parentUser, dbErr := models.Users.GetOneById(parentUuid)
+
+	// if dbErr != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": dbErr,
+	// 	})
+	// 	return
+	// }
+
 	c.JSON(200, gin.H{
 		"user": user,
+		// "parentUser": parentUser,
 	})
 }
 
