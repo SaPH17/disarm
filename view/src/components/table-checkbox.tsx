@@ -4,12 +4,11 @@ import { checklists } from '../data/checklist';
 export type TableData = {
   title: string[];
   content: object[];
-  onCheckedFunction: Function;
-  onUncheckedFunction: Function;
+  onRowClickFunction: Function;
   onClickFunction?: Function;
   isCheckOnRowClick?: Boolean;
-  selectedData: object[],
-  setSelectedData: React.Dispatch<React.SetStateAction<any[]>>
+  selectedData: object[];
+  setSelectedData: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 function toPascalCase(text: string) {
@@ -28,15 +27,14 @@ function classNames(...classes: string[]) {
 export default function TableCheckbox({
   title,
   content,
-  onCheckedFunction,
-  onUncheckedFunction,
-  onClickFunction = () => { },
+  onRowClickFunction,
+  onClickFunction = () => {},
   isCheckOnRowClick = false,
   selectedData,
-  setSelectedData
+  setSelectedData,
 }: TableData) {
   const handleCheckAll = (e: any) => {
-    if (content.length === selectedData.length){
+    if (content.length === selectedData.length) {
       setSelectedData([]);
       return;
     }
@@ -45,13 +43,15 @@ export default function TableCheckbox({
   };
 
   const handleCheck = (e: any, item: any) => {
-    const data = selectedData.map(data => (data as any).id);
+    const data = selectedData.map((data) => (data as any).id);
     if (!data.includes(item.id)) {
       setSelectedData([...selectedData, item]);
       return;
     }
 
-    setSelectedData(selectedData.filter(data => (data as any).id !== item.id));
+    setSelectedData(
+      selectedData.filter((data) => (data as any).id !== item.id)
+    );
   };
 
   return (
@@ -63,7 +63,7 @@ export default function TableCheckbox({
               <thead className="bg-gray-50">
                 <tr>
                   <th className="py-3">
-                    <div className='px-3'>
+                    <div className="px-3">
                       <input
                         id="check-all"
                         checked={selectedData.length === content.length}
@@ -97,11 +97,12 @@ export default function TableCheckbox({
                         if (isCheckOnRowClick) {
                           handleCheck(e, c);
                         }
-                        onCheckedFunction(c);
+                        onRowClickFunction(c);
                       }}
                       key={contentIndex}
-                      className={`${contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                        } cursor-pointer hover:bg-gray-200`}
+                      className={`${
+                        contentIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      } cursor-pointer hover:bg-gray-200`}
                     >
                       <td className="py-4">
                         <div className="px-3">
@@ -110,9 +111,12 @@ export default function TableCheckbox({
                             onChange={(e) => {
                               handleCheck(e, c);
                             }}
-                            checked={selectedData.map(data => (data as any).id).includes((c as any).id)}
+                            checked={selectedData
+                              .map((data) => (data as any).id)
+                              .includes((c as any).id)}
                             className="flex w-4 h-4 mx-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                          /></div>
+                          />
+                        </div>
                       </td>
                       {title.map((t, titleIndex) => {
                         return (
@@ -128,8 +132,9 @@ export default function TableCheckbox({
                             {titleIndex === 0 ? (
                               <span
                                 onClick={(e) => onClickFunction(c)}
-                                className={`${titleIndex === 0 ? 'hover:underline' : ''
-                                  }`}
+                                className={`${
+                                  titleIndex === 0 ? 'hover:underline' : ''
+                                }`}
                               >
                                 {(c as any)[t]}
                               </span>

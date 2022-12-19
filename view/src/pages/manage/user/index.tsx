@@ -85,6 +85,8 @@ export default function ManageUserIndex() {
     } catch (e) {}
   }
 
+  console.log(selectedUser);
+
   return (
     <>
       <div className="text-xl font-semibold">Manage User</div>
@@ -104,12 +106,8 @@ export default function ManageUserIndex() {
             selectedData={selectedUser}
             setSelectedData={setSelectedUser}
             content={users as object[]}
-            onCheckedFunction={(user: any) => {
-              setSelectedUser([...selectedUser, user]);
+            onRowClickFunction={(user: any) => {
               setActiveUser(user);
-            }}
-            onUncheckedFunction={(user: any) => {
-              // setactiveUser(activeUser.filter((item) => item !== user));
             }}
             onClickFunction={(user: any) => {
               navigate(`/users/${user.id}`);

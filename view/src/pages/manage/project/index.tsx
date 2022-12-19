@@ -17,17 +17,17 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Add User',
-    onClickFunction: () => { }
+    onClickFunction: () => {},
   },
   {
     id: '2',
     name: 'Generate Report',
-    onClickFunction: () => { }
+    onClickFunction: () => {},
   },
   {
     id: '3',
     name: 'Delete Project',
-    onClickFunction: () => { }
+    onClickFunction: () => {},
   },
 ];
 
@@ -36,10 +36,11 @@ const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectIndex() {
   const { data } = useQuery('projects', ProjectServices.getProjects);
-  const projects = data?.map((project: Project) => ({
-    ...project,
-    checklist: project.Checklist?.name
-  })) || [];
+  const projects =
+    data?.map((project: Project) => ({
+      ...project,
+      checklist: project.Checklist?.name,
+    })) || [];
 
   const [selectedProject, setSelectedProject] = useState<Project[]>([
     defaultProject,
