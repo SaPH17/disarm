@@ -1,7 +1,6 @@
 package models
 
 import (
-	"database/sql"
 	"disarm/main/database"
 	"fmt"
 
@@ -32,7 +31,7 @@ type UserOrm interface {
 	GetOneByEmail(email string) (User, error)
 	GetOneById(id uuid.UUID) (User, error)
 	GetManyByIds(ids []uuid.UUID) ([]User, error)
-	Edit(id uuid.UUID, email string, password string, username string, directSupervisorId sql.NullString) (User, error)
+	Edit(id uuid.UUID, email string, username string, supervisor *User) (User, error)
 	Delete(ids []uuid.UUID) (bool, error)
 }
 
@@ -79,7 +78,7 @@ func (o *userOrm) GetOneByEmail(email string) (User, error) {
 
 func (o *userOrm) GetOneById(id uuid.UUID) (User, error) {
 	var user User
-	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error
+	err := o.instance.Model(User{}).Preload("Groups").Preload("Supervisor").Where("id = ?", id).Take(&user).Error
 
 	return user, err
 }
@@ -91,13 +90,16 @@ func (o *userOrm) GetManyByIds(ids []uuid.UUID) ([]User, error) {
 	return users, err
 }
 
-func (o *userOrm) Edit(id uuid.UUID, email string, password string, username string, directSupervisorId sql.NullString) (User, error) {
+func (o *userOrm) Edit(id uuid.UUID, email string, username string, supervisor *User) (User, error) {
+	var supervisorId *uuid.UUID = nil
+	if supervisor.ID != uuid.Nil {
+		supervisorId = (*uuid.UUID)(&supervisor.ID)
+	}
+	fmt.Println(supervisorId)
+
 	var user User
 	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error
-	user.Email = email
-	user.Password = password
-	user.Username = username
-	o.instance.Save(user)
+	o.instance.Model(&user).Updates(User{Username: username,Email: email, SupervisorID: supervisorId})
 
 	return user, err
 }

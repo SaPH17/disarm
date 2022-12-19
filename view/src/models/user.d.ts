@@ -9,7 +9,7 @@ export type User = GeneralData & {
   created_at?: Date;
   email: string;
   username: string;
-  directSupervisor?: string;
+  direct_supervisor?: string;
   Groups? : Group[];
   Supervisor? : User;
 }

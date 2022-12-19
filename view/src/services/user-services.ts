@@ -22,6 +22,12 @@ export default class UserServices {
     });
   }
 
+  static async editUser(body: object, id: string | number){
+    return axios.put(`${process.env.REACT_APP_API_URL}/users/${id}`, body, {
+      withCredentials: true
+    });
+  }
+
   static async deleteUserByIds(body: object){
     return axios.delete(`${process.env.REACT_APP_API_URL}/users/`, {
       withCredentials: true,

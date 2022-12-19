@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ActionButton, {
-  ActionButtonItem,
+  ActionButtonItem
 } from '../../../components/action-button';
 import DeletePopup from '../../../components/popup/delete-popup';
 import PrimaryButton from '../../../components/primary-button';
@@ -22,7 +22,7 @@ const contentTitle = [
   'groups',
   'assignedProjects',
   'email',
-  'directSupervisor',
+  'direct_supervisor',
 ];
 
 export default function ManageUserIndex() {
@@ -35,7 +35,7 @@ export default function ManageUserIndex() {
         id: r.id,
         email: r.email,
         name: r.username,
-        directSupervisor: r.Supervisor?.username || '-',
+        direct_supervisor: r.Supervisor?.username || '-',
         groups: r.Groups?.map((group: Group) => group.name).join(", ") || '-',
         assignedProjects: '-',
       });
