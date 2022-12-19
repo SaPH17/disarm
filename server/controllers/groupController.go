@@ -3,6 +3,7 @@ package controllers
 import (
 	"disarm/main/models"
 	"disarm/main/utils"
+	"fmt"
 	"html"
 	"net/http"
 	"strings"
@@ -13,10 +14,11 @@ import (
 
 func CreateGroup(c *gin.Context) {
 	var body struct {
-		Name          string `json:"name" binding:"required"`
-		Description   string `json:"description" binding:"required"`
-		ParentGroupId string `json:"parentGroupId"`
-		Permissions   string `json:"permissions" binding:"required"`
+		Name          string   `json:"name" binding:"required"`
+		Description   string   `json:"description" binding:"required"`
+		ParentGroupId string   `json:"parentGroupId"`
+		Permissions   string   `json:"permissions" binding:"required"`
+		Users         []string `json:"assignedUser"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -33,7 +35,29 @@ func CreateGroup(c *gin.Context) {
 
 	parentGroupId := utils.GetNullableString(escapedParentGroupId)
 
-	group, dbErr := models.Groups.Create(escapedName, escapedDescription, parentGroupId, escapedPermissions)
+	var users []models.User
+	fmt.Println("asdasd")
+	fmt.Println(body.Users)
+
+	if len(body.Users) > 0 {
+		fmt.Println("qweqeqqqe")
+		var dbUserErr error
+		var userIds []uuid.UUID
+		for _, element := range body.Users {
+			userIds = append(userIds, uuid.FromStringOrNil(element))
+		}
+		fmt.Println(userIds)
+		users, dbUserErr = models.Users.GetManyByIds(userIds)
+		fmt.Println(users)
+		if dbUserErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": dbUserErr,
+			})
+			return
+		}
+	}
+
+	group, dbErr := models.Groups.Create(escapedName, escapedDescription, parentGroupId, escapedPermissions, users)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

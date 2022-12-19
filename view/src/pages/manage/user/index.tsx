@@ -31,7 +31,6 @@ export default function ManageUserIndex() {
   const { data, refetch } = useQuery('users', UserServices.getUsers);
   const users =
     data?.map((r: User) => {
-      console.log(r)
       return ({
         id: r.id,
         email: r.email,
@@ -39,7 +38,7 @@ export default function ManageUserIndex() {
         directSupervisor: '-',
         groups: r.Groups?.map((group: Group) => group.name).join(", ") || '-',
         assignedProjects: '-',
-      })
+      });
     }) || [];
 
   const [activeUser, setActiveUser] = useState<User>(defaultUser);
@@ -52,18 +51,18 @@ export default function ManageUserIndex() {
       onClickFunction: () => {
         if (!selectedUser) return;
         if (!selectedUser.filter((user: User) => user.id !== -1).length) return;
-        setOpenDeletePopup(true)
-      }
+        setOpenDeletePopup(true);
+      },
     },
     {
       id: '2',
       name: 'Add to Group',
-      onClickFunction: () => { }
+      onClickFunction: () => {},
     },
     {
       id: '3',
       name: 'Assign to Project',
-      onClickFunction: () => { }
+      onClickFunction: () => {},
     },
   ];
 
@@ -77,14 +76,14 @@ export default function ManageUserIndex() {
         error: {
           render({ data }: any) {
             return data.message;
-          }
-        }
-      })
+          },
+        },
+      });
       refetch();
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
+
+  console.log(selectedUser);
 
   return (
     <>
@@ -105,12 +104,8 @@ export default function ManageUserIndex() {
             selectedData={selectedUser}
             setSelectedData={setSelectedUser}
             content={users as object[]}
-            onCheckedFunction={(user: any) => {
-              console.log('here');
+            onRowClickFunction={(user: any) => {
               setActiveUser(user);
-            }}
-            onUncheckedFunction={(user: any) => {
-              // setactiveUser(activeUser.filter((item) => item !== user));
             }}
             onClickFunction={(user: any) => {
               navigate(`/users/${user.id}`);
@@ -126,17 +121,21 @@ export default function ManageUserIndex() {
       >
         <div className="flex items-center gap-4">
           <div>
-            <Link
-              to={`/users/${activeUser.id}/edit`}
-            >
+            <Link to={`/users/${activeUser.id}/edit`}>
               <PrimaryButton content="Edit" />
             </Link>
           </div>
         </div>
       </SelectedDetail>
-      {
-        selectedUser && <DeletePopup title='Delete Users' selectedData={selectedUser} onClickFunction={deleteUsers} open={openDeletePopup} setOpen={setOpenDeletePopup} />
-      }
+      {selectedUser && (
+        <DeletePopup
+          title="Delete Users"
+          selectedData={selectedUser}
+          onClickFunction={deleteUsers}
+          open={openDeletePopup}
+          setOpen={setOpenDeletePopup}
+        />
+      )}
     </>
   );
 }

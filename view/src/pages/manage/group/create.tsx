@@ -1,5 +1,4 @@
 import CreateGroupForm from '../../../components/page/group/create-group-form';
-import PrimaryButton from '../../../components/primary-button';
 
 const ManageGroupCreate = () => {
   return (

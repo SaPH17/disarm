@@ -31,6 +31,7 @@ type UserOrm interface {
 	GetAll() ([]User, error)
 	GetOneByEmail(email string) (User, error)
 	GetOneById(id uuid.UUID) (User, error)
+	GetManyByIds(ids []uuid.UUID) ([]User, error)
 	Edit(id uuid.UUID, email string, password string, username string, directSupervisorId sql.NullString) (User, error)
 	Delete(id uuid.UUID) (bool, error)
 	DeleteManyByIds(ids []uuid.UUID) (bool, error)
@@ -77,6 +78,13 @@ func (o *userOrm) GetOneById(id uuid.UUID) (User, error) {
 	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error
 
 	return user, err
+}
+
+func (o *userOrm) GetManyByIds(ids []uuid.UUID) ([]User, error) {
+	var users []User
+	err := o.instance.Model(User{}).Where("id IN ?", ids).Find(&users).Error
+
+	return users, err
 }
 
 func (o *userOrm) Edit(id uuid.UUID, email string, password string, username string, directSupervisorId sql.NullString) (User, error) {

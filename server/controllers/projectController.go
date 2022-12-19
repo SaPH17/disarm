@@ -15,7 +15,7 @@ func CreateProject(c *gin.Context) {
 		Name        string `json:"name" binding:"required"`
 		Company     string `json:"company" binding:"required"`
 		Phase       string `json:"phase" binding:"required"`
-		ChecklistId string `json:"checklist_id" binding:"required"`
+		ChecklistId string `json:"checklistId" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -92,14 +92,13 @@ func GetProjectById(c *gin.Context) {
 	})
 }
 
-
 func EditProject(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
 		Name        string `json:"name" binding:"required"`
 		Company     string `json:"company" binding:"required"`
 		Phase       string `json:"phase" binding:"required"`
-		ChecklistId string `json:"checklist_id" binding:"required"`
+		ChecklistId string `json:"checklistId" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

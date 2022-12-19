@@ -18,7 +18,7 @@ const items: ActionButtonItem[] = [
   {
     id: '1',
     name: 'Delete Group',
-    onClickFunction: () => { }
+    onClickFunction: () => {},
   },
 ];
 
@@ -41,6 +41,7 @@ export default function ManageGroupIndex() {
     })) || [];
 
   const [selectedGroup, setSelectedGroup] = useState<Group[]>([defaultGroup]);
+  const [activeGroup, setACtiveGroup] = useState<Group>(defaultGroup);
   const navigate = useNavigate();
 
   return (
@@ -55,21 +56,17 @@ export default function ManageGroupIndex() {
 
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Groups</div>
-        {/* {groups && (
+        {groups && (
           <TableCheckbox
             title={title}
+            selectedData={selectedGroup}
+            setSelectedData={setSelectedGroup}
             content={groups as object[]}
-            onCheckedFunction={(group: any) => {
+            onRowClickFunction={(group: any) => {
               setSelectedGroup([...selectedGroup, group]);
             }}
-            onUncheckedFunction={(group: any) => {
-              setSelectedGroup(selectedGroup.filter((item) => item !== group));
-            }}
-            onClickFunction={(group: any) => {
-              navigate(`/groups/${group.id}`);
-            }}
           />
-        )} */}
+        )}
       </div>
 
       <SelectedDetail
