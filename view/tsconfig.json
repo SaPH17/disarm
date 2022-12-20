@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "src/components/page/user/group-card.tsx"]
+  "include": ["src", "src/components/page/user/group-card.tsx", "src/services/.ts"]
 }

@@ -27,4 +27,16 @@ export default class ProjectServices {
       data: body,
     });
   }
+
+  static async createProject(body: object) {
+    return axios.post(`${process.env.REACT_APP_API_URL}/projects/`, body, {
+      withCredentials: true,
+    });
+  }
+
+  static async updateProject(body: object, id: string | number) {
+    return axios.put(`${process.env.REACT_APP_API_URL}/projects/${id}`, body, {
+      withCredentials: true,
+    });
+  }
 }

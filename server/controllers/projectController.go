@@ -14,8 +14,8 @@ func CreateProject(c *gin.Context) {
 	var body struct {
 		Name        string `json:"name" binding:"required"`
 		Company     string `json:"company" binding:"required"`
-		Phase       string `json:"phase" binding:"required"`
-		ChecklistId string `json:"checklist_id" binding:"required"`
+		Phase       string `json:"phase"`
+		ChecklistId string `json:"checklist" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -30,6 +30,10 @@ func CreateProject(c *gin.Context) {
 	escapedPhase := html.EscapeString(strings.TrimSpace(body.Phase))
 	escapedChecklistId := html.EscapeString(strings.TrimSpace(body.ChecklistId))
 	checklistUuid, errUuid := uuid.FromString(escapedChecklistId)
+
+	if escapedPhase == "" {
+		escapedPhase = "Idle"
+	}
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
