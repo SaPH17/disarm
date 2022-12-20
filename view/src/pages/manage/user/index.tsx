@@ -22,7 +22,7 @@ const contentTitle = [
   'groups',
   'assignedProjects',
   'email',
-  'directSupervisor',
+  'direct_supervisor',
 ];
 
 export default function ManageUserIndex() {
@@ -35,7 +35,7 @@ export default function ManageUserIndex() {
         id: r.id,
         email: r.email,
         name: r.username,
-        directSupervisor: r.Supervisor?.username || '-',
+        direct_supervisor: r.Supervisor?.username || '-',
         groups: r.Groups?.map((group: Group) => group.name).join(', ') || '-',
         assignedProjects: '-',
       };

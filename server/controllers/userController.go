@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"disarm/main/models"
-	"disarm/main/utils"
 	"html"
 	"net/http"
 	"strings"
@@ -17,7 +16,7 @@ func CreateUser(c *gin.Context) {
 		Email           string   `json:"email" binding:"required"`
 		Username        string   `json:"username" binding:"required"`
 		Password        string   `json:"password"`
-		SupervisorEmail string   `json:"directSupervisor"`
+		SupervisorEmail string   `json:"direct_supervisor"`
 		Groups          []string `json:"groups"`
 	}
 
@@ -126,44 +125,17 @@ func GetUserById(c *gin.Context) {
 		return
 	}
 
-	// if !user.DirectSupervisorId.Valid {
-	// 	c.JSON(200, gin.H{
-	// 		"user": user,
-	// 	})
-
-	// 	return
-	// }
-	// parentUuid, errParentUuid := uuid.FromString(user.DirectSupervisorId.String)
-
-	// if errParentUuid != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"error": errParentUuid.Error(),
-	// 	})
-	// 	return
-	// }
-
-	// parentUser, dbErr := models.Users.GetOneById(parentUuid)
-
-	// if dbErr != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"error": dbErr,
-	// 	})
-	// 	return
-	// }
-
 	c.JSON(200, gin.H{
 		"user": user,
-		// "parentUser": parentUser,
 	})
 }
 
 func EditUser(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Email              string `json:"email" binding:"required"`
-		Password           string `json:"password" binding:"required"`
-		Username           string `json:"username" binding:"required"`
-		DirectSupervisorId string `json:"direct_supervisor_id"`
+		Email           string   `json:"email" binding:"required"`
+		Username        string   `json:"username" binding:"required"`
+		SupervisorEmail string   `json:"direct_supervisor"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -175,22 +147,24 @@ func EditUser(c *gin.Context) {
 
 	escapedId := html.EscapeString(strings.TrimSpace(id))
 	escapedEmail := html.EscapeString(strings.TrimSpace(body.Email))
-	escapedPassword := html.EscapeString(strings.TrimSpace(body.Password))
 	escapedUsername := html.EscapeString(strings.TrimSpace(body.Username))
-	escapedDirectSupervisorId := html.EscapeString(strings.TrimSpace(body.DirectSupervisorId))
+	escapedDirectSupervisorEmail := html.EscapeString(strings.TrimSpace(body.SupervisorEmail))
 
-	directSupervisorId := utils.GetNullableString(escapedDirectSupervisorId)
+	var supervisor models.User
+	var dbErr error
 
-	uuid, errUuid := uuid.FromString(escapedId)
+	if escapedDirectSupervisorEmail != "" {
+		supervisor, dbErr = models.Users.GetOneByEmail(escapedDirectSupervisorEmail)
 
-	if errUuid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errUuid.Error(),
-		})
-		return
+		if dbErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": dbErr.Error(),
+			})
+			return
+		}
 	}
 
-	user, dbErr := models.Users.Edit(uuid, escapedEmail, escapedPassword, escapedUsername, directSupervisorId)
+	user, dbErr := models.Users.Edit(uuid.FromStringOrNil(escapedId), escapedEmail, escapedUsername, &supervisor)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

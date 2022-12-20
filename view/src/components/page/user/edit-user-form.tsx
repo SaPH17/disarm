@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { EditUserHandler } from '../../../handlers/user/edit-user-handler';
 import { UserFormData } from '../../../models/forms/user-form-data';
-import { GeneralData } from '../../../models/general-data';
 import { Group } from '../../../models/group';
 import { User } from '../../../models/user';
 import UserServices from '../../../services/user-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
-import SelectBox from '../../select-box';
-import GroupCard from './group-card';
 
 export default function EditUserForm() {
   const params = useParams();
-  const { data: userData } = useQuery(`users/${params.id}`, () =>
+  const { data: userData, refetch } = useQuery(`users/${params.id}`, () =>
     UserServices.getOneUser(params.id)
   );
   const { data: usersData } = useQuery(`users`, UserServices.getUsers);
@@ -24,7 +23,6 @@ export default function EditUserForm() {
       ...userData,
     } || null;
   const users = usersData?.filter((u: User) => u.id !== user.id) || null;
-  console.log(users);
 
   const [selectedGroups, setSelectedGroups] = useState<Group[]>([]);
   const [availableGroups, setAvailableGroups] = useState<Group[]>();
@@ -60,17 +58,33 @@ export default function EditUserForm() {
     // );
   }
 
-  function handleCreateUserButton(data: UserFormData) {
-    console.log(data);
+  function handleEditUserButton(data: UserFormData) {
+    try {
+      toast.promise(
+        EditUserHandler.handleEditUserFormSubmit(
+          data, user.id
+        ),
+        {
+          success: 'Successfully edit new user',
+          pending: 'Waiting for edit new user!',
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        }
+      );
+      refetch();
+    } catch (e) {}
   }
 
   useEffect(() => {
     if (!user) return;
-    reset(user);
+    reset({...user, direct_supervisor: (user as User).Supervisor?.email || ''});
   }, [userData]);
 
   return user ? (
-    <form className="space-y-8" onSubmit={handleSubmit(handleCreateUserButton)}>
+    <form className="space-y-8" onSubmit={handleSubmit(handleEditUserButton)}>
       <div className="space-y-6 sm:space-y-5">
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText
@@ -101,17 +115,31 @@ export default function EditUserForm() {
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText
             id="direct-supervisor"
-            name="directSupervisor"
+            name="direct_supervisor"
             label="Direct Supervisor"
-            type="text"
+            type="email"
+            datalist={
+              <datalist id="direct-supervisors">
+                {users &&
+                  users.map((user: User) => {
+                    return <option key={user.id} value={user.email}></option>;
+                  })}
+                <option value=""></option>
+              </datalist>
+            }
+            listId={'direct-supervisors'}
             errors={errors}
-            register={register('directSupervisor', {
-              required: 'Direct Supervisor is required.',
+            register={register('direct_supervisor', {
+              validate: (email) => {
+                if (!email) return true;
+                const countUser = users.filter((user: User) => user.email === email).length;
+                return !countUser ? 'Direct supervisor email is not existsx' : true;
+              }
             })}
           />
         </div>
 
-        {availableGroups && (
+        {/* {availableGroups && (
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label
               htmlFor="last_name"
@@ -145,7 +173,7 @@ export default function EditUserForm() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
       </div>
       <div className="flex flex-row justify-end">
         <PrimaryButton content="Edit User" type="submit" />

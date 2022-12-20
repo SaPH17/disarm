@@ -30,7 +30,7 @@ export const defaultUser: User = {
   supervisor_id: '-',
   groups: '-',
   assignedProjects: '-',
-  directSupervisor: '-'
+  direct_supervisor: '-'
 }
 
 export const defaultChecklist = {

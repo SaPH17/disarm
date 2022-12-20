@@ -140,7 +140,7 @@ export default function CreateUserForm() {
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText
             id="direct-supervisor"
-            name="directSupervisor"
+            name="direct_supervisor"
             label="Direct Supervisor"
             type="email"
             datalist={
@@ -154,7 +154,7 @@ export default function CreateUserForm() {
             }
             listId={'direct-supervisors'}
             errors={errors}
-            register={register('directSupervisor', {
+            register={register('direct_supervisor', {
               validate: (email) => {
                 if (!email) return true;
                 const countUser = users.filter(
