@@ -14,9 +14,7 @@ const ManageGroupEdit = () => {
   const [group, setGroup] = useState<any>({});
 
   useEffect(() => {
-    setGroup({
-      ...groupData,
-    });
+    setGroup(groupData);
   }, [groupData]);
 
   const breadcrumbsPages = [

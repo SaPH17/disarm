@@ -7,14 +7,33 @@ import { SearchIcon } from '@heroicons/react/outline';
 import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumbs from '../../../components/breadcrumbs';
 import { Group } from '../../../models/group';
+import { useQuery } from 'react-query';
+import { capitalize } from '../../../utils/functions/capitalize';
 import GroupServices from '../../../services/group-services';
 
-const title = ['id', 'name', 'category', 'description'];
+const title = ['id', 'action', 'objectType', 'objectId'];
 
 const ManageGroupEditPermission = () => {
   const { id } = useParams();
-  const [permission, setPermission] = useState<Permission[]>();
-  const [group, setGroup] = useState<Group>();
+  const { data: permissionsData } = useQuery(
+    'permissions',
+    PermissionServices.getPermissions
+  );
+  const { data: groupData } = useQuery(`groups/${id}`, () =>
+    GroupServices.getOneGroup(id)
+  );
+
+  const permission = permissionsData
+    ? permissionsData.map((p: any) => ({
+        id: `${p.PermissionAction.name}.${p.ObjectType.name}.${p.object_id}`,
+        action: capitalize(p.PermissionAction.name),
+        objectType: capitalize(p.ObjectType.name),
+        objectId: p.object_id,
+      }))
+    : [];
+  const [selectedPermission, setSelectedPermission] = useState<Permission[]>(
+    []
+  );
   const [search, setSearch] = useState('');
   const breadcrumbsPages = [
     {
@@ -22,29 +41,10 @@ const ManageGroupEditPermission = () => {
       url: '/groups',
     },
     {
-      name: `${group?.name}`,
-      url: `/groups/${group?.id}/edit-permission`,
+      name: `${groupData?.name || '-'}`,
+      url: `/groups/${groupData?.id}/edit-permission`,
     },
   ];
-  const navigate = useNavigate();
-
-  async function fetchGroup() {
-    if (id === undefined) {
-      return navigate('/');
-    }
-
-    if (permission === undefined) {
-      const result = await PermissionServices.getPermissions();
-      const g = await GroupServices.getOneGroup(id);
-
-      setGroup(g);
-      setPermission(result);
-    }
-  }
-
-  useEffect(() => {
-    fetchGroup();
-  }, [id, permission]);
 
   return permission ? (
     <div className="flex flex-col gap-4">
@@ -74,17 +74,15 @@ const ManageGroupEditPermission = () => {
         <div className="flex flex-col gap-4 px-8 pb-8 pt-4">
           <div className="flex justify-between items-center">
             <InputSwitch label={'Show enabled only'} />
-            <div className="underline cursor-pointer hover:text-gray-500">
-              Clear Permission
-            </div>
           </div>
-          {/* <TableCheckbox
+          <TableCheckbox
             title={title}
             content={permission}
-            onCheckedFunction={() => {}}
-            onUncheckedFunction={() => {}}
+            selectedData={selectedPermission}
+            setSelectedData={setSelectedPermission}
+            onRowClickFunction={() => {}}
             isCheckOnRowClick={true}
-          /> */}
+          />
         </div>
       </div>
     </div>

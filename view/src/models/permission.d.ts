@@ -1,6 +1,6 @@
-import { GeneralData } from "./general-data";
-
-export type Permission = GeneralData & {
-    category: string;
-    description: string;
-}
+export type Permission = {
+  id: string | number;
+  action: string;
+  objectType: string;
+  objectId: string;
+};
