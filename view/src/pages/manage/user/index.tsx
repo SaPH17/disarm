@@ -28,7 +28,9 @@ const contentTitle = [
 export default function ManageUserIndex() {
   const navigate = useNavigate();
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
-  const { data, refetch } = useQuery('users', UserServices.getUsers);
+  const { data, refetch } = useQuery('users', UserServices.getUsers, {
+    refetchOnMount: true
+  });
   const users =
     data?.map((r: User) => {
       return ({
@@ -82,10 +84,6 @@ export default function ManageUserIndex() {
       setSelectedUser([]);
     } catch (e) {}
   }
-
-  useEffect(() => {
-    refetch();
-  }, [refetch])
 
   return (
     <>

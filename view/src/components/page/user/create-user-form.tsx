@@ -74,7 +74,7 @@ export default function CreateUserForm() {
 
   async function handleCreateUserButton(data: UserFormData) {
     try {
-      toast.promise(
+      await toast.promise(
         CreateUserHandler.handleCreateUserFormSubmit(
           data,
           selectedGroups.map((group) => group.id) as string[]
