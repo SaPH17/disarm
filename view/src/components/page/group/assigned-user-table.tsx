@@ -91,21 +91,28 @@ const AssignedUserTable = ({
       <div className="flex flex-col gap-4 px-8 pt-4 pb-8">
         <Table
           title={title}
-          content={assignedUser.map((u: any) => ({
-            name: u.username,
-            email: u.email,
-            dateCreated: toReadableDate(new Date(u.created_at || '')),
-            action: (
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  removeAssignedUser(u.email);
-                }}
-              >
-                Delete
-              </div>
-            ),
-          }))}
+          content={assignedUser
+            .map((u: any) => ({
+              name: u.username,
+              email: u.email,
+              dateCreated: toReadableDate(new Date(u.created_at || '')),
+              action: (
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    removeAssignedUser(u.email);
+                  }}
+                >
+                  Delete
+                </div>
+              ),
+            }))
+            .filter(
+              (user: User) =>
+                ['name', 'email', 'dateCreated'].filter((t) =>
+                  ((user as any)[t] as string).includes(search)
+                ).length > 0
+            )}
           onClickFunction={(group: any) => {}}
         />
       </div>

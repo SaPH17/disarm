@@ -86,6 +86,10 @@ func GetAllGroup(c *gin.Context) {
 		return
 	}
 
+	for _, element := range groups {
+		element.Permissions = html.UnescapeString(element.Permissions)
+	}
+
 	c.JSON(200, gin.H{
 		"groups": groups,
 	})
@@ -111,6 +115,8 @@ func GetGroupById(c *gin.Context) {
 		})
 		return
 	}
+
+	group.Permissions = html.UnescapeString(group.Permissions)
 
 	c.JSON(200, gin.H{
 		"group": group,

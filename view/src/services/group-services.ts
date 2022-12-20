@@ -40,4 +40,14 @@ export default class GroupServices {
       withCredentials: true,
     });
   }
+
+  static async editGroupPermissions(id: string | number, body: object) {
+    return axios.put(
+      `${process.env.REACT_APP_API_URL}/groups/${id}/permissions`,
+      body,
+      {
+        withCredentials: true,
+      }
+    );
+  }
 }

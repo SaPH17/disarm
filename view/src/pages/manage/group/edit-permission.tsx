@@ -4,12 +4,15 @@ import { Permission } from '../../../models/permission';
 import PermissionServices from '../../../services/permission-services';
 import InputSwitch from '../../../components/input-switch/input-switch';
 import { SearchIcon } from '@heroicons/react/outline';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Breadcrumbs from '../../../components/breadcrumbs';
-import { Group } from '../../../models/group';
 import { useQuery } from 'react-query';
 import { capitalize } from '../../../utils/functions/capitalize';
 import GroupServices from '../../../services/group-services';
+import PrimaryButton from '../../../components/primary-button';
+import { permissionToJson } from '../../../utils/functions/permissionJson';
+import { toast } from 'react-toastify';
+import { GroupHandler } from '../../../handlers/group/group-handler';
 
 const title = ['id', 'action', 'objectType', 'objectId'];
 
@@ -19,11 +22,15 @@ const ManageGroupEditPermission = () => {
     'permissions',
     PermissionServices.getPermissions
   );
+  const [selectedPermission, setSelectedPermission] = useState<Permission[]>(
+    []
+  );
+  const [showEnabled, setShowEnabled] = useState<boolean>(false);
   const { data: groupData } = useQuery(`groups/${id}`, () =>
     GroupServices.getOneGroup(id)
   );
 
-  const permission = permissionsData
+  const permissions = permissionsData
     ? permissionsData.map((p: any) => ({
         id: `${p.PermissionAction.name}.${p.ObjectType.name}.${p.object_id}`,
         action: capitalize(p.PermissionAction.name),
@@ -31,9 +38,7 @@ const ManageGroupEditPermission = () => {
         objectId: p.object_id,
       }))
     : [];
-  const [selectedPermission, setSelectedPermission] = useState<Permission[]>(
-    []
-  );
+
   const [search, setSearch] = useState('');
   const breadcrumbsPages = [
     {
@@ -46,10 +51,57 @@ const ManageGroupEditPermission = () => {
     },
   ];
 
-  return permission ? (
+  const handleEditPermissionSubmit = () => {
+    console.log(permissionToJson(selectedPermission, permissions));
+    try {
+      toast.promise(
+        GroupHandler.handleEditGroupPermissionSubmit(
+          id as string | number,
+          permissionToJson(selectedPermission, permissions)
+        ),
+        {
+          success: 'Successfully edit group permission',
+          pending: 'Waiting for edit group permission!',
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        }
+      );
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    if (groupData && permissions) {
+      const p = JSON.parse(groupData.permissions);
+      for (let action in p) {
+        for (let objectType in p[action]) {
+          p[action][objectType].forEach((id: any) => {
+            const fullId = `${action}.${objectType}.${id}`;
+            setSelectedPermission((v) => [
+              ...v,
+              permissions.find((p: any) => p.id === fullId),
+            ]);
+          });
+        }
+      }
+    }
+  }, [groupData, permissionsData]);
+
+  return permissions ? (
     <div className="flex flex-col gap-4">
       <Breadcrumbs pages={breadcrumbsPages}></Breadcrumbs>
-      <div className="text-xl font-semibold">Edit Permission</div>
+      <div className="flex justify-between">
+        <div className="text-xl font-semibold">Edit Permission</div>
+        <div className="flex flex-row justify-end">
+          <PrimaryButton
+            onClick={handleEditPermissionSubmit}
+            content="Save Changes"
+            type="submit"
+          />
+        </div>
+      </div>
       <div className="flex flex-col sm:gap-2 rounded divide-y-1 bg-white text-sm shadow">
         <div className="flex flex-row justify-between items-center px-2 py-2 sm:px-8  sm:py-4 bg-gray-50">
           <div className="text-lg font-semibold">Available Permission</div>
@@ -73,11 +125,26 @@ const ManageGroupEditPermission = () => {
         </div>
         <div className="flex flex-col gap-4 px-8 pb-8 pt-4">
           <div className="flex justify-between items-center">
-            <InputSwitch label={'Show enabled only'} />
+            <InputSwitch
+              label={'Show enabled only'}
+              onChange={setShowEnabled}
+            />
           </div>
           <TableCheckbox
             title={title}
-            content={permission}
+            content={
+              permissions
+                ? showEnabled
+                  ? permissions
+                      .filter((v: any) =>
+                        selectedPermission.find((p) => p.id === v.id)
+                      )
+                      .filter((v: any) => v.id.includes(search.toLowerCase()))
+                  : permissions.filter((v: any) =>
+                      v.id.includes(search.toLowerCase())
+                    )
+                : []
+            }
             selectedData={selectedPermission}
             setSelectedData={setSelectedPermission}
             onRowClickFunction={() => {}}

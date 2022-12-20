@@ -40,9 +40,22 @@ export class GroupHandler {
       parent_group_id: data.parentGroup,
       assigned_user: assignedUser,
     };
-    console.log(body);
     try {
       return (await GroupServices.editGroup(id, body)).data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  static async handleEditGroupPermissionSubmit(
+    id: string | number,
+    permissions: string
+  ) {
+    const body = {
+      permissions: permissions,
+    };
+    try {
+      return (await GroupServices.editGroupPermissions(id, body)).data;
     } catch (e) {
       throw e;
     }

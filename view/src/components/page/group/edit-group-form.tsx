@@ -44,8 +44,8 @@ const EditGroupForm = ({ group }: any) => {
           assignedUser.map((u: any) => u.id)
         ),
         {
-          success: 'Successfully edit new group',
-          pending: 'Waiting for edit new group!',
+          success: 'Successfully edit group',
+          pending: 'Waiting for edit group!',
           error: {
             render({ data }: any) {
               return data.message;

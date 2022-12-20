@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { checklists } from '../data/checklist';
-
 export type TableData = {
   title: string[];
   content: object[];

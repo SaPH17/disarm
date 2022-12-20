@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -29,7 +29,7 @@ export default function ManageUserIndex() {
   const navigate = useNavigate();
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
   const { data, refetch } = useQuery('users', UserServices.getUsers, {
-    refetchOnMount: true
+    refetchOnMount: true,
   });
   const users =
     data?.map((r: User) => {
