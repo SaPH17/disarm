@@ -14,8 +14,8 @@ func CreateProject(c *gin.Context) {
 	var body struct {
 		Name        string `json:"name" binding:"required"`
 		Company     string `json:"company" binding:"required"`
-		Phase       string `json:"phase" binding:"required"`
-		ChecklistId string `json:"checklist_id" binding:"required"`
+		Phase       string `json:"phase"`
+		ChecklistId string `json:"checklist" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -30,6 +30,10 @@ func CreateProject(c *gin.Context) {
 	escapedPhase := html.EscapeString(strings.TrimSpace(body.Phase))
 	escapedChecklistId := html.EscapeString(strings.TrimSpace(body.ChecklistId))
 	checklistUuid, errUuid := uuid.FromString(escapedChecklistId)
+
+	if escapedPhase == "" {
+		escapedPhase = "Idle"
+	}
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -148,7 +152,7 @@ func EditProject(c *gin.Context) {
 func DeleteProject(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	uuid, errUuid := uuid.FromString(escapedId)
+	idUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -157,7 +161,9 @@ func DeleteProject(c *gin.Context) {
 		return
 	}
 
-	result, dbErr := models.Projects.Delete(uuid)
+	uuids := []uuid.UUID{idUuid}
+
+	result, dbErr := models.Projects.Delete(uuids)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -170,3 +176,35 @@ func DeleteProject(c *gin.Context) {
 		"result": result,
 	})
 }
+
+func DeleteProjectByIds(c *gin.Context) {
+	var body struct {
+		Ids []string `json:"ids" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var parsedUuids []uuid.UUID
+	for _, element := range body.Ids {
+		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	}
+
+	result, dbErr := models.Projects.Delete(parsedUuids)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"result": result,
+	})
+}
+

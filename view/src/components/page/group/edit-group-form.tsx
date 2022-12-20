@@ -12,16 +12,13 @@ import PrimaryButton from '../../primary-button';
 import { toast } from 'react-toastify';
 import { GroupHandler } from '../../../handlers/group/group-handler';
 
-const EditGroupForm = ({ group }: { group: Group }) => {
+const EditGroupForm = ({ group }: any) => {
   const { data: usersData } = useQuery('users', UserServices.getUsers);
   const { data: groupsData } = useQuery('groups', GroupServices.getGroups);
-  const users =
-    usersData?.map((user: User) => ({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      created_at: user.created_at,
-    })) || null;
+
+  const [assignedUser, setAssignedUser] = useState<any>([]);
+  const [users, setUsers] = useState<any>([]);
+
   const groups =
     groupsData?.map((r: Group) => ({
       id: r.id,
@@ -31,24 +28,20 @@ const EditGroupForm = ({ group }: { group: Group }) => {
       permissions: r.permissions,
     })) || null;
 
-  const [assignedUser, setAssignedUser] = useState<User[]>([]);
-
   const {
     register,
     formState: { errors },
     handleSubmit,
-    setValue,
+    reset,
   } = useForm<GroupFormData>();
 
   function handleEditGroupButton(data: GroupFormData) {
     try {
       toast.promise(
-        GroupHandler.handleEditGroupSubmit(
+        GroupHandler.handleEditGroupFormSubmit(
           group.id,
           data,
-          assignedUser.map((u) => {
-            return u.id;
-          }) as string[]
+          assignedUser.map((u: any) => u.id)
         ),
         {
           success: 'Successfully edit new group',
@@ -63,16 +56,26 @@ const EditGroupForm = ({ group }: { group: Group }) => {
     } catch (e) {}
   }
 
-  function deleteUser(user: User) {
-    console.log(user);
-  }
+  useEffect(() => {
+    if (!group) return;
+    reset(group);
+    setAssignedUser(group.Users || []);
+  }, [group]);
 
   useEffect(() => {
-    setValue('name', group.name);
-    setValue('description', group.description);
-    setValue('parentGroup', group.directParentGroup);
-    setAssignedUser((group.Users as User[]) || []);
-  }, [group]);
+    setUsers(
+      usersData
+        ?.map((user: User) => ({
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          created_at: user.created_at,
+        }))
+        .filter(
+          (user: any) => !assignedUser.find((u: any) => u.email === user.email)
+        ) || null
+    );
+  }, [usersData, assignedUser]);
 
   return groups && users ? (
     <div className="flex flex-col gap-4">
@@ -145,6 +148,7 @@ const EditGroupForm = ({ group }: { group: Group }) => {
         </div>
         <AssignedUserTable
           users={users}
+          setUsers={setUsers}
           assignedUser={assignedUser}
           setAssignedUser={setAssignedUser}
         />

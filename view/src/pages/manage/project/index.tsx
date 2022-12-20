@@ -12,38 +12,73 @@ import { defaultProject } from '../../../data/default-values';
 import SelectedDetail from '../../../components/selected-detail';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-
-const items: ActionButtonItem[] = [
-  {
-    id: '1',
-    name: 'Add User',
-    onClickFunction: () => {},
-  },
-  {
-    id: '2',
-    name: 'Generate Report',
-    onClickFunction: () => {},
-  },
-  {
-    id: '3',
-    name: 'Delete Project',
-    onClickFunction: () => {},
-  },
-];
+import DeletePopup from '../../../components/popup/delete-popup';
+import { toast } from 'react-toastify';
+import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
 
 const title = ['name', 'company', 'checklist', 'phase', 'report'];
 const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectIndex() {
-  const { data } = useQuery('projects', ProjectServices.getProjects);
+  const navigate = useNavigate();
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const { data, refetch } = useQuery('projects', ProjectServices.getProjects);
   const projects =
     data?.map((project: Project) => ({
       ...project,
       checklist: project.Checklist?.name,
     })) || [];
+
   const [activeProject, setActiveProject] = useState<Project>(defaultProject);
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
-  const navigate = useNavigate();
+
+  const items: ActionButtonItem[] = [
+    {
+      id: '1',
+      name: 'Delete Project',
+      onClickFunction: () => {
+        if (!selectedProject) return;
+        if (
+          !selectedProject.filter((project: Project) => project.id !== -1)
+            .length
+        )
+          return;
+        setOpenDeletePopup(true);
+      },
+    },
+    {
+      id: '2',
+      name: 'Add User',
+      onClickFunction: () => {},
+    },
+    {
+      id: '3',
+      name: 'Generate Report',
+      onClickFunction: () => {},
+    },
+  ];
+
+  function handleRedirectToProjectDetail(project: any) {
+    navigate('/projects/' + project.id);
+  }
+
+  function deleteProjects() {
+    if (!selectedProject) return;
+    const ids = selectedProject.map((project: Project) => project.id);
+    try {
+      toast.promise(DeleteProjectsHandler.handleDeleteProjectSubmit(ids), {
+        success: `Successfully delete ${ids.length} project(s)!`,
+        pending: `Waiting for delete ${ids.length} project(s)!`,
+        error: {
+          render({ data }: any) {
+            return data.message;
+          },
+        },
+      });
+      refetch();
+      setSelectedProject([]);
+    } catch (e) {}
+  }
 
   return projects ? (
     <>
@@ -58,14 +93,14 @@ export default function ManageProjectIndex() {
         <div className="text-lg font-semibold">Projects</div>
         <TableCheckbox
           title={title}
-          content={projects as object[]}
           selectedData={selectedProject}
           setSelectedData={setSelectedProject}
-          onRowClickFunction={(project: any) => {
+          content={projects as object[]}
+          onRowClickFunction={(project: Project) => {
             setActiveProject(project);
           }}
-          onClickFunction={(project: any) => {
-            navigate('/projects/' + project.id);
+          onClickFunction={(project: Project) => {
+            navigate(`/projects/${project.id}`);
           }}
         />
       </div>
@@ -88,6 +123,15 @@ export default function ManageProjectIndex() {
           </div>
         </div>
       </SelectedDetail>
+      {selectedProject && (
+        <DeletePopup
+          title="Delete Projects"
+          selectedData={selectedProject}
+          onClickFunction={deleteProjects}
+          open={openDeletePopup}
+          setOpen={setOpenDeletePopup}
+        />
+      )}
     </>
   ) : (
     <></>

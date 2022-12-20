@@ -29,7 +29,7 @@ export class GroupHandler {
     }
   }
 
-  static async handleEditGroupSubmit(
+  static async handleEditGroupFormSubmit(
     id: string | number,
     data: GroupFormData,
     assignedUser: string[]
