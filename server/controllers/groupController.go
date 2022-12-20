@@ -161,7 +161,24 @@ func EditGroup(c *gin.Context) {
 		}
 	}
 
-	group, dbErr := models.Groups.Edit(groupUuid, escapedName, escapedDescription, &parentGroup)
+	var users []models.User
+
+	if len(body.Users) > 0 {
+		var dbUserErr error
+		var userIds []uuid.UUID
+		for _, element := range body.Users {
+			userIds = append(userIds, uuid.FromStringOrNil(element))
+		}
+		users, dbUserErr = models.Users.GetManyByIds(userIds)
+		if dbUserErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": dbUserErr,
+			})
+			return
+		}
+	}
+
+	group, dbErr := models.Groups.Edit(groupUuid, escapedName, escapedDescription, &parentGroup, &users)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

@@ -2,30 +2,42 @@ import axios from 'axios';
 
 export default class GroupServices {
   static async getGroups() {
-    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/groups/`, {
-      withCredentials: true
-    });
-    return data.groups;  
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/groups/`,
+      {
+        withCredentials: true,
+      }
+    );
+    return data.groups;
   }
 
   static async getOneGroup(id: string | number | undefined) {
     if (id === undefined) return;
-    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/groups/${id}`, {
-      withCredentials: true
-    });
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/groups/${id}`,
+      {
+        withCredentials: true,
+      }
+    );
     return data.group;
   }
 
-  static async createGroup(body: object){
+  static async createGroup(body: object) {
     return axios.post(`${process.env.REACT_APP_API_URL}/groups/`, body, {
-      withCredentials: true
+      withCredentials: true,
     });
   }
 
-  static async deleteUserByIds(body: object){
+  static async deleteUserByIds(body: object) {
     return axios.delete(`${process.env.REACT_APP_API_URL}/groups/`, {
       withCredentials: true,
-      data: body
+      data: body,
+    });
+  }
+
+  static async editUser(id: string | number, body: object) {
+    return axios.put(`${process.env.REACT_APP_API_URL}/groups/${id}`, body, {
+      withCredentials: true,
     });
   }
 }

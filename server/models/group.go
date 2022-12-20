@@ -9,12 +9,12 @@ import (
 
 type Group struct {
 	Base
-	Name          string         `gorm:"size:255;not null;unique" json:"name"`
-	Description   string         `gorm:"size:255;not null;" json:"description"`
+	Name          string     `gorm:"size:255;not null;unique" json:"name"`
+	Description   string     `gorm:"size:255;not null;" json:"description"`
 	ParentGroupID *uuid.UUID `gorm:"type:uuid;" json:"parent_group_id"`
-	ParentGroup   *Group      `gorm:"foreignkey:ParentGroupID"`
-	Permissions   string         `gorm:"size:255;not null;" json:"permissions"`
-	Users         []User         `gorm:"many2many:user_groups"`
+	ParentGroup   *Group     `gorm:"foreignkey:ParentGroupID"`
+	Permissions   string     `gorm:"size:255;not null;" json:"permissions"`
+	Users         []User     `gorm:"many2many:user_groups"`
 }
 
 type groupOrm struct {
@@ -26,7 +26,7 @@ type GroupOrm interface {
 	GetAll() ([]Group, error)
 	GetOneById(id uuid.UUID) (Group, error)
 	GetManyByIds(ids []uuid.UUID) ([]Group, error)
-	Edit(id uuid.UUID, name string, description string, parentGroup *Group) (Group, error)
+	Edit(id uuid.UUID, name string, description string, parentGroup *Group, users *[]User) (Group, error)
 	EditPermission(id uuid.UUID, permissions string) (Group, error)
 	Delete(ids []uuid.UUID) (bool, error)
 }
@@ -71,7 +71,7 @@ func (o *groupOrm) GetManyByIds(ids []uuid.UUID) ([]Group, error) {
 	return groups, err
 }
 
-func (o *groupOrm) Edit(id uuid.UUID, name string, description string, parentGroup *Group) (Group, error) {
+func (o *groupOrm) Edit(id uuid.UUID, name string, description string, parentGroup *Group, users *[]User) (Group, error) {
 	var parentGroupId *uuid.UUID = nil
 	if parentGroup.ID != uuid.Nil {
 		parentGroupId = (*uuid.UUID)(&parentGroup.ID)
@@ -79,7 +79,8 @@ func (o *groupOrm) Edit(id uuid.UUID, name string, description string, parentGro
 
 	var group Group
 	err := o.instance.Model(Group{}).Where("id = ?", id).Take(&group).Error
-	o.instance.Model(&group).Updates(Group{Name: name,Description: description, ParentGroupID: parentGroupId})
+	o.instance.Model(&group).Omit("Users.*", "ParentGroup").Updates(Group{Name: name, Description: description, ParentGroupID: parentGroupId})
+	database.DB.Get().Model(&group).Omit("Users.*").Association("Users").Replace(users)
 
 	return group, err
 }
