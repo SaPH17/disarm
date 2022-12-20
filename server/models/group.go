@@ -79,7 +79,7 @@ func (o *groupOrm) Edit(id uuid.UUID, name string, description string, parentGro
 
 	var group Group
 	err := o.instance.Model(Group{}).Where("id = ?", id).Take(&group).Error
-	o.instance.Model(&group).Updates(Group{Name: name, Description: description, ParentGroupID: parentGroupId})
+	o.instance.Model(&group).Omit("Users.*", "ParentGroup").Updates(Group{Name: name, Description: description, ParentGroupID: parentGroupId})
 	database.DB.Get().Model(&group).Omit("Users.*").Association("Users").Replace(users)
 
 	return group, err
