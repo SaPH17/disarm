@@ -1,17 +1,30 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default class ProjectServices {
-  static async getProjects(){
-    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/projects/`, {
-      withCredentials: true
-    });
+  static async getProjects() {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/projects/`,
+      {
+        withCredentials: true,
+      }
+    );
     return data.projects;
   }
 
-  static async getOneProject(id: any){
-    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/projects/${id}`, {
-      withCredentials: true
-    });
+  static async getOneProject(id: any) {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/projects/${id}`,
+      {
+        withCredentials: true,
+      }
+    );
     return data.project;
+  }
+
+  static async deleteProjectByIds(body: object) {
+    return axios.delete(`${process.env.REACT_APP_API_URL}/projects/`, {
+      withCredentials: true,
+      data: body,
+    });
   }
 }

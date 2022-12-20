@@ -12,43 +12,72 @@ import { defaultProject } from '../../../data/default-values';
 import SelectedDetail from '../../../components/selected-detail';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-
-const items: ActionButtonItem[] = [
-  {
-    id: '1',
-    name: 'Add User',
-    onClickFunction: () => {},
-  },
-  {
-    id: '2',
-    name: 'Generate Report',
-    onClickFunction: () => {},
-  },
-  {
-    id: '3',
-    name: 'Delete Project',
-    onClickFunction: () => {},
-  },
-];
+import DeletePopup from '../../../components/popup/delete-popup';
+import { toast } from 'react-toastify';
+import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
 
 const title = ['name', 'company', 'checklist', 'phase', 'report'];
 const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
 
 export default function ManageProjectIndex() {
-  const { data } = useQuery('projects', ProjectServices.getProjects);
+  const navigate = useNavigate();
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const { data, refetch } = useQuery('projects', ProjectServices.getProjects);
   const projects =
     data?.map((project: Project) => ({
       ...project,
       checklist: project.Checklist?.name,
     })) || [];
 
-  const [selectedProject, setSelectedProject] = useState<Project[]>([
-    defaultProject,
-  ]);
-  const navigate = useNavigate();
+  const [activeProject, setActiveProject] = useState<Project>(defaultProject);
+  const [selectedProject, setSelectedProject] = useState<Project[]>([]);
+
+  const items: ActionButtonItem[] = [
+    {
+      id: '1',
+      name: 'Delete Project',
+      onClickFunction: () => {
+        if (!selectedProject) return;
+        if (
+          !selectedProject.filter((project: Project) => project.id !== -1)
+            .length
+        )
+          return;
+        setOpenDeletePopup(true);
+      },
+    },
+    {
+      id: '2',
+      name: 'Add User',
+      onClickFunction: () => {},
+    },
+    {
+      id: '3',
+      name: 'Generate Report',
+      onClickFunction: () => {},
+    },
+  ];
 
   function handleRedirectToProjectDetail(project: any) {
     navigate('/projects/' + project.id);
+  }
+
+  function deleteProjects() {
+    if (!selectedProject) return;
+    const ids = selectedProject.map((project: Project) => project.id);
+    try {
+      toast.promise(DeleteProjectsHandler.handleDeleteProjectSubmit(ids), {
+        success: `Successfully delete ${ids.length} project(s)!`,
+        pending: `Waiting for delete ${ids.length} project(s)!`,
+        error: {
+          render({ data }: any) {
+            return data.message;
+          },
+        },
+      });
+      refetch();
+      setSelectedProject([]);
+    } catch (e) {}
   }
 
   return projects ? (
@@ -62,46 +91,47 @@ export default function ManageProjectIndex() {
       </div>
       <div className="flex flex-col gap-1 sm:gap-2">
         <div className="text-lg font-semibold">Projects</div>
-        {/* <TableCheckbox
+        <TableCheckbox
           title={title}
+          selectedData={selectedProject}
+          setSelectedData={setSelectedProject}
           content={projects as object[]}
-          onCheckedFunction={(project: any) => {
-            setSelectedProject([...selectedProject, project]);
+          onRowClickFunction={(project: Project) => {
+            setActiveProject(project);
           }}
-          onUncheckedFunction={(project: any) => {
-            setSelectedProject(
-              selectedProject.filter((item) => item !== project)
-            );
+          onClickFunction={(project: Project) => {
+            navigate(`/projects/${project.id}`);
           }}
-          onClickFunction={handleRedirectToProjectDetail}
-        /> */}
+        />
       </div>
 
       <SelectedDetail
         title={'Project Detail'}
         contentTitle={contentTitle}
-        content={selectedProject[selectedProject.length - 1]}
+        content={activeProject}
       >
         <div className="flex items-center gap-4">
           <div>
-            <Link
-              to={`/projects/${selectedProject[selectedProject.length - 1].id}`}
-              className={'underline'}
-            >
+            <Link to={`/projects/${activeProject.id}`} className={'underline'}>
               View Detail
             </Link>
           </div>
           <div>
-            <Link
-              to={`/projects/${
-                selectedProject[selectedProject.length - 1].id
-              }/edit`}
-            >
+            <Link to={`/projects/${activeProject.id}/edit`}>
               <PrimaryButton content="Edit" />
             </Link>
           </div>
         </div>
       </SelectedDetail>
+      {selectedProject && (
+        <DeletePopup
+          title="Delete Projects"
+          selectedData={selectedProject}
+          onClickFunction={deleteProjects}
+          open={openDeletePopup}
+          setOpen={setOpenDeletePopup}
+        />
+      )}
     </>
   ) : (
     <></>

@@ -36,6 +36,7 @@ func main() {
 		{
 			project.GET("/", controllers.GetAllProject)
 			project.POST("/", controllers.CreateProject)
+			project.DELETE("/", controllers.DeleteProjectByIds)
 			project.GET("/:id", controllers.GetProjectById)
 			project.PUT("/:id", controllers.EditProject)
 			project.DELETE("/:id", controllers.DeleteProject)

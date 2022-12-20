@@ -95,7 +95,6 @@ func (o *userOrm) Edit(id uuid.UUID, email string, username string, supervisor *
 	if supervisor.ID != uuid.Nil {
 		supervisorId = (*uuid.UUID)(&supervisor.ID)
 	}
-	fmt.Println(supervisorId)
 
 	var user User
 	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error

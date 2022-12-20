@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CreateUserHandler } from '../../../handlers/user/create-user-handler';
 import { UserFormData } from '../../../models/forms/user-form-data';
@@ -17,6 +17,7 @@ import SelectBox from '../../select-box';
 import GroupCard from './group-card';
 
 export default function CreateUserForm() {
+  const navigate = useNavigate();
   const { data: groupsData } = useQuery('groups', GroupServices.getGroups);
   const { data: usersData } = useQuery('users', UserServices.getUsers);
 
@@ -88,6 +89,7 @@ export default function CreateUserForm() {
           },
         }
       );
+      navigate('/users');
     } catch (e) {}
   }
 

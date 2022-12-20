@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -40,7 +40,6 @@ export default function ManageUserIndex() {
         assignedProjects: '-',
       });
     }) || [];
-
   const [activeUser, setActiveUser] = useState<User>(defaultUser);
   const [selectedUser, setSelectedUser] = useState<User[]>([]);
 
@@ -80,8 +79,13 @@ export default function ManageUserIndex() {
         },
       });
       refetch();
+      setSelectedUser([]);
     } catch (e) {}
   }
+
+  useEffect(() => {
+    refetch();
+  }, [refetch])
 
   return (
     <>
@@ -102,10 +106,10 @@ export default function ManageUserIndex() {
             selectedData={selectedUser}
             setSelectedData={setSelectedUser}
             content={users as object[]}
-            onRowClickFunction={(user: any) => {
+            onRowClickFunction={(user: User) => {
               setActiveUser(user);
             }}
-            onClickFunction={(user: any) => {
+            onClickFunction={(user: User) => {
               navigate(`/users/${user.id}`);
             }}
           />

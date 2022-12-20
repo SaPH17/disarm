@@ -2,6 +2,7 @@ package models
 
 import (
 	"disarm/main/database"
+	"fmt"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -27,7 +28,7 @@ type ProjectOrm interface {
 	GetAll() ([]Project, error)
 	GetOneById(id uuid.UUID) (Project, error)
 	Edit(id uuid.UUID, name string, company string, phase string, checklistId uuid.UUID) (Project, error)
-	Delete(id uuid.UUID) (bool, error)
+	Delete(ids []uuid.UUID) (bool, error)
 }
 
 var Projects ProjectOrm
@@ -70,10 +71,12 @@ func (o *projectOrm) Edit(id uuid.UUID, name string, company string, phase strin
 	return project, err
 }
 
-func (o *projectOrm) Delete(id uuid.UUID) (bool, error) {
-	var project Project
-	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
-	o.instance.Delete(&project)
+func (o *projectOrm) Delete(ids []uuid.UUID) (bool, error) {
+	var projects []Project
+	err := o.instance.Model(Project{}).Where("id IN ?", ids).Find(&projects).Error
+	fmt.Println(ids)
+	fmt.Println(projects)
+	o.instance.Delete(&projects)
 
 	return true, err
 }

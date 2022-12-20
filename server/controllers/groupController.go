@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"disarm/main/models"
-	"disarm/main/utils"
 	"html"
 	"net/http"
 	"strings"
@@ -32,7 +31,19 @@ func CreateGroup(c *gin.Context) {
 	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
 
-	parentGroupId := utils.GetNullableString(escapedParentGroupId)
+	var parentGroup models.Group
+	var dbErr error
+
+	if escapedParentGroupId != "" {
+		parentGroup, dbErr = models.Groups.GetOneById(uuid.FromStringOrNil(escapedParentGroupId))
+
+		if dbErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": dbErr.Error(),
+			})
+			return
+		}
+	}
 
 	var users []models.User
 
@@ -51,7 +62,7 @@ func CreateGroup(c *gin.Context) {
 		}
 	}
 
-	group, dbErr := models.Groups.Create(escapedName, escapedDescription, parentGroupId, escapedPermissions, users)
+	group, dbErr := models.Groups.Create(escapedName, escapedDescription, &parentGroup, escapedPermissions, users)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -127,9 +138,7 @@ func EditGroup(c *gin.Context) {
 	escapedDescription := html.EscapeString(strings.TrimSpace(body.Description))
 	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 
-	parentGroupId := utils.GetNullableString(escapedParentGroupId)
-
-	uuid, errUuid := uuid.FromString(escapedId)
+	groupUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -138,7 +147,21 @@ func EditGroup(c *gin.Context) {
 		return
 	}
 
-	group, dbErr := models.Groups.Edit(uuid, escapedName, escapedDescription, parentGroupId)
+	var parentGroup models.Group
+	var dbErr error
+
+	if escapedParentGroupId != "" {
+		parentGroup, dbErr = models.Groups.GetOneById(uuid.FromStringOrNil(escapedParentGroupId))
+
+		if dbErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": dbErr.Error(),
+			})
+			return
+		}
+	}
+
+	group, dbErr := models.Groups.Edit(groupUuid, escapedName, escapedDescription, &parentGroup)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
