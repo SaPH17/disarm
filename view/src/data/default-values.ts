@@ -10,7 +10,7 @@ export const defaultProject: Project = {
   report: '-',
   description: '-',
   created_at: '-',
-  updated_at: '-'
+  updated_at: '-',
 };
 
 export const defaultGroup: Group = {
@@ -30,8 +30,8 @@ export const defaultUser: User = {
   supervisor_id: '-',
   groups: '-',
   assignedProjects: '-',
-  direct_supervisor: '-'
-}
+  direct_supervisor: '-',
+};
 
 export const defaultChecklist = {
   id: -1,
@@ -42,9 +42,9 @@ export const defaultChecklist = {
   createdBy: '-',
   status: '-',
   sections: [],
-  createdAt: '-'
+  createdAt: '-',
 };
 
 export const defaultChecklistAccordion = {
   isEdited: true,
-}
+};

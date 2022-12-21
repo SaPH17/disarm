@@ -19,6 +19,7 @@ import ManageProjectShow from './pages/manage/project/show';
 import ManageUserIndex from './pages/manage/user';
 import ManageUserCreate from './pages/manage/user/create';
 import ManageUserEdit from './pages/manage/user/edit';
+import ManageFindingCreate from './pages/manage/finding/create';
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
             <Route path="login" element={<Login />} />
           </Route>
           <Route path="/" element={<RolesAuthRoute roles={['auth']} />}>
-            <Route path="users" >
+            <Route path="users">
               <Route index element={<ManageUserIndex />} />
               <Route path="create" element={<ManageUserCreate />} />
               <Route path=":id/edit" element={<ManageUserEdit />} />
@@ -60,6 +61,10 @@ function App() {
               <Route path="create" element={<ManageProjectCreate />} />
               <Route path=":id" element={<ManageProjectShow />} />
               <Route path=":id/edit" element={<ManageProjectEdit />} />
+              <Route
+                path=":id/insert-finding"
+                element={<ManageFindingCreate />}
+              />
             </Route>
             <Route path="/" element={<Dashboard />} />
           </Route>

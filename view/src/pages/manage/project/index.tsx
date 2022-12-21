@@ -16,8 +16,8 @@ import DeletePopup from '../../../components/popup/delete-popup';
 import { toast } from 'react-toastify';
 import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
 
-const title = ['name', 'company', 'checklist', 'phase', 'report'];
-const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
+const title = ['name', 'company', 'phase', 'report'];
+const contentTitle = ['name', 'company', 'checklist', 'phase', 'assignedUser'];
 
 export default function ManageProjectIndex() {
   const navigate = useNavigate();
@@ -57,10 +57,6 @@ export default function ManageProjectIndex() {
       onClickFunction: () => {},
     },
   ];
-
-  function handleRedirectToProjectDetail(project: any) {
-    navigate('/projects/' + project.id);
-  }
 
   function deleteProjects() {
     if (!selectedProject) return;

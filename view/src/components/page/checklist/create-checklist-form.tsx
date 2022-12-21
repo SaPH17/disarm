@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { CreateChecklistHandler } from '../../../handlers/checklist/create-user-handler';
+import { CreateChecklistHandler } from '../../../handlers/checklist/create-checklist-handler';
 import { ChecklistFormData } from '../../../models/forms/checklist-form-data';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
