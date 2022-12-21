@@ -13,6 +13,7 @@ export type InputTextData = {
   disabled?: boolean;
   listId?: string;
   datalist?: JSX.Element;
+  labelLastSeen?: string;
 };
 
 const InputText = ({
@@ -23,19 +24,22 @@ const InputText = ({
   placeholder,
   errors,
   register,
-  onChange = () => {},
+  onChange = () => { },
   disabled = false,
   listId,
-  datalist
+  datalist,
+  labelLastSeen = ''
 }: InputTextData) => {
+  
   return (
     <>
-      <label
+      <div className='hidden sm:hidden'></div>
+      {label !== "" && <label
         htmlFor={id}
-        className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+        className={`block ${labelLastSeen === '' ? '' : (labelLastSeen + ':hidden')} text-sm font-medium text-gray-700  sm:mt-px sm:pt-2`}
       >
         {label}
-      </label>
+      </label>}
       <div className="mt-1 sm:mt-0 sm:col-span-2">
         <input
           id={id}
@@ -45,9 +49,9 @@ const InputText = ({
           onChange={(e) => onChange(e.target.value)}
           className={`block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md`}
           disabled={disabled}
-          { ...(listId !== undefined && { list: listId })}
+          {...(listId !== undefined && { list: listId })}
         />
-        { datalist }
+        {datalist}
         {errors && <FormErrorMessage name={name} errors={errors} />}
       </div>
     </>

@@ -6,7 +6,7 @@ import { CreateProjectHandler } from '../../../handlers/project/create-project-h
 import { Checklist } from '../../../models/checklist';
 import { ProjectFormData } from '../../../models/forms/project-form-data';
 import { GeneralData } from '../../../models/general-data';
-import ChecklistServices from '../../../services/checklist-service';
+import ChecklistServices from '../../../services/checklist-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';

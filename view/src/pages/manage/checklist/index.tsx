@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionButton, {
-  ActionButtonItem,
+  ActionButtonItem
 } from '../../../components/action-button';
 import PrimaryButton from '../../../components/primary-button';
 import SelectedDetail from '../../../components/selected-detail';
 import TableCheckbox from '../../../components/table-checkbox';
 import { defaultChecklist } from '../../../data/default-values';
 import { Checklist } from '../../../models/checklist';
-import ChecklistServices from '../../../services/checklist-service';
+import ChecklistServices from '../../../services/checklist-services';
 import { toReadableDateTime } from '../../../utils/functions/dates';
 
 const items: ActionButtonItem[] = [
@@ -36,6 +36,7 @@ export default function ManageChecklistIndex() {
     'checklists',
     ChecklistServices.getChecklists
   );
+  console.log(checklistsData);
 
   const checklists =
     checklistsData?.map((checklist: Checklist) => ({

@@ -11,9 +11,9 @@ type Checklist struct {
 	Base
 	Name      string    `gorm:"size:255;not null;" json:"name"`
 	Status    string    `gorm:"size:255;not null;" json:"status"`
-	CreatedBy uuid.UUID `gorm:"type:uuid;" json:"created_by"`
-	User      User      `gorm:"foreignKey:created_by"`
-	Sections  string    `gorm:"size:255;not null;" json:"sections"`
+	CreatedByID uuid.UUID `gorm:"type:uuid;" json:"created_by_id"`
+	User      User      `gorm:"foreignKey:CreatedByID"`
+	Sections  string    `gorm:"size:65535;not null;" json:"sections"`
 }
 
 type checklistOrm struct {
@@ -36,8 +36,8 @@ func init() {
 }
 
 func (o *checklistOrm) Create(name string, status string, createdBy uuid.UUID, sections string) (Checklist, error) {
-	checklist := Checklist{Name: name, Status: status, CreatedBy: createdBy, Sections: sections}
-	result := o.instance.Create(&checklist)
+	checklist := Checklist{Name: name, Status: status, Sections: sections, CreatedByID: createdBy}
+	result := o.instance.Omit("User").Create(&checklist)
 
 	return checklist, result.Error
 }
@@ -61,7 +61,7 @@ func (o *checklistOrm) Edit(id uuid.UUID, name string, status string, createdBy 
 	err := o.instance.Model(Checklist{}).Where("id = ?", id).Take(&checklist).Error
 	checklist.Name = name
 	checklist.Status = status
-	checklist.CreatedBy = createdBy
+	// checklist.CreatedBy = createdBy
 	checklist.Sections = sections
 	o.instance.Save(checklist)
 

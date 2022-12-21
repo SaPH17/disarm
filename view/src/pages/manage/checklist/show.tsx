@@ -1,9 +1,8 @@
-import Breadcrumbs from '../../../components/breadcrumbs';
-import TableAccordion from '../../../components/table-accordion';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import Breadcrumbs from '../../../components/breadcrumbs';
 import { Checklist } from '../../../models/checklist';
-import ChecklistService from '../../../services/checklist-service';
+import ChecklistService from '../../../services/checklist-services';
 
 const title = ['id', 'detail', 'tool', 'procedure'];
 const content = [
@@ -87,13 +86,13 @@ const ManageChecklistShow = () => {
     <>
       <Breadcrumbs pages={breadcrumbsPages}></Breadcrumbs>
       <div className="text-xl font-semibold">Checklist A</div>
-      <div className="flex flex-col gap-2 sm:gap-4 bg-gray-100 rounded">
-        <TableAccordion
+      <div className="flex flex-col gap-2 bg-gray-100 rounded sm:gap-4">
+        {/* <TableAccordion
           title={title}
           content={content}
           onCheckedFunction={() => {}}
           onUncheckedFunction={() => {}}
-        ></TableAccordion>{' '}
+        ></TableAccordion>{' '} */}
       </div>
     </>
   );

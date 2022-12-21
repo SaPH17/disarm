@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { UpdateProjectHandler } from '../../../handlers/project/edit-project-handler';
 import { Checklist } from '../../../models/checklist';
 import { ProjectFormData } from '../../../models/forms/project-form-data';
-import ChecklistServices from '../../../services/checklist-service';
+import ChecklistServices from '../../../services/checklist-services';
 import ProjectServices from '../../../services/project-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';

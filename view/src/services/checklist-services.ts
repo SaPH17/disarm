@@ -13,4 +13,10 @@ export default class ChecklistServices {
       (checklist) => (checklist.id as string) === (id as string)
     );
   }
+
+  static async createChecklist(body: object){
+    return axios.post(`${process.env.REACT_APP_API_URL}/checklists/`, body, {
+      withCredentials: true
+    });
+  }
 }

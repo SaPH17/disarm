@@ -44,3 +44,7 @@ export const defaultChecklist = {
   sections: [],
   createdAt: '-'
 };
+
+export const defaultChecklistAccordion = {
+  isEdited: true,
+}

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"disarm/main/models"
+	"disarm/main/utils/token"
 	"html"
 	"net/http"
 	"strings"
@@ -13,8 +14,6 @@ import (
 func CreateChecklist(c *gin.Context) {
 	var body struct {
 		Name      string `json:"name" binding:"required"`
-		Status    string `json:"status" binding:"required"`
-		CreatedBy string `json:"createdBy" binding:"required"`
 		Sections  string `json:"sections" binding:"required"`
 	}
 
@@ -26,20 +25,16 @@ func CreateChecklist(c *gin.Context) {
 	}
 
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
-	escapedStatus := html.EscapeString(strings.TrimSpace(body.Status))
-	escapedCreatedBy := html.EscapeString(strings.TrimSpace(body.CreatedBy))
-	escapedSections := html.EscapeString(strings.TrimSpace(body.Sections))
+	escapedSections := strings.TrimSpace(body.Sections)
 
-	createdByUuid, errUuid := uuid.FromString(escapedCreatedBy)
-
-	if errUuid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errUuid.Error(),
-		})
+	createdByUuid, err := token.ExtractTokenID(c)
+	
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	checklist, dbErr := models.Checklists.Create(escapedName, escapedStatus, createdByUuid, escapedSections)
+	
+	checklist, dbErr := models.Checklists.Create(escapedName, "Active", createdByUuid, escapedSections)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

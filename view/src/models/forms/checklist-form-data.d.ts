@@ -1,11 +1,7 @@
 export type ChecklistFormData = {
-  id: string | number;
-  name: string;
-  createdAt: Date;
-  lastModified: Date;
-  createdBy: string;
-  status: string;
-  sections: ChecklistSectionFormData[];
+  name?: string;
+  section?: string;
+  isSubmit?: boolean;
 };
 
 export type ChecklistSectionFormData = {
