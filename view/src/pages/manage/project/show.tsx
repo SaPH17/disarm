@@ -5,6 +5,7 @@ import PrimaryButton from '../../../components/primary-button';
 import ProjectServices from '../../../services/project-services';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
+import { Project } from '../../../models/project';
 
 const content = [
   {
@@ -50,15 +51,19 @@ const content = [
 ];
 
 const title = ['id', 'title', 'impactedSystem', 'risk', 'phase', 'action'];
-
-const contentTitle = ['name', 'company', 'phase', 'assignedUser'];
+const contentTitle = ['name', 'company', 'checklist', 'phase', 'assignedUser'];
 
 export default function ManageProjectShow() {
   const params = useParams();
   const { data } = useQuery(`project/${params.id}`, () =>
     ProjectServices.getOneProject(params.id)
   );
-  const project = data || [];
+  const project = data
+    ? {
+        ...data,
+        checklist: data.Checklist?.name,
+      }
+    : [];
 
   return project ? (
     <>
