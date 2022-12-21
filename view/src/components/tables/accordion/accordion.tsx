@@ -68,52 +68,90 @@ const Accordion = ({ accordionTitle, headers, content, isEditable, index, setCon
               key={contentIndex}
               className={
                 'bg-white p-3 pl-5 items-center sm:items-start border-gray-200 border-b inline-grid grid-cols-' +
-                ((headers.length) * 2 + (isEditable ? 1 : 0))
+                (headers.length * 2 + (isEditable ? 1 : 0))
               }
             >
               {headers.map((h: any, idx: number) => {
                 return (
-                  <div key={idx} className={`col-span-${((headers.length) * 2) + (isEditable ? 1 : 0)} sm:col-span-2 mb-auto`}>
-                    {(contentRow.isEdited) ? <div className='px-1 py-2 sm:py-0'>
-                      <InputText
-                        id={`${h}_${idx}`}
-                        name={`${h}`}
-                        label={`${toPascalCase(h)}`}
-                        labelLastSeen={'sm'}
-                        type="text"
-                        errors={errors}
-                        register={register(h, {
-                          required: `${toPascalCase(h)} is required.`,
-                          validate: (value) => {
-                            if (h !== 'id') return true;
-                            return !(content[index].details as object[]).filter((detail: any) => detail?.id === value || false).length ? true : 'Id must be unique!';
-                          }
-                        })}
-                      />
-                    </div> : <div className='grid grid-cols-4 gap-1'>
-                      <div className='flex justify-between font-medium sm:hidden'>
-                        <span>{toPascalCase(h)}</span>
-                        <span>:</span>
+                  <div
+                    key={idx}
+                    className={`col-span-${
+                      headers.length * 2 + (isEditable ? 1 : 0)
+                    } sm:col-span-2 mb-auto`}
+                  >
+                    {contentRow.isEdited ? (
+                      <div className="px-1 py-2 sm:py-0">
+                        <InputText
+                          id={`${h}_${idx}`}
+                          name={`${h}`}
+                          label={`${toPascalCase(h)}`}
+                          labelLastSeen={'sm'}
+                          type="text"
+                          errors={errors}
+                          register={register(h, {
+                            required: `${toPascalCase(h)} is required.`,
+                            validate: (value) => {
+                              if (h !== 'id') return true;
+                              return !(
+                                content[index].details as object[]
+                              ).filter(
+                                (detail: any) => detail?.id === value || false
+                              ).length
+                                ? true
+                                : 'Id must be unique!';
+                            },
+                          })}
+                        />
                       </div>
-                      <div className='col-span-3 sm:col-span-1'>{(contentRow as any)[h]}</div>
-                    </div>}
+                    ) : (
+                      <div className="grid grid-cols-4 gap-1">
+                        <div className="flex justify-between font-medium sm:hidden">
+                          <span>{toPascalCase(h)}</span>
+                          <span>:</span>
+                        </div>
+                        <div className="col-span-3 sm:col-span-1">
+                          {(contentRow as any)[h]}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
-              <div className={`col-span-${((headers.length) * 2) + (isEditable ? 1 : 0)} sm:col-span-1`}>
-                <div className={`flex justify-center w-full text-gray-500 cursor-pointer pt-${contentRow.isEdited ? '2.5' : '1'} hover:text-gray-700`}>
-                  <div className='hidden sm:block'>
-                    {
-                      contentRow.isEdited ?
-                        <button type='submit'><CheckIcon className='w-5 h-5' /></button> :
-                        <button onClick={() => deleteDataFromRow(contentIndex)} type="button"><TrashIcon className='w-5 h-5' /></button>
-                    }
-                  </div>
-                  <div className='flex-1 block sm:hidden'>
-                    <PrimaryButton type='submit' classNames='w-full' content='Save' />
+              {isEditable && (
+                <div
+                  className={`col-span-${
+                    headers.length * 2 + (isEditable ? 1 : 0)
+                  } sm:col-span-1`}
+                >
+                  <div
+                    className={`flex justify-center w-full text-gray-500 cursor-pointer pt-${
+                      contentRow.isEdited ? '2.5' : '1'
+                    } hover:text-gray-700`}
+                  >
+                    <div className="hidden sm:block">
+                      {contentRow.isEdited ? (
+                        <button type="submit">
+                          <CheckIcon className="w-5 h-5" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => deleteDataFromRow(contentIndex)}
+                          type="button"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex-1 block sm:hidden">
+                      <PrimaryButton
+                        type="submit"
+                        classNames="w-full"
+                        content="Save"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}
