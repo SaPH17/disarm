@@ -3,25 +3,6 @@ import EditableList from '../../../components/editable-list';
 import { useState } from 'react';
 import EditableImageList from '../../../components/editable-image-list';
 
-const content = [
-  {
-    name: 'Role A',
-    description: 'Role for admin',
-  },
-  {
-    name: 'Role B',
-    description: 'Role for pentester',
-  },
-  {
-    name: 'Role C',
-    description: 'Role for SysAdmin',
-  },
-  {
-    name: 'Role D',
-    description: 'Role for others',
-  },
-];
-
 const contentTitle = [
   'name',
   'description',

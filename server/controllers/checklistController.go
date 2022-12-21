@@ -93,8 +93,6 @@ func EditChecklist(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
 		Name      string `json:"name" binding:"required"`
-		Status    string `json:"status" binding:"required"`
-		CreatedBy string `json:"created_by" binding:"required"`
 		Sections  string `json:"sections" binding:"required"`
 	}
 
@@ -107,12 +105,9 @@ func EditChecklist(c *gin.Context) {
 
 	escapedId := html.EscapeString(strings.TrimSpace(id))
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
-	escapedStatus := html.EscapeString(strings.TrimSpace(body.Status))
-	escapedCreatedBy := html.EscapeString(strings.TrimSpace(body.CreatedBy))
-	escapedSections := html.EscapeString(strings.TrimSpace(body.Sections))
+	escapedSections := strings.TrimSpace(body.Sections)
 
-	createdByUuid, errUuid := uuid.FromString(escapedCreatedBy)
-	uuid, errCreatedByUuid := uuid.FromString(escapedId)
+	currentUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -121,14 +116,7 @@ func EditChecklist(c *gin.Context) {
 		return
 	}
 
-	if errCreatedByUuid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errCreatedByUuid.Error(),
-		})
-		return
-	}
-
-	checklist, dbErr := models.Checklists.Edit(uuid, escapedName, escapedStatus, createdByUuid, escapedSections)
+	checklist, dbErr := models.Checklists.Edit(currentUuid, escapedName, escapedSections)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -142,10 +130,11 @@ func EditChecklist(c *gin.Context) {
 	})
 }
 
+
 func DeleteChecklist(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	uuid, errUuid := uuid.FromString(escapedId)
+	idUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -154,7 +143,40 @@ func DeleteChecklist(c *gin.Context) {
 		return
 	}
 
-	result, dbErr := models.Checklists.Delete(uuid)
+	uuids := []uuid.UUID{idUuid}
+
+	result, dbErr := models.Checklists.Delete(uuids)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"result": result,
+	})
+}
+
+func DeleteChecklistByIds(c *gin.Context) {
+	var body struct {
+		Ids []string `json:"ids" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var parsedUuids []uuid.UUID
+	for _, element := range body.Ids {
+		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	}
+
+	result, dbErr := models.Checklists.Delete(parsedUuids)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

@@ -1,24 +1,19 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
+import DeletePopup from '../../../components/popup/delete-popup';
 import PrimaryButton from '../../../components/primary-button';
 import SelectedDetail from '../../../components/selected-detail';
 import TableCheckbox from '../../../components/table-checkbox';
 import { defaultChecklist } from '../../../data/default-values';
+import { DeleteChecklistsHandler } from '../../../handlers/checklist/delete-checklist-handler';
 import { Checklist } from '../../../models/checklist';
 import ChecklistServices from '../../../services/checklist-services';
 import { toReadableDateTime } from '../../../utils/functions/dates';
-
-const items: ActionButtonItem[] = [
-  {
-    id: '1',
-    name: 'Delete Checklist',
-    onClickFunction: () => {},
-  },
-];
 
 const title = ['name', 'lastModified', 'createdBy', 'status'];
 
@@ -32,7 +27,8 @@ const contentTitle = [
 
 export default function ManageChecklistIndex() {
   const navigate = useNavigate();
-  const { data: checklistsData } = useQuery(
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const { data: checklistsData, refetch } = useQuery(
     'checklists',
     ChecklistServices.getChecklists
   );
@@ -47,6 +43,41 @@ export default function ManageChecklistIndex() {
   const [activeChecklist, setActiveChecklist] =
     useState<Checklist>(defaultChecklist);
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>([]);
+
+  const items: ActionButtonItem[] = [
+    {
+      id: '1',
+      name: 'Delete Checklist',
+      onClickFunction: () => {
+        if (!selectedChecklist) return;
+        if (
+          !selectedChecklist.filter(
+            (checklist: Checklist) => checklist.id !== -1
+          ).length
+        )
+          return;
+        setOpenDeletePopup(true);
+      },
+    },
+  ];
+
+  async function deleteChecklists() {
+    if (!selectedChecklist) return;
+    const ids = selectedChecklist.map((checklist: Checklist) => checklist.id);
+    try {
+      await toast.promise(DeleteChecklistsHandler.handleDeleteChecklistSubmit(ids), {
+        success: `Successfully delete ${ids.length} checklist(s)!`,
+        pending: `Waiting for delete ${ids.length} checklist(s)!`,
+        error: {
+          render({ data }: any) {
+            return data.message;
+          },
+        },
+      });
+      refetch();
+      setSelectedChecklist([]);
+    } catch (e) {}
+  }
 
   return checklists ? (
     <>
@@ -95,6 +126,15 @@ export default function ManageChecklistIndex() {
           </Link>
         </div>
       </SelectedDetail>
+      {selectedChecklist && (
+        <DeletePopup
+          title="Delete Checklists"
+          selectedData={selectedChecklist}
+          onClickFunction={deleteChecklists}
+          open={openDeletePopup}
+          setOpen={setOpenDeletePopup}
+        />
+      )}
     </>
   ) : (
     <></>

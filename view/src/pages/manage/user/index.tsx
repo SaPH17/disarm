@@ -67,11 +67,11 @@ export default function ManageUserIndex() {
     },
   ];
 
-  function deleteUsers() {
+  async function deleteUsers() {
     if (!selectedUser) return;
     const ids = selectedUser.map((user: User) => user.id);
     try {
-      toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(ids), {
+      await toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(ids), {
         success: `Successfully delete ${ids.length} user(s)!`,
         pending: `Waiting for delete ${ids.length} user(s)!`,
         error: {

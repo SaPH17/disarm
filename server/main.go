@@ -64,6 +64,7 @@ func main() {
 		{
 			checklist.GET("/", controllers.GetAllChecklist)
 			checklist.POST("/", controllers.CreateChecklist)
+			checklist.DELETE("/", controllers.DeleteChecklistByIds)
 			checklist.GET("/:id", controllers.GetChecklistById)
 			checklist.PUT("/:id", controllers.EditChecklist)
 			checklist.DELETE("/:id", controllers.DeleteChecklist)

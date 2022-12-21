@@ -3,20 +3,41 @@ import { checklists } from '../data/checklist';
 
 export default class ChecklistServices {
   static async getChecklists() {
-    const {data} = await axios.get(`${process.env.REACT_APP_API_URL}/checklists/`, {
-      withCredentials: true
-    });
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/checklists/`,
+      {
+        withCredentials: true,
+      }
+    );
     return data.checklists;
   }
-  static getOneChecklist(id: string | number) {
-    return checklists.find(
-      (checklist) => (checklist.id as string) === (id as string)
+  static async getOneChecklist(id: string | number | undefined) {
+    if (id === undefined) return null;
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/checklists/${id}`,
+      {
+        withCredentials: true,
+      }
     );
+    return data.checklist;
   }
 
-  static async createChecklist(body: object){
+  static async createChecklist(body: object) {
     return axios.post(`${process.env.REACT_APP_API_URL}/checklists/`, body, {
-      withCredentials: true
+      withCredentials: true,
+    });
+  }
+
+  static async deleteChecklistByIds(body: object) {
+    return axios.delete(`${process.env.REACT_APP_API_URL}/checklists/`, {
+      withCredentials: true,
+      data: body,
+    });
+  }
+
+  static async editChecklist(body: object, id: string | number) {
+    return axios.put(`${process.env.REACT_APP_API_URL}/checklists/${id}`, body, {
+      withCredentials: true,
     });
   }
 }

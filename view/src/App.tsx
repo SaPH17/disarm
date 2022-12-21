@@ -6,6 +6,7 @@ import Login from './pages/auth/login';
 import Dashboard from './pages/dashboard';
 import ManageChecklistIndex from './pages/manage/checklist';
 import ManageChecklistCreate from './pages/manage/checklist/create';
+import ManageChecklistEdit from './pages/manage/checklist/edit';
 import ManageChecklistShow from './pages/manage/checklist/show';
 import ManageFindingIndex from './pages/manage/finding';
 import ManageGroupIndex from './pages/manage/group';
@@ -50,6 +51,7 @@ function App() {
               <Route index element={<ManageChecklistIndex />} />
               <Route path=":id" element={<ManageChecklistShow />} />
               <Route path="create" element={<ManageChecklistCreate />} />
+              <Route path=":id/edit" element={<ManageChecklistEdit />} />
             </Route>
 
             <Route path="finding">
