@@ -2,15 +2,22 @@
 import { Dialog, Transition } from '@headlessui/react';
 
 import {
-  CheckIcon, HomeIcon,
+  CheckIcon,
+  HomeIcon,
+  LogoutIcon,
   MenuIcon,
   ServerIcon,
   UserGroupIcon,
   UserIcon,
-  XIcon
+  XIcon,
 } from '@heroicons/react/outline';
+import { useAtom } from 'jotai';
 import { Fragment, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import authAtom from '../../atoms/atom';
+import { LogoutHandlers } from '../../handlers/auth/logout-handler';
+import AuthServices from '../../services/auth-services';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
@@ -32,9 +39,29 @@ function activePath(currentPath: string, comparePath: string) {
   return currentPath.startsWith(comparePath);
 }
 
+
+
 export default function AuthorizedLayout({ children }: any) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+const [auth, setAuth] = useAtom(authAtom);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    try {
+      await toast.promise(LogoutHandlers.handleLogout(), {
+        success: 'Successfully logout!',
+        pending: 'Waiting for logout!',
+        error: {
+          render({ data }: any) {
+            return data.message;
+          },
+        },
+      });
+      setAuth(null);
+      navigate('/auth/login');
+    } catch (e) {}
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100">
@@ -88,16 +115,12 @@ export default function AuthorizedLayout({ children }: any) {
               </Transition.Child>
               <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                 <div className="flex items-center flex-shrink-0 px-4">
-                  <img
-                    className="w-auto h-8"
-                    src="/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
-                    alt="Workflow"
-                  />
+                  <img className="w-auto h-8" src="/Disarm.png" alt="Disarm" />
                 </div>
                 <nav className="px-2 mt-5 space-y-1">
                   {navigation.map((item) => (
                     <Link key={item.name} to={item.href}>
-                      <a
+                      <span
                         className={classNames(
                           activePath(location.pathname, item.href)
                             ? 'bg-gray-100 text-gray-900'
@@ -115,7 +138,7 @@ export default function AuthorizedLayout({ children }: any) {
                           aria-hidden="true"
                         />
                         {item.name}
-                      </a>
+                      </span>
                     </Link>
                   ))}
                 </nav>
@@ -130,13 +153,25 @@ export default function AuthorizedLayout({ children }: any) {
                         alt=""
                       />
                     </div>
-                    <div className="ml-3">
-                      <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
-                        Tom Cook
-                      </p>
-                      <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
-                        View profile
-                      </p>
+                    <div className="ml-3 flex-1 flex justify-between items-center">
+                      <div className="flex flex-col w-52">
+                        <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 truncate">
+                          Lorem ipsum dolor sit amet consectetur adipisicing
+                          elit. Aliquid impedit temporibus nesciunt, illo amet
+                          ab quae sapiente fuga voluptatem maxime modi, facilis
+                          possimus delectus molestias, magni libero commodi
+                          accusamus quisquam.
+                        </p>
+                        <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+                          View profile
+                        </p>
+                      </div>
+                      <div className="text-gray-500 hover:text-gray-700 w-5 ml-2">
+                        <LogoutIcon
+                          className="w-5 h-5"
+                          onClick={() => handleLogout()}
+                        />
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -156,11 +191,7 @@ export default function AuthorizedLayout({ children }: any) {
           <div className="flex flex-col flex-1 h-0 bg-white border-r border-gray-200">
             <div className="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4">
-                <img
-                  className="w-auto h-8"
-                  src="/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
-                  alt="Workflow"
-                />
+                <img className="w-auto h-8" src="/Disarm.png" alt="Disarm" />
               </div>
               <nav className="flex-1 px-2 mt-5 space-y-1 bg-white">
                 {navigation.map((item) => (
@@ -198,13 +229,25 @@ export default function AuthorizedLayout({ children }: any) {
                       alt=""
                     />
                   </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                      Tom Cook
-                    </p>
-                    <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                      View profile
-                    </p>
+                  <div className="ml-3 flex-1 flex justify-between items-center">
+                    <div className="flex flex-col w-36">
+                      <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 truncate">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Aliquid impedit temporibus nesciunt, illo amet ab quae
+                        sapiente fuga voluptatem maxime modi, facilis possimus
+                        delectus molestias, magni libero commodi accusamus
+                        quisquam.
+                      </p>
+                      <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+                        View profile
+                      </p>
+                    </div>
+                    <div className="text-gray-500 hover:text-gray-700 w-5">
+                      <LogoutIcon
+                        className="w-5 h-5"
+                        onClick={() => handleLogout()}
+                      />
+                    </div>
                   </div>
                 </div>
               </Link>
