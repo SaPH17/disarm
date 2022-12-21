@@ -24,8 +24,8 @@ type ChecklistOrm interface {
 	Create(name string, status string, createdBy uuid.UUID, sections string) (Checklist, error)
 	GetAll() ([]Checklist, error)
 	GetOneById(id uuid.UUID) (Checklist, error)
-	Edit(id uuid.UUID, name string, status string, createdBy uuid.UUID, sections string) (Checklist, error)
-	Delete(id uuid.UUID) (bool, error)
+	Edit(id uuid.UUID, name string, sections string) (Checklist, error)
+	Delete(ids []uuid.UUID) (bool, error)
 }
 
 var Checklists ChecklistOrm
@@ -51,27 +51,23 @@ func (o *checklistOrm) GetAll() ([]Checklist, error) {
 
 func (o *checklistOrm) GetOneById(id uuid.UUID) (Checklist, error) {
 	var checklist Checklist
-	err := o.instance.Preload("User").Model(Checklist{}).Where("id = ?", id).Take(&checklist).Error
+	err := o.instance.Model(Checklist{}).Preload("User").Where("id = ?", id).Take(&checklist).Error
 
 	return checklist, err
 }
 
-func (o *checklistOrm) Edit(id uuid.UUID, name string, status string, createdBy uuid.UUID, sections string) (Checklist, error) {
+func (o *checklistOrm) Edit(id uuid.UUID, name string, sections string) (Checklist, error) {
 	var checklist Checklist
 	err := o.instance.Model(Checklist{}).Where("id = ?", id).Take(&checklist).Error
-	checklist.Name = name
-	checklist.Status = status
-	// checklist.CreatedBy = createdBy
-	checklist.Sections = sections
-	o.instance.Save(checklist)
+	o.instance.Model(&checklist).Updates(Checklist{Name: name, Sections: sections})
 
 	return checklist, err
 }
 
-func (o *checklistOrm) Delete(id uuid.UUID) (bool, error) {
-	var checklist Checklist
-	err := o.instance.Model(Checklist{}).Where("id = ?", id).Take(&checklist).Error
-	o.instance.Delete(&checklist)
+func (o *checklistOrm) Delete(ids []uuid.UUID) (bool, error) {
+	var checklists []Checklist
+	err := o.instance.Model(Checklist{}).Where("id IN ?", ids).Find(&checklists).Error
+	o.instance.Delete(&checklists)
 
 	return true, err
 }
