@@ -49,19 +49,20 @@ export default function Login() {
   }
   
   return (
-    <div className="flex flex-col justify-center min-h-screen py-12 bg-gray-50 sm:px-6 lg:px-8" onSubmit={handleSubmit(handleLoginFormSubmit)}>
+    <div
+      className="flex flex-col justify-center min-h-screen py-12 bg-gray-50 sm:px-6 lg:px-8"
+      onSubmit={handleSubmit(handleLoginFormSubmit)}
+    >
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <img
-          className="w-auto h-12 mx-auto"
-          src="/img/logos/workflow-mark-blue-600.svg"
-          alt="Workflow"
-        />
-        <h2 className="mt-6 text-3xl font-extrabold text-center text-gray-900">Sign in to your account</h2>
+        <img className="w-auto h-12 mx-auto" src="/Disarm.png" alt="Disarm" />
+        <h2 className="mt-6 text-3xl font-extrabold text-center text-gray-900">
+          Sign in to your account
+        </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" >
+          <form className="space-y-6">
             <div>
               <InputText
                 id="email"
@@ -109,11 +110,15 @@ export default function Login() {
             </div> */}
 
             <div>
-              <PrimaryButton content='Sign In' type="submit" classNames="!rounded-md shadow-sm w-full"/>
+              <PrimaryButton
+                content="Sign In"
+                type="submit"
+                classNames="!rounded-md shadow-sm w-full"
+              />
             </div>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }

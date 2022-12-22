@@ -12,4 +12,10 @@ export default class AuthServices {
       withCredentials: true
     });
   }
+
+  static logout(){
+    return axios.post(`${process.env.REACT_APP_API_URL}/auth/logout`, {
+      withCredentials: true,
+    });
+  }
 }
