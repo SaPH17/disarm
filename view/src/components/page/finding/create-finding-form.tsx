@@ -34,7 +34,7 @@ export default function CreateFindingForm() {
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('risk', data.risk);
-    formData.append('impacted_sytem', data.impactedSystem);
+    formData.append('impacted_system', data.impactedSystem);
     formData.append('description', data.description);
     formData.append('steps', stepsToJson(steps));
     formData.append('recommendations', stepsToJson(recommendations));
@@ -83,7 +83,7 @@ export default function CreateFindingForm() {
     >
       <div className="space-y-6 sm:space-y-5">
         <div className="flex flex-row justify-end">
-          <PrimaryButton content="Create User" type="submit" />
+          <PrimaryButton content="Create Finding" type="submit" />
         </div>
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText

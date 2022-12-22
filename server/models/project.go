@@ -47,14 +47,14 @@ func (o *projectOrm) Create(name string, company string, phase string, checklist
 
 func (o *projectOrm) GetAll() ([]Project, error) {
 	var projects []Project
-	result := o.instance.Preload("Checklist").Find(&projects)
+	result := o.instance.Preload("Checklist").Preload("Findings").Find(&projects)
 
 	return projects, result.Error
 }
 
 func (o *projectOrm) GetOneById(id uuid.UUID) (Project, error) {
 	var project Project
-	err := o.instance.Model(Project{}).Preload("Checklist").Where("id = ?", id).Take(&project).Error
+	err := o.instance.Model(Project{}).Preload("Checklist").Preload("Findings").Where("id = ?", id).Take(&project).Error
 
 	return project, err
 }

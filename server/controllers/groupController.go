@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"disarm/main/models"
+	"fmt"
 	"html"
 	"net/http"
 	"strings"
@@ -281,6 +282,8 @@ func DeleteGroupByIds(c *gin.Context) {
 	for _, element := range body.Ids {
 		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
 	}
+
+	fmt.Println(parsedUuids)
 
 	result, dbErr := models.Groups.Delete(parsedUuids)
 

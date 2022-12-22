@@ -98,7 +98,7 @@ func (o *userOrm) Edit(id uuid.UUID, email string, username string, supervisor *
 
 	var user User
 	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error
-	o.instance.Model(&user).Updates(User{Username: username,Email: email, SupervisorID: supervisorId})
+	o.instance.Model(&user).Updates(User{Username: username, Email: email, SupervisorID: supervisorId})
 
 	return user, err
 }

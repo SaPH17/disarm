@@ -51,6 +51,7 @@ func main() {
 			group.PUT("/:id", controllers.EditGroup)
 			group.PUT("/:id/permissions", controllers.EditGroupPermission)
 			group.DELETE("/:id", controllers.DeleteGroup)
+			group.DELETE("/", controllers.DeleteGroupByIds)
 		}
 
 		finding := apiWithJWT.Group("/findings")

@@ -37,6 +37,11 @@ func CreateFinding(c *gin.Context) {
 	// 	return
 	// }
 
+	type EvidencesItem struct {
+		Image   string `json:"image" binding:"required"`
+		Content string `json:"content" binding:"required"`
+	}
+
 	form, formErr := c.MultipartForm()
 	if formErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -45,58 +50,77 @@ func CreateFinding(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(form.Value["title"][0])
 	title := form.Value["title"][0]
 	risk := form.Value["risk"][0]
 	impactedSystem := form.Value["impacted_system"][0]
 	checklistDetailId := form.Value["checklist_detail_id"][0]
+	description := form.Value["description"][0]
 	projectId := form.Value["project_id"][0]
 	stepsJson := form.Value["steps"][0]
 	recommendationsJson := form.Value["recommendations"][0]
 	evidencesJson := form.Value["evidences"][0]
 	fixedEvidencesJson := form.Value["fixed_evidences"][0]
 
-	var steps any
-	var recommendations any
-	var evidences any
-	var fixedEvidences any
+	var evidences []EvidencesItem
+	var fixedEvidences []EvidencesItem
 
 	evidenceImages := form.File["evidence_images"]
 	fixedEvidenceImages := form.File["fixed_evidence_images"]
 
-	jsonErr := json.Unmarshal([]byte(stepsJson), &steps)
-	jsonErr2 := json.Unmarshal([]byte(recommendationsJson), &recommendations)
-	jsonErr3 := json.Unmarshal([]byte(evidencesJson), &evidences)
-	jsonErr4 := json.Unmarshal([]byte(fixedEvidencesJson), &fixedEvidences)
+	fmt.Println(evidencesJson)
+	fmt.Println(fixedEvidencesJson)
 
-	if jsonErr != nil || jsonErr2 != nil || jsonErr3 != nil || jsonErr4 != nil {
+	jsonErr1 := json.Unmarshal([]byte(evidencesJson), &evidences)
+	jsonErr2 := json.Unmarshal([]byte(fixedEvidencesJson), &fixedEvidences)
+
+	if jsonErr1 != nil || jsonErr2 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Error": "Invalid JSON",
 		})
 		return
 	}
 
-	fmt.Println(steps)
-	//TODO:
-	//UBAH NAMA FILE DI JSON
-	//MASUKIN JSON JUGA DI CREATE
-	for _, file := range evidenceImages {
+	fmt.Printf("%+v\n", evidences)
+	fmt.Printf("%+v\n", fixedEvidences)
+
+	for idx, file := range evidenceImages {
 		extension := filepath.Ext(file.Filename)
-		newFileName := file.Filename + "_" + strconv.FormatInt(time.Now().UTC().UnixNano()/1e6, 10) + extension
+		rawFileName := strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename))
+		newFileName := rawFileName + "_" + strconv.FormatInt(time.Now().UTC().UnixNano()/1e6, 10) + extension
+		evidences[idx].Image = newFileName
 
 		c.SaveUploadedFile(file, "./upload/"+newFileName)
 	}
 
-	for _, file := range fixedEvidenceImages {
+	for idx, file := range fixedEvidenceImages {
 		extension := filepath.Ext(file.Filename)
-		newFileName := file.Filename + "_" + strconv.FormatInt(time.Now().UTC().UnixNano()/1e6, 10) + extension
+		rawFileName := strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename))
+		newFileName := rawFileName + "_" + strconv.FormatInt(time.Now().UTC().UnixNano()/1e6, 10) + extension
+		fixedEvidences[idx].Image = newFileName
 
 		c.SaveUploadedFile(file, "./upload/"+newFileName)
 	}
+
+	fmt.Println(evidences)
+	fmt.Println(fixedEvidences)
+
+	newEvidencesJson, jsonErr3 := json.Marshal(evidences)
+	newFixedEvidencesJson, jsonErr4 := json.Marshal(fixedEvidences)
+
+	if jsonErr3 != nil || jsonErr4 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "Invalid JSON",
+		})
+		return
+	}
+
+	fmt.Println(string(newEvidencesJson))
+	fmt.Println(string(newFixedEvidencesJson))
 
 	escapedTitle := html.EscapeString(strings.TrimSpace(title))
 	escapedRisk := html.EscapeString(strings.TrimSpace(risk))
 	escapedImpactedSystem := html.EscapeString(strings.TrimSpace(impactedSystem))
+	escapedDescription := html.EscapeString(strings.TrimSpace(description))
 	escapedChecklistDetailId := html.EscapeString(strings.TrimSpace(checklistDetailId))
 	escapedProjectId := html.EscapeString(strings.TrimSpace(projectId))
 
@@ -126,7 +150,7 @@ func CreateFinding(c *gin.Context) {
 		return
 	}
 
-	finding, dbErr := models.Findings.Create(escapedTitle, escapedRisk, escapedImpactedSystem, escapedChecklistDetailId, projectUuid, project.ChecklistId, createdByUuid)
+	finding, dbErr := models.Findings.Create(escapedTitle, escapedRisk, escapedImpactedSystem, escapedDescription, stepsJson, recommendationsJson, string(newEvidencesJson), string(newFixedEvidencesJson), escapedChecklistDetailId, projectUuid, project.ChecklistId, createdByUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -138,9 +162,6 @@ func CreateFinding(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"finding": finding,
 	})
-	// c.JSON(200, gin.H{
-	// 	"finding": "finding",
-	// })
 }
 
 func GetAllFinding(c *gin.Context) {

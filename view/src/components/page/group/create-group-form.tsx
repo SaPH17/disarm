@@ -14,8 +14,10 @@ import UserCard from '../project/user-card';
 import FormErrorMessage from '../../input-text/form-error-message';
 import { toast } from 'react-toastify';
 import { GroupHandler } from '../../../handlers/group/group-handler';
+import { useNavigate } from 'react-router-dom';
 
 const CreateGroupForm = () => {
+  const navigate = useNavigate();
   const { data: usersData } = useQuery('users', UserServices.getUsers);
   const { data: groupsData } = useQuery('groups', GroupServices.getGroups);
 
@@ -86,6 +88,7 @@ const CreateGroupForm = () => {
           },
         }
       );
+      navigate('/groups');
     } catch (e) {}
   }
 
