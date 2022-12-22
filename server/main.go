@@ -12,6 +12,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(middlewares.CORSMiddleware())
+	r.Static("/upload", "./upload")
 	api := r.Group("/api")
 	{
 		auth := api.Group("/auth")

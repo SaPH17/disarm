@@ -4,6 +4,7 @@ import EditableImageList from '../../../components/editable-image-list';
 import { useForm } from 'react-hook-form';
 import InputText from '../../input-text/input-text';
 import FormErrorMessage from '../../input-text/form-error-message';
+import PrimaryButton from '../../primary-button';
 
 export default function CreateFindingForm() {
   const {
@@ -22,6 +23,9 @@ export default function CreateFindingForm() {
       onSubmit={handleSubmit(handleCreateFindingFormSubmit)}
     >
       <div className="space-y-6 sm:space-y-5">
+        <div className="flex flex-row justify-end">
+          <PrimaryButton content="Create User" type="submit" />
+        </div>
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <InputText
             id="title"

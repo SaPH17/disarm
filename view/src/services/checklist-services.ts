@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { checklists } from '../data/checklist';
 
 export default class ChecklistServices {
   static async getChecklists() {
@@ -36,8 +35,12 @@ export default class ChecklistServices {
   }
 
   static async editChecklist(body: object, id: string | number) {
-    return axios.put(`${process.env.REACT_APP_API_URL}/checklists/${id}`, body, {
-      withCredentials: true,
-    });
+    return axios.put(
+      `${process.env.REACT_APP_API_URL}/checklists/${id}`,
+      body,
+      {
+        withCredentials: true,
+      }
+    );
   }
 }
