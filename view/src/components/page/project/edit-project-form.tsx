@@ -32,8 +32,6 @@ export default function EditProjectForm() {
       name: checklist.name,
     })) || null;
 
-  console.log(project);
-
   const [selectedChecklistId, setSelectedChecklistId] = useState<string>(
     project?.checklist_id || ''
   );

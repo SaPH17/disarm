@@ -1,20 +1,79 @@
 import EditableList from '../../../components/editable-list';
 import { useState } from 'react';
-import EditableImageList from '../../../components/editable-image-list';
+import EditableImageList, {
+  ImageListData,
+  defaultListData,
+} from '../../../components/editable-image-list';
 import { useForm } from 'react-hook-form';
 import InputText from '../../input-text/input-text';
 import FormErrorMessage from '../../input-text/form-error-message';
 import PrimaryButton from '../../primary-button';
+import { toast } from 'react-toastify';
+import { FindingHandler } from '../../../handlers/finding/finding-hander';
+import { stepsToJson } from '../../../utils/functions/jsonConverter';
+import { useParams } from 'react-router-dom';
 
 export default function CreateFindingForm() {
+  const { id } = useParams();
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<any>();
 
+  const [steps, setSteps] = useState<string[]>(['']);
+  const [recommendations, setRecommendations] = useState<string[]>(['']);
+  const [evidences, setEvidences] = useState<ImageListData[]>([
+    { ...defaultListData },
+  ]);
+  const [fixedEvidences, setFixedEvidences] = useState<ImageListData[]>([
+    { ...defaultListData },
+  ]);
+
   const handleCreateFindingFormSubmit = (data: any) => {
-    console.log(data);
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('risk', data.risk);
+    formData.append('impacted_sytem', data.impactedSystem);
+    formData.append('description', data.description);
+    formData.append('steps', stepsToJson(steps));
+    formData.append('recommendations', stepsToJson(recommendations));
+    formData.append(
+      'evidences',
+      stepsToJson(
+        evidences.map((v: any) => ({ image: v.image.name, content: v.content }))
+      )
+    );
+    formData.append(
+      'fixed_evidences',
+      stepsToJson(
+        fixedEvidences.map((v: any) => ({
+          image: v.image.name,
+          content: v.content,
+        }))
+      )
+    );
+    formData.append('checklist_detail_id', data.checklistDetailId);
+    formData.append('project_id', id as string);
+
+    evidences.forEach((v) => {
+      formData.append('evidence_images', v.image);
+    });
+    fixedEvidences.forEach((v) => {
+      formData.append('fixed_evidence_images', v.image);
+    });
+
+    try {
+      toast.promise(FindingHandler.handleCreateFindingFormSubmit(formData), {
+        success: 'Successfully create new finding',
+        pending: 'Waiting for create new finding!',
+        error: {
+          render({ data }: any) {
+            return data.message;
+          },
+        },
+      });
+    } catch (e) {}
   };
 
   return (
@@ -109,10 +168,27 @@ export default function CreateFindingForm() {
         </div>
       </div>
 
-      <EditableList editOnly={true} title="Replication Steps"></EditableList>
-      <EditableList editOnly={true} title="Recommendations"></EditableList>
-      <EditableImageList editOnly={true} title="Evidence"></EditableImageList>
+      <EditableList
+        lists={steps}
+        setLists={setSteps}
+        editOnly={true}
+        title={'Replication Steps'}
+      ></EditableList>
+      <EditableList
+        lists={recommendations}
+        setLists={setRecommendations}
+        editOnly={true}
+        title={'Recommendations'}
+      ></EditableList>
       <EditableImageList
+        lists={evidences}
+        setLists={setEvidences}
+        editOnly={true}
+        title="Evidence"
+      ></EditableImageList>
+      <EditableImageList
+        lists={fixedEvidences}
+        setLists={setFixedEvidences}
         editOnly={true}
         title="Fixed Evidence"
       ></EditableImageList>

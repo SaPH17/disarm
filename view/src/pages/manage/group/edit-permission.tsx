@@ -10,7 +10,7 @@ import { useQuery } from 'react-query';
 import { capitalize } from '../../../utils/functions/capitalize';
 import GroupServices from '../../../services/group-services';
 import PrimaryButton from '../../../components/primary-button';
-import { permissionToJson } from '../../../utils/functions/permissionJson';
+import { permissionToJson } from '../../../utils/functions/jsonConverter';
 import { toast } from 'react-toastify';
 import { GroupHandler } from '../../../handlers/group/group-handler';
 

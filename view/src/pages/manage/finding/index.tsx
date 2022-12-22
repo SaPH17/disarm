@@ -68,11 +68,11 @@ export default function ManageFindingIndex() {
         placeholder="Description"
         className="placeholder:text-gray-300 flex overflow-hidden border border-gray-300 rounded-sm resize-none h-24 min-h-24 w-[100%]"
       />
-
+      {/* 
       <EditableList title="Replication Steps"></EditableList>
       <EditableList title="Recommendations"></EditableList>
       <EditableImageList title="Evidence"></EditableImageList>
-      <EditableImageList title="Fixed Evidence"></EditableImageList>
+      <EditableImageList title="Fixed Evidence"></EditableImageList> */}
     </>
   );
 }

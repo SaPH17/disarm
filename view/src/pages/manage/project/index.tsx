@@ -29,8 +29,6 @@ export default function ManageProjectIndex() {
       checklist: project.Checklist?.name,
     })) || [];
 
-  console.log(data);
-
   const [activeProject, setActiveProject] = useState<Project>(defaultProject);
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
 

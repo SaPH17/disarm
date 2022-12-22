@@ -2,12 +2,18 @@ import { useState } from 'react';
 import { TrashIcon } from '@heroicons/react/solid';
 
 export type EditableListProps = {
+  lists: string[];
+  setLists: React.Dispatch<React.SetStateAction<string[]>>;
   title: string;
   editOnly?: boolean;
 };
 
-const EditableList = ({ title, editOnly = false }: EditableListProps) => {
-  const [lists, setLists] = useState<string[]>(['']);
+const EditableList = ({
+  lists,
+  setLists,
+  title,
+  editOnly = false,
+}: EditableListProps) => {
   const [isEditable, setEditable] = useState(editOnly);
 
   const toggleEditable = (e: any) => {

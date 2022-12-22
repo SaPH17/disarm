@@ -5,7 +5,6 @@ import PrimaryButton from '../../../components/primary-button';
 import ProjectServices from '../../../services/project-services';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { Project } from '../../../models/project';
 
 const content = [
   {
@@ -62,8 +61,11 @@ export default function ManageProjectShow() {
     ? {
         ...data,
         checklist: data.Checklist?.name,
+        findings: data.Findings,
       }
     : [];
+
+  console.log(project);
 
   return project ? (
     <>
@@ -91,7 +93,7 @@ export default function ManageProjectShow() {
       </div>
       <div className="flex flex-col gap-2 p-2 bg-gray-100 border-4 border-dashed rounded sm:gap-4 sm:p-4 ">
         <div className="text-lg font-semibold">Findings</div>
-        <Table title={title} content={content} />
+        <Table title={title} content={project.findings || []} />
       </div>
     </>
   ) : (
