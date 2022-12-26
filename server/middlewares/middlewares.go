@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 
 	"disarm/main/controllers"
@@ -8,7 +10,6 @@ import (
 	"disarm/main/utils/token"
 
 	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
 )
 
 func JwtAuthMiddleware() gin.HandlerFunc {
@@ -17,7 +18,7 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 		if err != nil {
 			c.String(http.StatusUnauthorized, "Unauthorized")
 			c.Abort()
-			controllers.CreateLog(uuid.Nil, *c, http.StatusText(http.StatusUnauthorized))
+			// controllers.CreateLog(uuid.Nil, *c, http.StatusText(http.StatusUnauthorized))
 			return
 		}
 
@@ -26,11 +27,21 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 		if getErr != nil {
 			c.String(http.StatusUnauthorized, "Unauthorized")
 			c.Abort()
-			controllers.CreateLog(uuid.Nil, *c, http.StatusText(http.StatusUnauthorized))
+			// controllers.CreateLog(uuid.Nil, *c, http.StatusText(http.StatusUnauthorized))
 			return
 		}
 
-		controllers.CreateLog(uid, *c, "")
+		body, buffErr := io.ReadAll(c.Request.Body)
+		if buffErr != nil {
+			c.String(http.StatusBadRequest, "Unable to read body buffer")
+			c.Abort()
+			return
+		}
+
+		c.Request.Body = io.NopCloser(bytes.NewReader(body))
+		strbody := string(body)
+
+		controllers.CreateLog(uid, strbody, c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
 
 		c.Next()
 	}
