@@ -1,31 +1,32 @@
 import { TrashIcon } from '@heroicons/react/solid';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export type EditableImageListProps = {
+  lists: ImageListData[];
+  setLists: React.Dispatch<React.SetStateAction<ImageListData[]>>;
   title: string;
   editOnly?: boolean;
 };
 
-type ListData = {
+export type ImageListData = {
   image: string;
+  imageUrl: string;
   content: string;
 };
 
-const defaultListData = {
-  image:
+export const defaultListData = {
+  image: 'dummy.png',
+  imageUrl:
     'https://m.media-amazon.com/images/M/MV5BYTJiYWY2YjAtMGI1OS00NjA2LWJhYzQtYTg2NTZiMjM3NjAzXkEyXkFqcGdeQXVyNzI1NzMxNzM@._V1_.jpg',
   content: '',
 };
 
 const EditableImageList = ({
+  lists,
+  setLists,
   title,
   editOnly = false,
 }: EditableImageListProps) => {
-  const [lists, setLists] = useState<ListData[]>([
-    {
-      ...defaultListData,
-    },
-  ]);
   const [images, setImages] = useState<any>([]);
   const [isEditable, setEditable] = useState(editOnly);
 
@@ -48,7 +49,8 @@ const EditableImageList = ({
     setImages(temp);
 
     const temp2 = [...lists];
-    temp2[idx].image = URL.createObjectURL(e.target.files[0]);
+    temp2[idx].image = e.target.files[0];
+    temp2[idx].imageUrl = URL.createObjectURL(e.target.files[0]);
     setLists(temp2);
   };
 
@@ -86,7 +88,7 @@ const EditableImageList = ({
               htmlFor={`${title}-image-${idx}`}
               className="flex px-2 py-3 cursor-pointer"
             >
-              <img className="w-72 rounded-md" src={l.image} alt="" />
+              <img className="w-72 rounded-md" src={l.imageUrl} alt="" />
             </label>
             <input
               className="hidden"

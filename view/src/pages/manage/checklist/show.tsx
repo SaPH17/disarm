@@ -1,5 +1,4 @@
-import ShowChecklistData from "../../../components/page/checklist/show-checklist-data";
-
+import ShowChecklistData from '../../../components/page/checklist/show-checklist-data';
 
 const ManageChecklistShow = () => {
   return (

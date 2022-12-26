@@ -8,7 +8,7 @@ export class GroupHandler {
   ) {
     const body = {
       ...data,
-      assignedUser: assignedUser,
+      assigned_user: assignedUser,
       permissions: '-',
     };
     try {

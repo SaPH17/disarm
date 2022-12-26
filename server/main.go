@@ -12,6 +12,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(middlewares.CORSMiddleware())
+	r.Static("/upload", "./upload")
 	api := r.Group("/api")
 	{
 		auth := api.Group("/auth")
@@ -51,6 +52,7 @@ func main() {
 			group.PUT("/:id", controllers.EditGroup)
 			group.PUT("/:id/permissions", controllers.EditGroupPermission)
 			group.DELETE("/:id", controllers.DeleteGroup)
+			group.DELETE("/", controllers.DeleteGroupByIds)
 		}
 
 		finding := apiWithJWT.Group("/findings")

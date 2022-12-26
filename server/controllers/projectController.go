@@ -207,4 +207,3 @@ func DeleteProjectByIds(c *gin.Context) {
 		"result": result,
 	})
 }
-

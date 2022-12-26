@@ -31,7 +31,7 @@ export type ChecklistShowData = {
   name: string;
   status: string;
   user: string;
-}
+};
 
 const ShowChecklistData = () => {
   const params = useParams();
@@ -44,20 +44,19 @@ const ShowChecklistData = () => {
   const {
     register,
     formState: { errors },
-    reset
+    reset,
   } = useForm<ChecklistShowData>();
 
   const [sections, setSections] = useState<SectionType[]>([]);
 
   useEffect(() => {
     if (!checklistData) return;
-    console.log(checklist)
     setSections(JSON.parse(checklistData.sections));
     reset({
       ...checklist,
-      user: checklist.User.username
-    })
-  }, [checklistData])
+      user: checklist.User.username,
+    });
+  }, [checklistData]);
 
   return (
     checklist && (

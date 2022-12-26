@@ -95,9 +95,9 @@ func (o *groupOrm) EditPermission(id uuid.UUID, permissions string) (Group, erro
 }
 
 func (o *groupOrm) Delete(ids []uuid.UUID) (bool, error) {
-	var group Group
-	err := o.instance.Model(Group{}).Where("id IN ?", ids).Take(&group).Error
-	o.instance.Delete(&group)
+	var groups []Group
+	err := o.instance.Model(Group{}).Where("id IN ?", ids).Find(&groups).Error
+	o.instance.Delete(&groups)
 
 	return true, err
 }

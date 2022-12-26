@@ -11,7 +11,7 @@ import ProjectServices from '../../../services/project-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
-
+import { useState } from 'react';
 
 export default function EditProjectForm() {
   const params = useParams();
@@ -19,14 +19,22 @@ export default function EditProjectForm() {
   const { data: projectData } = useQuery(`project/${params.id}`, () =>
     ProjectServices.getOneProject(params.id)
   );
-  const { data: checklistsData } = useQuery('checklists', ChecklistServices.getChecklists);
+  const { data: checklistsData } = useQuery(
+    'checklists',
+    ChecklistServices.getChecklists
+  );
 
   const project = projectData || undefined;
 
-  const checklists = checklistsData?.map((checklist: Checklist) => ({
-    id: checklist.id,
-    name: checklist.name,
-  })) || null;
+  const checklists =
+    checklistsData?.map((checklist: Checklist) => ({
+      id: checklist.id,
+      name: checklist.name,
+    })) || null;
+
+  const [selectedChecklistId, setSelectedChecklistId] = useState<string>(
+    project?.checklist_id || ''
+  );
 
   const {
     register,
@@ -43,25 +51,28 @@ export default function EditProjectForm() {
 
   useEffect(() => {
     if (!projectData) return;
-    setValue('checklist', projectData.Checklist.id);
+    setValue('checklist', projectData.Checklist.id || '');
   }, []);
 
   async function handleUpdateProjectButton(data: ProjectFormData) {
-     try {
-       await toast.promise(
-         UpdateProjectHandler.handleUpdateProjectFormSubmit(data, project.id),
-         {
-           success: 'Successfully update new project',
-           pending: 'Waiting for update new project!',
-           error: {
-             render({ data }: any) {
-               return data.message;
-             },
-           },
-         }
-       );
-       navigate('/projects');
-     } catch (e) {}
+    try {
+      await toast.promise(
+        UpdateProjectHandler.handleUpdateProjectFormSubmit(
+          { ...data, checklist_id: selectedChecklistId } as ProjectFormData,
+          project.id
+        ),
+        {
+          success: 'Successfully update new project',
+          pending: 'Waiting for update new project!',
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        }
+      );
+      navigate('/projects');
+    } catch (e) {}
   }
 
   return project ? (
@@ -101,19 +112,26 @@ export default function EditProjectForm() {
             htmlFor="country"
             className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
           >
-            Standard
+            Checklist
           </label>
           <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
             <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-              {
-                checklists && <SelectBox initialSelected={{
-                  id: project.Checklist.id,
-                  name: project.Checklist.name
-                }} items={checklists} defaultValue={'Select Standard'} />
-              }
+              {checklists && (
+                <SelectBox
+                  initialSelected={{
+                    id: project.Checklist.id,
+                    name: project.Checklist.name,
+                  }}
+                  items={checklists}
+                  defaultValue={'Select Checklist'}
+                  onClickFunction={(item: any) => {
+                    setSelectedChecklistId(item.id);
+                  }}
+                />
+              )}
             </div>
             <span className="text-gray-500 underline cursor-pointer hover:text-gray-700">
-              Update a new standard
+              Create a new checklist
             </span>
           </div>
         </div>

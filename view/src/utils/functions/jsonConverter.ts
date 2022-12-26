@@ -23,3 +23,7 @@ const assignValue = (obj: any, action: string, type: string, val: string) => {
   obj = obj[type] = obj[type] || [];
   obj.push(val);
 };
+
+export const stepsToJson = (steps: any[]) => {
+  return JSON.stringify(steps)
+};
