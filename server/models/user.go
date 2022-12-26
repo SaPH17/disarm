@@ -26,6 +26,7 @@ type userOrm struct {
 }
 
 type UserOrm interface {
+	GetAllGroups() (groups []Group, err error)
 	Create(email string, password string, username string, supervisor *User, groups []Group) (User, error)
 	GetAll() ([]User, error)
 	GetOneByEmail(email string) (User, error)
@@ -69,6 +70,13 @@ func (o *userOrm) GetAll() ([]User, error) {
 	return users, result.Error
 }
 
+func (o *userOrm) GetAllGroups() ([]Group, error) {
+	var groups []Group
+	result := o.instance.Preload("Users").Find(&groups)
+
+	return groups, result.Error
+}
+
 func (o *userOrm) GetOneByEmail(email string) (User, error) {
 	var user User
 	err := o.instance.Model(User{}).Where("email = ?", email).Take(&user).Error
@@ -98,7 +106,7 @@ func (o *userOrm) Edit(id uuid.UUID, email string, username string, supervisor *
 
 	var user User
 	err := o.instance.Model(User{}).Where("id = ?", id).Take(&user).Error
-	o.instance.Model(&user).Updates(User{Username: username,Email: email, SupervisorID: supervisorId})
+	o.instance.Model(&user).Updates(User{Username: username, Email: email, SupervisorID: supervisorId})
 
 	return user, err
 }

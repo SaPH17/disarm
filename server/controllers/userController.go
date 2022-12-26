@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"disarm/main/database"
 	"disarm/main/models"
 	"html"
 	"net/http"
@@ -22,7 +23,7 @@ func CreateUser(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"bind error": err.Error(),
 		})
 		return
 	}
@@ -104,6 +105,42 @@ func GetAllUser(c *gin.Context) {
 	})
 }
 
+func GetManyGroupsByUser(c *gin.Context) {
+	id := c.Param("id")
+	escapedId := html.EscapeString(strings.TrimSpace(id))
+	currentUuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUuid.Error(),
+		})
+		return
+	}
+
+	user, dbErr := models.Users.GetOneById(currentUuid)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	var groups []models.Group
+	retErr := database.DB.Get().Model(&user).Association("Groups").Find(&groups)
+
+	if retErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": retErr,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"groups": groups,
+	})
+}
+
 func GetUserById(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
@@ -133,9 +170,9 @@ func GetUserById(c *gin.Context) {
 func EditUser(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Email           string   `json:"email" binding:"required"`
-		Username        string   `json:"username" binding:"required"`
-		SupervisorEmail string   `json:"direct_supervisor"`
+		Email           string `json:"email" binding:"required"`
+		Username        string `json:"username" binding:"required"`
+		SupervisorEmail string `json:"direct_supervisor"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

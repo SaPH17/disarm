@@ -27,9 +27,10 @@ func GenerateToken(uid uuid.UUID) (string, error) {
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 }
 
-func ValidateToken(c *gin.Context) error {
+func ValidateToken(c *gin.Context) (uuid.UUID, error) {
 	tokenString := ExtractToken(c)
-	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	claims := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("[!] unexpected signing method: %v", token.Header["alg"])
 		}
@@ -37,10 +38,16 @@ func ValidateToken(c *gin.Context) error {
 	})
 
 	if err != nil {
-		return err
+		return uuid.Nil, err
 	}
 
-	return nil
+	u, parseErr := uuid.FromString((claims["user_id"].(string)))
+
+	if parseErr != nil {
+		return uuid.Nil, parseErr
+	}
+
+	return u, nil
 }
 
 func ExtractToken(c *gin.Context) string {

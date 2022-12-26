@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"bytes"
 	"disarm/main/models"
+	"fmt"
 	"html"
+	"io"
 	"net/http"
 	"strings"
 
@@ -10,45 +13,32 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func CreateLog(c *gin.Context) {
-	var body struct {
-		Endpoint string `json:"endpoint" binding:"required"`
-		Payload  string `json:"payload" binding:"required"`
-		UserId   string `json:"userId" binding:"required"`
+func CreateLog(userId uuid.UUID, c gin.Context, status string) (l *models.Log, e error) {
+	body := new(bytes.Buffer)
+	_, err := io.Copy(body, c.Request.Body)
+
+	if err != nil {
+		return nil, err
 	}
 
-	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+	strbody := body.String()
 
-	escapedEndpoint := html.EscapeString(strings.TrimSpace(body.Endpoint))
-	escapedPayload := html.EscapeString(strings.TrimSpace(body.Payload))
-	escapedUserId := html.EscapeString(strings.TrimSpace(body.UserId))
+	fmt.Println("Host " + c.Request.RequestURI)
+	fmt.Println("Body " + strbody)
 
-	userUuid, errUuid := uuid.FromString(escapedUserId)
+	escapedEndpoint := html.EscapeString(strings.TrimSpace(c.Request.RequestURI))
+	escapedPayload := html.EscapeString(strings.TrimSpace(strbody))
+	escapedStatus := html.EscapeString(strings.TrimSpace(status))
+	escapedMethod := html.EscapeString(strings.TrimSpace(c.Request.Method))
+	escapedIp := html.EscapeString(strings.TrimSpace(c.ClientIP()))
 
-	if errUuid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errUuid.Error(),
-		})
-		return
-	}
-
-	log, dbErr := models.Logs.Create(escapedEndpoint, escapedPayload, userUuid)
+	log, dbErr := models.Logs.Create(escapedEndpoint, escapedPayload, escapedStatus, escapedMethod, escapedIp, userId)
 
 	if dbErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": dbErr,
-		})
-		return
+		return nil, dbErr
 	}
 
-	c.JSON(200, gin.H{
-		"log": log,
-	})
+	return &log, nil
 }
 
 func GetAllLog(c *gin.Context) {

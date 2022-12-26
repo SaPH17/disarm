@@ -10,7 +10,10 @@ import (
 type Log struct {
 	Base
 	Endpoint string    `gorm:"size:255;not null;" json:"endpoint"`
-	Payload  string    `gorm:"size:255;not null;" json:"payload"`
+	Payload  string    `gorm:"size:255;" json:"payload"`
+	Method   string    `gorm:"size:255;not null;" json:"method"`
+	Status   string    `gorm:"size:255;not null;" json:"status"`
+	Ip       string    `gorm:"size:255;not null;" json:"ip"`
 	UserId   uuid.UUID `gorm:"type:uuid;" json:"user_id"`
 	User     User
 }
@@ -20,7 +23,7 @@ type logOrm struct {
 }
 
 type LogOrm interface {
-	Create(endpoint string, payload string, userId uuid.UUID) (Log, error)
+	Create(endpoint string, payload string, status string, method string, ip string, userId uuid.UUID) (Log, error)
 	GetAll() ([]Log, error)
 }
 
@@ -31,8 +34,8 @@ func init() {
 	Logs = &logOrm{instance: database.DB.Get()}
 }
 
-func (o *logOrm) Create(endpoint string, payload string, userId uuid.UUID) (Log, error) {
-	log := Log{Endpoint: endpoint, Payload: payload, UserId: userId}
+func (o *logOrm) Create(endpoint string, payload string, status string, method string, ip string, userId uuid.UUID) (Log, error) {
+	log := Log{Endpoint: endpoint, Payload: payload, UserId: userId, Status: status, Method: method, Ip: ip}
 	result := o.instance.Create(&log)
 
 	return log, result.Error
