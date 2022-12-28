@@ -86,19 +86,21 @@ const EditableImageList = ({
             </div>
             <label
               htmlFor={`${title}-image-${idx}`}
-              className="flex px-2 py-3 cursor-pointer"
+              className={`flex px-2 py-3 ${isEditable && 'cursor-pointer'}`}
             >
               <img className="w-72 rounded-md" src={l.imageUrl} alt="" />
             </label>
-            <input
-              className="hidden"
-              type="file"
-              name={`${title}-image-${idx}`}
-              id={`${title}-image-${idx}`}
-              onChange={(e) => {
-                handleImageUpload(idx, e);
-              }}
-            />
+            {isEditable && (
+              <input
+                className="hidden"
+                type="file"
+                name={`${title}-image-${idx}`}
+                id={`${title}-image-${idx}`}
+                onChange={(e) => {
+                  handleImageUpload(idx, e);
+                }}
+              />
+            )}
             <textarea
               disabled={!isEditable}
               rows={1}

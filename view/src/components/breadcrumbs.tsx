@@ -12,7 +12,7 @@ const Breadcrumbs = ({ pages }: BreadcrumbsData) => {
     <nav className="flex" aria-label="Breadcrumb">
       <ol className="flex items-center space-x-4">
         {pages.map((page, idx) => (
-          <li key={page.name}>
+          <li key={`${page.name}-${idx}`}>
             <div className="flex items-center">
               {idx > 0 && (
                 <ChevronRightIcon

@@ -9,11 +9,11 @@ import (
 
 type Checklist struct {
 	Base
-	Name      string    `gorm:"size:255;not null;" json:"name"`
-	Status    string    `gorm:"size:255;not null;" json:"status"`
+	Name        string    `gorm:"size:255;not null;" json:"name"`
+	Status      string    `gorm:"size:255;not null;" json:"status"`
 	CreatedByID uuid.UUID `gorm:"type:uuid;" json:"created_by_id"`
-	User      User      `gorm:"foreignKey:CreatedByID"`
-	Sections  string    `gorm:"size:65535;not null;" json:"sections"`
+	User        User      `gorm:"foreignKey:CreatedByID"`
+	Sections    string    `gorm:"size:65535;not null;" json:"sections"`
 }
 
 type checklistOrm struct {

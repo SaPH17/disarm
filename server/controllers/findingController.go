@@ -4,7 +4,6 @@ import (
 	"disarm/main/models"
 	"disarm/main/utils/token"
 	"encoding/json"
-	"fmt"
 	"html"
 	"net/http"
 	"path/filepath"
@@ -67,9 +66,6 @@ func CreateFinding(c *gin.Context) {
 	evidenceImages := form.File["evidence_images"]
 	fixedEvidenceImages := form.File["fixed_evidence_images"]
 
-	fmt.Println(evidencesJson)
-	fmt.Println(fixedEvidencesJson)
-
 	jsonErr1 := json.Unmarshal([]byte(evidencesJson), &evidences)
 	jsonErr2 := json.Unmarshal([]byte(fixedEvidencesJson), &fixedEvidences)
 
@@ -79,9 +75,6 @@ func CreateFinding(c *gin.Context) {
 		})
 		return
 	}
-
-	fmt.Printf("%+v\n", evidences)
-	fmt.Printf("%+v\n", fixedEvidences)
 
 	for idx, file := range evidenceImages {
 		extension := filepath.Ext(file.Filename)
@@ -101,9 +94,6 @@ func CreateFinding(c *gin.Context) {
 		c.SaveUploadedFile(file, "./upload/"+newFileName)
 	}
 
-	fmt.Println(evidences)
-	fmt.Println(fixedEvidences)
-
 	newEvidencesJson, jsonErr3 := json.Marshal(evidences)
 	newFixedEvidencesJson, jsonErr4 := json.Marshal(fixedEvidences)
 
@@ -113,9 +103,6 @@ func CreateFinding(c *gin.Context) {
 		})
 		return
 	}
-
-	fmt.Println(string(newEvidencesJson))
-	fmt.Println(string(newFixedEvidencesJson))
 
 	escapedTitle := html.EscapeString(strings.TrimSpace(title))
 	escapedRisk := html.EscapeString(strings.TrimSpace(risk))
@@ -206,37 +193,38 @@ func GetFindingById(c *gin.Context) {
 }
 
 func EditFinding(c *gin.Context) {
-	id := c.Param("id")
-	var body struct {
-		Title             string `json:"title" binding:"required"`
-		Risk              string `json:"risk" binding:"required"`
-		ImpactedSystem    string `json:"impacted_system" binding:"required"`
-		ChecklistDetailId string `json:"checklist_detail_id" binding:"required"`
-		ProjectId         string `json:"project_id" binding:"required"`
-		ChecklistId       string `json:"checklist_id" binding:"required"`
-		UserId            string `json:"user_id" binding:"required"`
+	// var body struct {
+	// 	Title             string `json:"title" binding:"required"`
+	// 	Risk              string `json:"risk" binding:"required"`
+	// 	ImpactedSystem    string `json:"impacted_system" binding:"required"`
+	// 	ChecklistDetailId string `json:"checklist_detail_id" binding:"required"`
+	// 	ProjectId         string `json:"project_id" binding:"required"`
+	// 	ChecklistId       string `json:"checklist_id" binding:"required"`
+	// 	UserId            string `json:"user_id" binding:"required"`
+	// }
+
+	// if err := c.ShouldBindJSON(&body); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"error": err.Error(),
+	// 	})
+	// 	return
+	// }
+	type EvidencesItem struct {
+		Image   string `json:"image" binding:"required"`
+		Content string `json:"content" binding:"required"`
 	}
 
-	if err := c.ShouldBindJSON(&body); err != nil {
+	form, formErr := c.MultipartForm()
+	if formErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"formerror": formErr.Error(),
 		})
 		return
 	}
 
+	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	escapedTitle := html.EscapeString(strings.TrimSpace(body.Title))
-	escapedRisk := html.EscapeString(strings.TrimSpace(body.Risk))
-	escapedImpactedSystem := html.EscapeString(strings.TrimSpace(body.ImpactedSystem))
-	escapedChecklistDetailId := html.EscapeString(strings.TrimSpace(body.ChecklistDetailId))
-	escapedProjectId := html.EscapeString(strings.TrimSpace(body.ProjectId))
-	escapedChecklistId := html.EscapeString(strings.TrimSpace(body.ChecklistId))
-	escapedUserId := html.EscapeString(strings.TrimSpace(body.UserId))
-
-	idUuid, errUuid := uuid.FromString(escapedId)
-	projectUuid, errProject := uuid.FromString(escapedProjectId)
-	checklistUuid, errChecklist := uuid.FromString(escapedChecklistId)
-	userUuid, errUser := uuid.FromString(escapedUserId)
+	uuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -245,28 +233,77 @@ func EditFinding(c *gin.Context) {
 		return
 	}
 
-	if errProject != nil {
+	title := form.Value["title"][0]
+	risk := form.Value["risk"][0]
+	impactedSystem := form.Value["impacted_system"][0]
+	checklistDetailId := form.Value["checklist_detail_id"][0]
+	description := form.Value["description"][0]
+	status := form.Value["status"][0]
+	stepsJson := form.Value["steps"][0]
+	recommendationsJson := form.Value["recommendations"][0]
+	evidencesJson := form.Value["evidences"][0]
+	fixedEvidencesJson := form.Value["fixed_evidences"][0]
+
+	var evidences []EvidencesItem
+	var fixedEvidences []EvidencesItem
+
+	evidenceImages := form.File["evidence_images"]
+	fixedEvidenceImages := form.File["fixed_evidence_images"]
+
+	jsonErr1 := json.Unmarshal([]byte(evidencesJson), &evidences)
+	jsonErr2 := json.Unmarshal([]byte(fixedEvidencesJson), &fixedEvidences)
+
+	if jsonErr1 != nil || jsonErr2 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errProject.Error(),
+			"Error": "Invalid JSON",
 		})
 		return
 	}
 
-	if errChecklist != nil {
+	for idx, file := range evidenceImages {
+		if file.Filename == "NO_IMAGE_PROVIDED.disarm" {
+			continue
+		}
+
+		extension := filepath.Ext(file.Filename)
+		rawFileName := strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename))
+		newFileName := rawFileName + "_" + strconv.FormatInt(time.Now().UTC().UnixNano()/1e6, 10) + extension
+		evidences[idx].Image = newFileName
+
+		c.SaveUploadedFile(file, "./upload/"+newFileName)
+	}
+
+	for idx, file := range fixedEvidenceImages {
+		if file.Filename == "NO_IMAGE_PROVIDED.disarm" {
+			continue
+		}
+
+		extension := filepath.Ext(file.Filename)
+		rawFileName := strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename))
+		newFileName := rawFileName + "_" + strconv.FormatInt(time.Now().UTC().UnixNano()/1e6, 10) + extension
+		fixedEvidences[idx].Image = newFileName
+
+		c.SaveUploadedFile(file, "./upload/"+newFileName)
+	}
+
+	newEvidencesJson, jsonErr3 := json.Marshal(evidences)
+	newFixedEvidencesJson, jsonErr4 := json.Marshal(fixedEvidences)
+
+	if jsonErr3 != nil || jsonErr4 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errChecklist.Error(),
+			"Error": "Invalid JSON",
 		})
 		return
 	}
 
-	if errUser != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errUser.Error(),
-		})
-		return
-	}
+	escapedTitle := html.EscapeString(strings.TrimSpace(title))
+	escapedRisk := html.EscapeString(strings.TrimSpace(risk))
+	escapedImpactedSystem := html.EscapeString(strings.TrimSpace(impactedSystem))
+	escapedDescription := html.EscapeString(strings.TrimSpace(description))
+	escapedChecklistDetailId := html.EscapeString(strings.TrimSpace(checklistDetailId))
+	escapedStatus := html.EscapeString(strings.TrimSpace(status))
 
-	finding, dbErr := models.Findings.Edit(idUuid, escapedTitle, escapedRisk, escapedImpactedSystem, escapedChecklistDetailId, projectUuid, checklistUuid, userUuid)
+	finding, dbErr := models.Findings.Edit(uuid, escapedTitle, escapedRisk, escapedImpactedSystem, escapedDescription, stepsJson, recommendationsJson, string(newEvidencesJson), string(newFixedEvidencesJson), escapedChecklistDetailId, escapedStatus)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

@@ -9,12 +9,13 @@ import InputText from '../../input-text/input-text';
 import FormErrorMessage from '../../input-text/form-error-message';
 import PrimaryButton from '../../primary-button';
 import { toast } from 'react-toastify';
-import { FindingHandler } from '../../../handlers/finding/finding-hander';
+import { FindingHandler } from '../../../handlers/finding/finding-handler';
 import { stepsToJson } from '../../../utils/functions/jsonConverter';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function CreateFindingForm() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
@@ -73,6 +74,7 @@ export default function CreateFindingForm() {
           },
         },
       });
+      navigate(`/projects/${id}`);
     } catch (e) {}
   };
 
@@ -109,8 +111,13 @@ export default function CreateFindingForm() {
               required: 'Risk is required.',
               validate: (risk) =>
                 ['None', 'Low', 'High', 'Critical'].includes(risk)
-                  ? 'Risk is invalid'
-                  : true,
+                  ? true
+                  : `Risk is invalid, only ${[
+                      'None',
+                      'Low',
+                      'High',
+                      'Critical',
+                    ].join(', ')} is allowed`,
             })}
           />
         </div>

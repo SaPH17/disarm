@@ -35,7 +35,7 @@ type FindingOrm interface {
 	Create(title string, risk string, impactedSystem string, description string, steps string, recommendations string, evidences string, fixedEvidences string, checklistDetailId string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error)
 	GetAll() ([]Finding, error)
 	GetOneById(id uuid.UUID) (Finding, error)
-	Edit(id uuid.UUID, title string, risk string, impactedSystem string, checklistDetailId string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error)
+	Edit(id uuid.UUID, title string, risk string, impactedSystem string, description string, steps string, recommendations string, evidences string, fixedEvidences string, checklistDetailId string, status string) (Finding, error)
 }
 
 var Findings FindingOrm
@@ -62,21 +62,24 @@ func (o *findingOrm) GetAll() ([]Finding, error) {
 
 func (o *findingOrm) GetOneById(id uuid.UUID) (Finding, error) {
 	var finding Finding
-	err := o.instance.Model(Finding{}).Where("id = ?", id).Take(&finding).Error
+	err := o.instance.Model(Finding{}).Preload("Project").Preload("Checklist").Preload("User").Where("id = ?", id).Take(&finding).Error
 
 	return finding, err
 }
 
-func (o *findingOrm) Edit(id uuid.UUID, title string, risk string, impactedSystem string, checklistDetailId string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error) {
+func (o *findingOrm) Edit(id uuid.UUID, title string, risk string, impactedSystem string, description string, steps string, recommendations string, evidences string, fixedEvidences string, checklistDetailId string, status string) (Finding, error) {
 	var finding Finding
 	err := o.instance.Model(Finding{}).Where("id = ?", id).Take(&finding).Error
 	finding.Title = title
 	finding.Risk = risk
 	finding.ImpactedSystem = impactedSystem
+	finding.Description = description
+	finding.Steps = steps
+	finding.Recommendations = recommendations
+	finding.Evidences = evidences
+	finding.FixedEvidences = fixedEvidences
 	finding.ChecklistDetailId = checklistDetailId
-	finding.ProjectId = projectId
-	finding.ChecklistId = checklistId
-	finding.UserId = userId
+	finding.Status = status
 	o.instance.Save(finding)
 
 	return finding, err

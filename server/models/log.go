@@ -10,7 +10,7 @@ import (
 type Log struct {
 	Base
 	Endpoint string    `gorm:"size:255;not null;" json:"endpoint"`
-	Payload  string    `gorm:"size:255;" json:"payload"`
+	Payload  string    `json:"payload"`
 	Method   string    `gorm:"size:255;not null;" json:"method"`
 	Status   string    `gorm:"size:255;not null;" json:"status"`
 	Ip       string    `gorm:"size:255;not null;" json:"ip"`
@@ -43,7 +43,7 @@ func (o *logOrm) Create(endpoint string, payload string, status string, method s
 
 func (o *logOrm) GetAll() ([]Log, error) {
 	var logs []Log
-	result := o.instance.Preload("User").Find(&logs)
+	result := o.instance.Preload("User").Order("created_at desc").Find(&logs)
 
 	return logs, result.Error
 }

@@ -8,7 +8,7 @@ import ManageChecklistIndex from './pages/manage/checklist';
 import ManageChecklistCreate from './pages/manage/checklist/create';
 import ManageChecklistEdit from './pages/manage/checklist/edit';
 import ManageChecklistShow from './pages/manage/checklist/show';
-import ManageFindingIndex from './pages/manage/finding';
+import ManageFindingIndex from './pages/manage/finding/show';
 import ManageGroupIndex from './pages/manage/group';
 import ManageGroupCreate from './pages/manage/group/create';
 import ManageGroupEdit from './pages/manage/group/edit';
@@ -21,6 +21,7 @@ import ManageUserIndex from './pages/manage/user';
 import ManageUserCreate from './pages/manage/user/create';
 import ManageUserEdit from './pages/manage/user/edit';
 import ManageFindingCreate from './pages/manage/finding/create';
+import ManageFindingShow from './pages/manage/finding/show';
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
                 element={<ManageFindingCreate />}
               />
             </Route>
+            <Route path="findings/:id" element={<ManageFindingShow />} />
             <Route path="/" element={<Dashboard />} />
           </Route>
         </Routes>

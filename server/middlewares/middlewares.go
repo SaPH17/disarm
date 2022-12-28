@@ -1,11 +1,8 @@
 package middlewares
 
 import (
-	"bytes"
-	"io"
 	"net/http"
 
-	"disarm/main/controllers"
 	"disarm/main/models"
 	"disarm/main/utils/token"
 
@@ -31,17 +28,63 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		body, buffErr := io.ReadAll(c.Request.Body)
-		if buffErr != nil {
-			c.String(http.StatusBadRequest, "Unable to read body buffer")
-			c.Abort()
-			return
+		// var bodyPostWithoutImage struct {
+		// 	Title             string `form:"title"`
+		// 	Risk              string `form:"risk"`
+		// 	ImpactedSystem    string `form:"impacted_system"`
+		// 	ChecklistDetailId string `form:"checklist_detail_id"`
+		// 	Description       string `form:"description"`
+		// 	ProjectId         string `form:"project_id"`
+		// 	Steps             string `form:"steps"`
+		// 	Recommendations   string `form:"recommendations"`
+		// 	Evidences         string `form:"evidences"`
+		// 	FixedEvidences    string `form:"fixed_evidences"`
+		// }
+
+		// var bodyPutWithoutImage struct {
+		// 	Title             string `form:"title"`
+		// 	Risk              string `form:"risk"`
+		// 	ImpactedSystem    string `form:"impacted_system"`
+		// 	ChecklistDetailId string `form:"checklist_detail_id"`
+		// 	Description       string `form:"description"`
+		// 	Status            string `form:"status"`
+		// 	Steps             string `form:"steps"`
+		// 	Recommendations   string `form:"recommendations"`
+		// 	Evidences         string `form:"evidences"`
+		// 	FixedEvidences    string `form:"fixed_evidences"`
+		// }
+
+		if c.Request.Method == "PUT" && c.FullPath() == "/api/findings/:id" {
+			// c.Bind(&bodyPutWithoutImage)
+			// out, err := json.Marshal(bodyPutWithoutImage)
+			// if err != nil {
+			// 	c.String(http.StatusBadRequest, "Failed")
+			// 	c.Abort()
+			// 	return
+			// }
+			// controllers.CreateLog(uid, string(out), c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
+		} else if c.Request.Method == "POST" && c.FullPath() == "/api/findings/" {
+			// c.Bind(&bodyPostWithoutImage)
+			// out, err := json.Marshal(bodyPostWithoutImage)
+			// if err != nil {
+			// 	c.String(http.StatusBadRequest, "Failed")
+			// 	c.Abort()
+			// 	return
+			// }
+			// controllers.CreateLog(uid, string(out), c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
+		} else {
+			// body, buffErr := io.ReadAll(c.Request.Body)
+			// if buffErr != nil {
+			// 	c.String(http.StatusBadRequest, "Unable to read body buffer")
+			// 	c.Abort()
+			// 	return
+			// }
+
+			// c.Request.Body = io.NopCloser(bytes.NewReader(body))
+			// strbody := string(body)
+
+			// controllers.CreateLog(uid, strbody, c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
 		}
-
-		c.Request.Body = io.NopCloser(bytes.NewReader(body))
-		strbody := string(body)
-
-		controllers.CreateLog(uid, strbody, c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
 
 		c.Next()
 	}
