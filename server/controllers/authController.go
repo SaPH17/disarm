@@ -45,7 +45,7 @@ func GetCurrentUser(c *gin.Context) {
 
 func AuthenticateUser(c *gin.Context) {
 	var body struct {
-		Email string `json:"email" binding:"required"`
+		Email    string `json:"email" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 
@@ -85,11 +85,11 @@ func AuthenticateUser(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	
-	t := &http.Cookie{ Name: "token", Value: token, Expires: time.Now().Add(time.Hour * time.Duration(token_lifespan)), HttpOnly: true, Path: "/" }
-	
+
+	t := &http.Cookie{Name: "token", Value: token, Expires: time.Now().Add(time.Hour * time.Duration(token_lifespan)), HttpOnly: true, Path: "/"}
+
 	http.SetCookie(c.Writer, t)
-	c.JSON(http.StatusOK, gin.H{"token": token, "id": user.ID, "expires": time.Now().Add(time.Hour * time.Duration(token_lifespan))})
+	c.JSON(http.StatusOK, gin.H{"token": token, "id": user.ID, "username": user.Username, "expires": time.Now().Add(time.Hour * time.Duration(token_lifespan))})
 }
 
 func VerifyPassword(password string, hashed string) error {

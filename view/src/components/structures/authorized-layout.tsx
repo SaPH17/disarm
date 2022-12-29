@@ -17,7 +17,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import authAtom from '../../atoms/atom';
 import { LogoutHandlers } from '../../handlers/auth/logout-handler';
-import AuthServices from '../../services/auth-services';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
@@ -39,11 +38,9 @@ function activePath(currentPath: string, comparePath: string) {
   return currentPath.startsWith(comparePath);
 }
 
-
-
 export default function AuthorizedLayout({ children }: any) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-const [auth, setAuth] = useAtom(authAtom);
+  const [auth, setAuth] = useAtom(authAtom);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -149,21 +146,14 @@ const [auth, setAuth] = useAtom(authAtom);
                     <div>
                       <img
                         className="inline-block w-10 h-10 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        src="/profile-picture.webp"
                         alt=""
                       />
                     </div>
                     <div className="ml-3 flex-1 flex justify-between items-center">
                       <div className="flex flex-col w-52">
                         <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 truncate">
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Aliquid impedit temporibus nesciunt, illo amet
-                          ab quae sapiente fuga voluptatem maxime modi, facilis
-                          possimus delectus molestias, magni libero commodi
-                          accusamus quisquam.
-                        </p>
-                        <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                          View profile
+                          {auth.username}
                         </p>
                       </div>
                       <div className="text-gray-500 hover:text-gray-700 w-5 ml-2">
@@ -225,21 +215,14 @@ const [auth, setAuth] = useAtom(authAtom);
                   <div>
                     <img
                       className="inline-block rounded-full h-9 w-9"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      src="/profile-picture.webp"
                       alt=""
                     />
                   </div>
                   <div className="ml-3 flex-1 flex justify-between items-center">
                     <div className="flex flex-col w-36">
                       <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 truncate">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Aliquid impedit temporibus nesciunt, illo amet ab quae
-                        sapiente fuga voluptatem maxime modi, facilis possimus
-                        delectus molestias, magni libero commodi accusamus
-                        quisquam.
-                      </p>
-                      <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                        View profile
+                        {auth.username}
                       </p>
                     </div>
                     <div className="text-gray-500 hover:text-gray-700 w-5">

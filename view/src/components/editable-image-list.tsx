@@ -16,8 +16,7 @@ export type ImageListData = {
 
 export const defaultListData = {
   image: 'dummy.png',
-  imageUrl:
-    'https://m.media-amazon.com/images/M/MV5BYTJiYWY2YjAtMGI1OS00NjA2LWJhYzQtYTg2NTZiMjM3NjAzXkEyXkFqcGdeQXVyNzI1NzMxNzM@._V1_.jpg',
+  imageUrl: '/image-placeholder.webp',
   content: '',
 };
 
