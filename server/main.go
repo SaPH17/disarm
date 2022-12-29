@@ -50,6 +50,7 @@ func main() {
 			group.POST("/", controllers.CreateGroup)
 			group.GET("/:id", controllers.GetGroupById)
 			group.PUT("/:id", controllers.EditGroup)
+			group.POST("/assign-user", controllers.AddUserToGroup)
 			group.PUT("/:id/permissions", controllers.EditGroupPermission)
 			group.DELETE("/:id", controllers.DeleteGroup)
 			group.DELETE("/", controllers.DeleteGroupByIds)

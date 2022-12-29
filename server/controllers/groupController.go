@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"disarm/main/models"
-	"fmt"
 	"html"
 	"net/http"
 	"strings"
@@ -199,6 +198,54 @@ func EditGroup(c *gin.Context) {
 	})
 }
 
+func AddUserToGroup(c *gin.Context) {
+	var body struct {
+		UserIds  []string `json:"user_ids" binding:"required"`
+		GroupIds []string `json:"group_ids" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var users []models.User
+	var parsedGroupUuids []uuid.UUID
+	for _, element := range body.GroupIds {
+		parsedGroupUuids = append(parsedGroupUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	}
+
+	if len(body.UserIds) > 0 {
+		var dbUserErr error
+		var userIds []uuid.UUID
+		for _, element := range body.UserIds {
+			userIds = append(userIds, uuid.FromStringOrNil(element))
+		}
+		users, dbUserErr = models.Users.GetManyByIds(userIds)
+		if dbUserErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": dbUserErr,
+			})
+			return
+		}
+	}
+
+	groups, dbErr := models.Groups.AssignUser(parsedGroupUuids, &users)
+
+	if dbErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": dbErr.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"groups": groups,
+	})
+}
+
 func EditGroupPermission(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
@@ -282,8 +329,6 @@ func DeleteGroupByIds(c *gin.Context) {
 	for _, element := range body.Ids {
 		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
 	}
-
-	fmt.Println(parsedUuids)
 
 	result, dbErr := models.Groups.Delete(parsedUuids)
 

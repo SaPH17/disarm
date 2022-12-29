@@ -14,6 +14,10 @@ import { DeleteUsersHandler } from '../../../handlers/user/delete-user-handler';
 import { Group } from '../../../models/group';
 import { User } from '../../../models/user';
 import UserServices from '../../../services/user-services';
+import SelectPopup from '../../../components/popup/select-popup';
+import GroupServices from '../../../services/group-services';
+import { UsersIcon } from '@heroicons/react/solid';
+import { GroupHandler } from '../../../handlers/group/group-handler';
 
 const title = ['name', 'email', 'groups'];
 
@@ -27,10 +31,14 @@ const contentTitle = [
 
 export default function ManageUserIndex() {
   const navigate = useNavigate();
-  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const [openedPopup, setOpenedPopup] = useState({
+    delete: false,
+    assignGroup: false,
+  });
   const { data, refetch } = useQuery('users', UserServices.getUsers, {
     refetchOnMount: true,
   });
+  const { data: dataGroup } = useQuery('groups', GroupServices.getGroups);
   const users =
     data?.map((r: User) => {
       return {
@@ -42,6 +50,16 @@ export default function ManageUserIndex() {
         assignedProjects: '-',
       };
     }) || [];
+
+  const groups =
+    dataGroup?.map((r: Group) => ({
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      directParentGroup: r.directParentGroup,
+      permissions: r.permissions,
+    })) || undefined;
+
   const [activeUser, setActiveUser] = useState<User>(defaultUser);
   const [selectedUser, setSelectedUser] = useState<User[]>([]);
 
@@ -52,18 +70,18 @@ export default function ManageUserIndex() {
       onClickFunction: () => {
         if (!selectedUser) return;
         if (!selectedUser.filter((user: User) => user.id !== -1).length) return;
-        setOpenDeletePopup(true);
+        setOpenedPopup({ ...openedPopup, delete: !openedPopup.delete });
       },
     },
     {
       id: '2',
       name: 'Add to Group',
-      onClickFunction: () => {},
-    },
-    {
-      id: '3',
-      name: 'Assign to Project',
-      onClickFunction: () => {},
+      onClickFunction: () => {
+        setOpenedPopup({
+          ...openedPopup,
+          assignGroup: !openedPopup.assignGroup,
+        });
+      },
     },
   ];
 
@@ -80,6 +98,30 @@ export default function ManageUserIndex() {
           },
         },
       });
+      refetch();
+      setSelectedUser([]);
+    } catch (e) {}
+  }
+
+  async function addUserToGroup(selectedGroup: any) {
+    if (selectedGroup.length === 0 || selectedUser.length === 0) {
+      return;
+    }
+    const userIds = selectedUser.map((user: User) => user.id);
+    const groupIds = selectedGroup.map((group: any) => group.id);
+    try {
+      await toast.promise(
+        GroupHandler.handleAddUserToGroup(userIds, groupIds),
+        {
+          success: `Successfully assigned ${userIds.length} user(s)!`,
+          pending: `Assigning ${userIds.length} user(s)!`,
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        }
+      );
       refetch();
       setSelectedUser([]);
     } catch (e) {}
@@ -132,8 +174,24 @@ export default function ManageUserIndex() {
           title="Delete Users"
           selectedData={selectedUser}
           onClickFunction={deleteUsers}
-          open={openDeletePopup}
-          setOpen={setOpenDeletePopup}
+          open={openedPopup.delete}
+          setOpen={(val: any) => {
+            setOpenedPopup({ ...openedPopup, delete: val });
+          }}
+        />
+      )}
+      {groups && (
+        <SelectPopup
+          icon={
+            <UsersIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+          }
+          availableData={groups}
+          title="Select Group"
+          onClickFunction={addUserToGroup}
+          open={openedPopup.assignGroup}
+          setOpen={(val: any) => {
+            setOpenedPopup({ ...openedPopup, assignGroup: val });
+          }}
         />
       )}
     </>

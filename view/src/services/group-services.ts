@@ -50,4 +50,14 @@ export default class GroupServices {
       }
     );
   }
+
+  static async addUserToGroup(body: object) {
+    return axios.post(
+      `${process.env.REACT_APP_API_URL}/groups/assign-user`,
+      body,
+      {
+        withCredentials: true,
+      }
+    );
+  }
 }

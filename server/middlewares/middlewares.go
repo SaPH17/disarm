@@ -54,37 +54,37 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 		// 	FixedEvidences    string `form:"fixed_evidences"`
 		// }
 
-		if c.Request.Method == "PUT" && c.FullPath() == "/api/findings/:id" {
-			// c.Bind(&bodyPutWithoutImage)
-			// out, err := json.Marshal(bodyPutWithoutImage)
-			// if err != nil {
-			// 	c.String(http.StatusBadRequest, "Failed")
-			// 	c.Abort()
-			// 	return
-			// }
-			// controllers.CreateLog(uid, string(out), c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
-		} else if c.Request.Method == "POST" && c.FullPath() == "/api/findings/" {
-			// c.Bind(&bodyPostWithoutImage)
-			// out, err := json.Marshal(bodyPostWithoutImage)
-			// if err != nil {
-			// 	c.String(http.StatusBadRequest, "Failed")
-			// 	c.Abort()
-			// 	return
-			// }
-			// controllers.CreateLog(uid, string(out), c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
-		} else {
-			// body, buffErr := io.ReadAll(c.Request.Body)
-			// if buffErr != nil {
-			// 	c.String(http.StatusBadRequest, "Unable to read body buffer")
-			// 	c.Abort()
-			// 	return
-			// }
+		// if c.Request.Method == "PUT" && c.FullPath() == "/api/findings/:id" {
+		// 	c.Bind(&bodyPutWithoutImage)
+		// 	out, err := json.Marshal(bodyPutWithoutImage)
+		// 	if err != nil {
+		// 		c.String(http.StatusBadRequest, "Failed")
+		// 		c.Abort()
+		// 		return
+		// 	}
+		// 	controllers.CreateLog(uid, string(out), c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
+		// } else if c.Request.Method == "POST" && c.FullPath() == "/api/findings/" {
+		// 	c.Bind(&bodyPostWithoutImage)
+		// 	out, err := json.Marshal(bodyPostWithoutImage)
+		// 	if err != nil {
+		// 		c.String(http.StatusBadRequest, "Failed")
+		// 		c.Abort()
+		// 		return
+		// 	}
+		// 	controllers.CreateLog(uid, string(out), c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
+		// } else {
+		// 	body, buffErr := io.ReadAll(c.Request.Body)
+		// 	if buffErr != nil {
+		// 		c.String(http.StatusBadRequest, "Unable to read body buffer")
+		// 		c.Abort()
+		// 		return
+		// 	}
 
-			// c.Request.Body = io.NopCloser(bytes.NewReader(body))
-			// strbody := string(body)
+		// 	c.Request.Body = io.NopCloser(bytes.NewReader(body))
+		// 	strbody := string(body)
 
-			// controllers.CreateLog(uid, strbody, c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
-		}
+		// 	controllers.CreateLog(uid, strbody, c.Request.RequestURI, c.Request.Method, c.ClientIP(), "")
+		// }
 
 		c.Next()
 	}

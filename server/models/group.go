@@ -29,6 +29,7 @@ type GroupOrm interface {
 	Edit(id uuid.UUID, name string, description string, parentGroup *Group, users *[]User) (Group, error)
 	EditPermission(id uuid.UUID, permissions string) (Group, error)
 	Delete(ids []uuid.UUID) (bool, error)
+	AssignUser(ids []uuid.UUID, users *[]User) ([]Group, error)
 }
 
 var Groups GroupOrm
@@ -100,4 +101,14 @@ func (o *groupOrm) Delete(ids []uuid.UUID) (bool, error) {
 	o.instance.Delete(&groups)
 
 	return true, err
+}
+
+func (o *groupOrm) AssignUser(ids []uuid.UUID, users *[]User) ([]Group, error) {
+	var groups []Group
+	err := o.instance.Model(Group{}).Where("id in ?", ids).Find(&groups).Error
+	for _, element := range groups {
+		database.DB.Get().Model(&element).Omit("Users.*").Association("Users").Append(users)
+	}
+
+	return groups, err
 }

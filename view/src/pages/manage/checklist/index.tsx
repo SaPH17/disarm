@@ -65,15 +65,18 @@ export default function ManageChecklistIndex() {
     if (!selectedChecklist) return;
     const ids = selectedChecklist.map((checklist: Checklist) => checklist.id);
     try {
-      await toast.promise(DeleteChecklistsHandler.handleDeleteChecklistSubmit(ids), {
-        success: `Successfully delete ${ids.length} checklist(s)!`,
-        pending: `Waiting for delete ${ids.length} checklist(s)!`,
-        error: {
-          render({ data }: any) {
-            return data.message;
+      await toast.promise(
+        DeleteChecklistsHandler.handleDeleteChecklistSubmit(ids),
+        {
+          success: `Successfully delete ${ids.length} checklist(s)!`,
+          pending: `Waiting for delete ${ids.length} checklist(s)!`,
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
           },
-        },
-      });
+        }
+      );
       refetch();
       setSelectedChecklist([]);
     } catch (e) {}
@@ -117,9 +120,6 @@ export default function ManageChecklistIndex() {
             className={'underline'}
           >
             View Detail
-          </Link>
-          <Link to="/" className={'underline'}>
-            Apply to Project
           </Link>
           <Link to={`/checklists/${activeChecklist.id}/edit`}>
             <PrimaryButton content="Edit" />

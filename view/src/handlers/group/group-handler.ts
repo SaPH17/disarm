@@ -60,4 +60,16 @@ export class GroupHandler {
       throw e;
     }
   }
+
+  static async handleAddUserToGroup(userIds: any, groupIds: any) {
+    const body = {
+      user_ids: userIds,
+      group_ids: groupIds,
+    };
+    try {
+      return (await GroupServices.addUserToGroup(body)).data;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

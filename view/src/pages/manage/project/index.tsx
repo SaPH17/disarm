@@ -48,11 +48,6 @@ export default function ManageProjectIndex() {
     },
     {
       id: '2',
-      name: 'Add User',
-      onClickFunction: () => {},
-    },
-    {
-      id: '3',
       name: 'Generate Report',
       onClickFunction: () => {},
     },
