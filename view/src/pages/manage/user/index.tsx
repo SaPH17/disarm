@@ -18,6 +18,8 @@ import SelectPopup from '../../../components/popup/select-popup';
 import GroupServices from '../../../services/group-services';
 import { UsersIcon } from '@heroicons/react/solid';
 import { GroupHandler } from '../../../handlers/group/group-handler';
+import ResetPasswordPopup from '../../../components/page/user/reset-password-popup';
+import { ResetPasswordHandler } from '../../../handlers/user/reset-password-handler';
 
 const title = ['name', 'email', 'groups'];
 
@@ -34,6 +36,7 @@ export default function ManageUserIndex() {
   const [openedPopup, setOpenedPopup] = useState({
     delete: false,
     assignGroup: false,
+    resetPassword: false
   });
   const { data, refetch } = useQuery('users', UserServices.getUsers, {
     refetchOnMount: true,
@@ -100,7 +103,29 @@ export default function ManageUserIndex() {
       });
       refetch();
       setSelectedUser([]);
-    } catch (e) {}
+    } catch (e) { }
+  }
+
+  async function resetPassword() {
+    if (!activeUser) return;
+    const id = activeUser.id;
+    try {
+      await toast.promise(ResetPasswordHandler.handleResetPassword(id), {
+        success: {
+          render({data}: any){
+            return `Successfully reset ${activeUser.name} (${activeUser.email})'s password to ${data.password}!`;
+          }
+        },
+        pending: `Waiting for reset ${activeUser.name} (${activeUser.email})'s password!`,
+        error: {
+          render({ data }: any) {
+            return data.message;
+          },
+        },
+      });
+      refetch();
+      setActiveUser(defaultUser);
+    } catch (e) { }
   }
 
   async function addUserToGroup(selectedGroup: any) {
@@ -124,7 +149,7 @@ export default function ManageUserIndex() {
       );
       refetch();
       setSelectedUser([]);
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return (
@@ -162,6 +187,14 @@ export default function ManageUserIndex() {
         content={activeUser}
       >
         <div className="flex items-center gap-4">
+          <span onClick={() => setOpenedPopup({
+            ...openedPopup,
+            resetPassword: !openedPopup.resetPassword
+          })}
+            className={'underline cursor-pointer'}
+          >
+            Reset Password
+          </span>
           <div>
             <Link to={`/users/${activeUser.id}/edit`}>
               <PrimaryButton content="Edit" />
@@ -169,6 +202,17 @@ export default function ManageUserIndex() {
           </div>
         </div>
       </SelectedDetail>
+      {selectedUser && (
+        <ResetPasswordPopup
+          title="Reset Password"
+          activeData={activeUser}
+          onClickFunction={resetPassword}
+          open={openedPopup.resetPassword}
+          setOpen={(val: any) => {
+            setOpenedPopup({ ...openedPopup, resetPassword: val });
+          }}
+        />
+      )}
       {selectedUser && (
         <DeletePopup
           title="Delete Users"
@@ -183,7 +227,7 @@ export default function ManageUserIndex() {
       {groups && (
         <SelectPopup
           icon={
-            <UsersIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+            <UsersIcon className="w-6 h-6 text-green-600" aria-hidden="true" />
           }
           availableData={groups}
           title="Select Group"

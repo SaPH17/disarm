@@ -13,12 +13,13 @@ import (
 
 type User struct {
 	Base
-	Groups       []Group    `gorm:"many2many:user_groups"`
-	Email        string     `gorm:"size:255;not null;unique" json:"email"`
-	Username     string     `gorm:"size:255;not null;unique" json:"username"`
-	Password     string     `gorm:"size:255;not null;" json:"password"`
-	SupervisorID *uuid.UUID `gorm:"type:uuid;" json:"supervisor_id"`
-	Supervisor   *User      `gorm:"foreignkey:SupervisorID"`
+	Groups            []Group    `gorm:"many2many:user_groups"`
+	Email             string     `gorm:"size:255;not null;unique" json:"email"`
+	Username          string     `gorm:"size:255;not null;unique" json:"username"`
+	Password          string     `gorm:"size:255;not null;" json:"password"`
+	SupervisorID      *uuid.UUID `gorm:"type:uuid;" json:"supervisor_id"`
+	Supervisor        *User      `gorm:"foreignkey:SupervisorID"`
+	IsPasswordChanged bool       `gorm:"not null;" json:"is_password_changed"`
 }
 
 type userOrm struct {
@@ -34,6 +35,8 @@ type UserOrm interface {
 	GetManyByIds(ids []uuid.UUID) ([]User, error)
 	Edit(id uuid.UUID, email string, username string, supervisor *User) (User, error)
 	Delete(ids []uuid.UUID) (bool, error)
+
+	ChangePassword(id uuid.UUID, password string, isPasswordChanged bool) (User, error)
 }
 
 var Users UserOrm
@@ -56,7 +59,7 @@ func (o *userOrm) Create(email string, password string, username string, supervi
 		supervisorId = (*uuid.UUID)(&supervisor.ID)
 	}
 
-	user := User{Email: email, Username: username, Password: password, SupervisorID: (*uuid.UUID)(supervisorId), Groups: groups}
+	user := User{Email: email, Username: username, Password: password, SupervisorID: (*uuid.UUID)(supervisorId), Groups: groups, IsPasswordChanged: false}
 
 	result := o.instance.Omit("Groups.*", "Supervisor").Create(&user)
 
@@ -111,6 +114,14 @@ func (o *userOrm) Edit(id uuid.UUID, email string, username string, supervisor *
 	return user, err
 }
 
+func (o *userOrm) ChangePassword(id uuid.UUID, password string, isPasswordChanged bool) (User, error) {
+	var user User
+	err := o.instance.Model(User{}).Where("id = ?", id).Find(&user).Error
+	o.instance.Model(&user).Updates(User{Password: password, IsPasswordChanged: isPasswordChanged})
+
+	return user, err
+}
+
 func (o *userOrm) Delete(ids []uuid.UUID) (bool, error) {
 	var users []User
 	err := o.instance.Model(User{}).Where("id IN ?", ids).Find(&users).Error
@@ -131,7 +142,7 @@ func (s *UsersSeeder) Seed(db *gorm.DB) error {
 	var users []User
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("root"), bcrypt.DefaultCost)
 
-	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword)})
+	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword), IsPasswordChanged: true})
 	// ,DirectSupervisorId: sql.NullString{String: "", Valid: false}}
 
 	return db.CreateInBatches(users, s.Configuration.Rows).Error

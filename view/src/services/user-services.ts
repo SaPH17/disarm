@@ -34,4 +34,10 @@ export default class UserServices {
       data: body
     });
   }
+
+  static async resetPassword(id: string | number | undefined) {
+    return axios.patch(`${process.env.REACT_APP_API_URL}/users/${id}/reset-password`, {
+      withCredentials: true
+    });
+  }
 }

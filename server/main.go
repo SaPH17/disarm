@@ -32,6 +32,7 @@ func main() {
 			user.PUT("/:id", controllers.EditUser)
 			user.DELETE("/:id", controllers.DeleteUser)
 			user.GET("/:id/groups", controllers.GetManyGroupsByUser)
+			user.PATCH("/:id/reset-password", controllers.ResetUserPassword)
 		}
 
 		project := apiWithJWT.Group("/projects")

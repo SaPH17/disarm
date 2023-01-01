@@ -80,7 +80,11 @@ export default function CreateUserForm() {
           selectedGroups.map((group) => group.id) as string[]
         ),
         {
-          success: 'Successfully create new user',
+          success: {
+            render({data}: any){
+              return `Successfully create new user with password ${data.password}`;
+            }
+          },
           pending: 'Waiting for create new user!',
           error: {
             render({ data }: any) {

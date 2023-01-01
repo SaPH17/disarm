@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"disarm/main/actions"
 	"disarm/main/database"
 	"disarm/main/models"
 	"html"
@@ -47,7 +48,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	if body.Password == "" {
-		body.Password = "password"
+		body.Password = actions.CreatePassword()
 	}
 
 	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
@@ -87,6 +88,7 @@ func CreateUser(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"user": user,
+		"password": body.Password,
 	})
 }
 
@@ -212,6 +214,52 @@ func EditUser(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"user": user,
+	})
+}
+
+func ResetUserPassword(c *gin.Context) {
+	id := c.Param("id")
+	var body struct {
+		Password           string `json:"password"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	escapedId := html.EscapeString(strings.TrimSpace(id))
+
+	password := actions.CreatePassword()
+	isPasswordChanged := false
+	
+	if (body.Password != ""){
+		password = body.Password
+		isPasswordChanged = true
+	}
+
+	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if hashingErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": hashingErr.Error(),
+		})
+		return
+	}
+
+	user, dbErr := models.Users.ChangePassword(uuid.FromStringOrNil(escapedId), string(hashedPassword), isPasswordChanged)
+
+	if dbErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": dbErr.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"user": user,
+		"password": password,
 	})
 }
 
