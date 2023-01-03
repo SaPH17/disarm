@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"disarm/main/actions"
 	"disarm/main/database"
 	"disarm/main/models"
 	"html"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -48,7 +49,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	if body.Password == "" {
-		body.Password = actions.CreatePassword()
+		body.Password = CreatePassword()
 	}
 
 	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
@@ -87,7 +88,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"user": user,
+		"user":     user,
 		"password": body.Password,
 	})
 }
@@ -220,7 +221,7 @@ func EditUser(c *gin.Context) {
 func ResetUserPassword(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Password           string `json:"password"`
+		Password string `json:"password"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -232,10 +233,10 @@ func ResetUserPassword(c *gin.Context) {
 
 	escapedId := html.EscapeString(strings.TrimSpace(id))
 
-	password := actions.CreatePassword()
+	password := CreatePassword()
 	isPasswordChanged := false
-	
-	if (body.Password != ""){
+
+	if body.Password != "" {
 		password = body.Password
 		isPasswordChanged = true
 	}
@@ -258,7 +259,7 @@ func ResetUserPassword(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"user": user,
+		"user":     user,
 		"password": password,
 	})
 }
@@ -320,4 +321,16 @@ func DeleteUserByIds(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"result": result,
 	})
+}
+
+func CreatePassword() string {
+	rand.Seed(time.Now().UnixNano())
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890")
+
+	b := make([]rune, 8)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+
+	return string(b)
 }

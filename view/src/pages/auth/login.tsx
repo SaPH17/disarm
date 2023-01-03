@@ -1,53 +1,45 @@
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import InputText from '../../components/input-text/input-text';
-import PrimaryButton from "../../components/primary-button";
-import { LoginFormData, LoginHandlers } from "../../handlers/auth/login-handler";
+import PrimaryButton from '../../components/primary-button';
+import {
+  LoginFormData,
+  LoginHandlers,
+} from '../../handlers/auth/login-handler';
 import { toast } from 'react-toastify';
 import { useAtom } from 'jotai';
-import authAtom from "../../atoms/atom";
-/*
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ]
-  }
-  ```
-*/
+import authAtom from '../../atoms/atom';
+
 export default function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>();
   const [auth, setAuth] = useAtom(authAtom);
   const navigate = useNavigate();
-  
+
   const handleLoginFormSubmit = async (data: LoginFormData) => {
     try {
       await toast.promise(LoginHandlers.handleLoginFormSubmit(data), {
         success: {
-          render({data} : any){
+          render({ data }: any) {
             setAuth(data);
             return 'Successfully Login!';
-          }
+          },
         },
         error: {
-          render({data} : any){
+          render({ data }: any) {
             return data.message;
-          }
+          },
         },
-        pending: 'Waiting for Login!'
+        pending: 'Waiting for Login!',
       });
-      
+
       return navigate('/users');
-    } catch (e) { }
-  }
-  
+    } catch (e) {}
+  };
+
   return (
     <div
       className="flex flex-col justify-center min-h-screen py-12 bg-gray-50 sm:px-6 lg:px-8"
