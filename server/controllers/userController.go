@@ -3,6 +3,7 @@ package controllers
 import (
 	"disarm/main/database"
 	"disarm/main/models"
+	"disarm/main/utils/token"
 	"html"
 	"math/rand"
 	"net/http"
@@ -333,4 +334,61 @@ func CreatePassword() string {
 	}
 
 	return string(b)
+}
+
+func ChangePassword(c *gin.Context) {
+	var body struct {
+		OldPassword string `json:"oldPassword" binding:"required"`
+		Password    string `json:"password" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	userUuid, err := token.ExtractTokenID(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userById, getUserErr := models.Users.GetOneById(userUuid)
+
+	if getUserErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": getUserErr,
+		})
+		return
+	}
+
+	passwErr := VerifyPassword(body.OldPassword, userById.Password)
+
+	if passwErr != nil && passwErr == bcrypt.ErrMismatchedHashAndPassword {
+		return
+	}
+
+	hashedPassword, hashingErr := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
+	if hashingErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": hashingErr.Error(),
+		})
+		return
+	}
+
+	user, dbErr := models.Users.ChangePassword(userUuid, string(hashedPassword), true)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"user": user,
+	})
 }

@@ -26,6 +26,13 @@ func init() {
 	database.DB.Get().AutoMigrate(&PermissionObjectType{})
 	PermissionObjectTypes = &permissionObjectTypeOrm{instance: database.DB.Get()}
 
+	var types []PermissionObjectType
+	dbErr := database.DB.Get().Find(&types).Error
+
+	if len(types) != 0 || dbErr != nil {
+		return
+	}
+
 	typesSeeder := NewPermissionObjectTypesSeeder(gorm_seeder.SeederConfiguration{Rows: 5})
 	seedersStack := gorm_seeder.NewSeedersStack(database.DB.Get())
 	seedersStack.AddSeeder(&typesSeeder)

@@ -1,5 +1,5 @@
-import { GeneralData } from "./general-data";
-import { Group } from "./group";
+import { GeneralData } from './general-data';
+import { Group } from './group';
 
 export type User = GeneralData & {
   groups: string;
@@ -10,11 +10,11 @@ export type User = GeneralData & {
   email: string;
   username: string;
   direct_supervisor?: string;
-  Groups? : Group[];
-  Supervisor? : User;
-}
+  Groups?: Group[];
+  Supervisor?: User;
+};
 
 export type UserSupervisor = {
   String: string;
   Valid: boolean;
-}
+};

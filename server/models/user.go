@@ -35,7 +35,6 @@ type UserOrm interface {
 	GetManyByIds(ids []uuid.UUID) ([]User, error)
 	Edit(id uuid.UUID, email string, username string, supervisor *User) (User, error)
 	Delete(ids []uuid.UUID) (bool, error)
-
 	ChangePassword(id uuid.UUID, password string, isPasswordChanged bool) (User, error)
 }
 
@@ -44,6 +43,12 @@ var Users UserOrm
 func init() {
 	database.DB.Get().AutoMigrate(&User{})
 	Users = &userOrm{instance: database.DB.Get()}
+
+	groups, _ := Users.GetAll()
+
+	if len(groups) != 0 {
+		return
+	}
 
 	usersSeeder := NewUsersSeeder(gorm_seeder.SeederConfiguration{Rows: 1})
 	seedersStack := gorm_seeder.NewSeedersStack(database.DB.Get())
@@ -142,7 +147,7 @@ func (s *UsersSeeder) Seed(db *gorm.DB) error {
 	var users []User
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("root"), bcrypt.DefaultCost)
 
-	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword), IsPasswordChanged: true})
+	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword), IsPasswordChanged: false})
 	// ,DirectSupervisorId: sql.NullString{String: "", Valid: false}}
 
 	return db.CreateInBatches(users, s.Configuration.Rows).Error

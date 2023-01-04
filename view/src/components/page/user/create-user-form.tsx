@@ -81,9 +81,9 @@ export default function CreateUserForm() {
         ),
         {
           success: {
-            render({data}: any){
+            render({ data }: any) {
               return `Successfully create new user with password ${data.password}`;
-            }
+            },
           },
           pending: 'Waiting for create new user!',
           error: {

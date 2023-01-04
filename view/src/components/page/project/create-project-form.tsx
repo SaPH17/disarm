@@ -28,15 +28,13 @@ export default function CreateProjectForm() {
     register,
     formState: { errors },
     handleSubmit,
-    setValue
+    setValue,
   } = useForm<ProjectFormData>();
 
   async function handleCreateProjectButton(data: ProjectFormData) {
     try {
       await toast.promise(
-        CreateProjectHandler.handleCreateProjectFormSubmit(
-          data
-        ),
+        CreateProjectHandler.handleCreateProjectFormSubmit(data),
         {
           success: 'Successfully create new project',
           pending: 'Waiting for create new project!',
@@ -51,8 +49,8 @@ export default function CreateProjectForm() {
     } catch (e) {}
   }
 
-  function changeChecklist(item: any){
-    setValue('checklist', item.id)
+  function changeChecklist(item: any) {
+    setValue('checklist', item.id);
   }
 
   return (

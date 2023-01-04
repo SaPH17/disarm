@@ -14,7 +14,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "react-jsx"
   },
-  "include": ["src", "src/components/page/user/group-card.tsx", "src/services/.ts"]
+  "include": [
+    "src",
+    "src/components/page/user/group-card.tsx",
+    "src/services/.ts"
+  ]
 }

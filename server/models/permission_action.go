@@ -26,6 +26,13 @@ func init() {
 	database.DB.Get().AutoMigrate(&PermissionAction{})
 	PermissionActions = &permissionActionOrm{instance: database.DB.Get()}
 
+	var actions []PermissionAction
+	dbErr := database.DB.Get().Find(&actions).Error
+
+	if len(actions) != 0 || dbErr != nil {
+		return
+	}
+
 	actionsSeeder := NewPermissionActionsSeeder(gorm_seeder.SeederConfiguration{Rows: 5})
 	seedersStack := gorm_seeder.NewSeedersStack(database.DB.Get())
 	seedersStack.AddSeeder(&actionsSeeder)

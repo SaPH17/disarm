@@ -23,6 +23,11 @@ func main() {
 		apiWithJWT := api.Group("")
 		apiWithJWT.Use(middlewares.JwtAuthMiddleware())
 
+		authWithMiddleware := apiWithJWT.Group("/auth")
+		{
+			authWithMiddleware.PATCH("/change-password", controllers.ChangePassword)
+		}
+
 		user := apiWithJWT.Group("/users")
 		{
 			user.GET("/", controllers.GetAllUser)

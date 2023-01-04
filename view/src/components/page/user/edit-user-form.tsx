@@ -60,27 +60,25 @@ export default function EditUserForm() {
 
   function handleEditUserButton(data: UserFormData) {
     try {
-      toast.promise(
-        EditUserHandler.handleEditUserFormSubmit(
-          data, user.id
-        ),
-        {
-          success: 'Successfully edit new user',
-          pending: 'Waiting for edit new user!',
-          error: {
-            render({ data }: any) {
-              return data.message;
-            },
+      toast.promise(EditUserHandler.handleEditUserFormSubmit(data, user.id), {
+        success: 'Successfully edit new user',
+        pending: 'Waiting for edit new user!',
+        error: {
+          render({ data }: any) {
+            return data.message;
           },
-        }
-      );
+        },
+      });
       refetch();
     } catch (e) {}
   }
 
   useEffect(() => {
     if (!user) return;
-    reset({...user, direct_supervisor: (user as User).Supervisor?.email || ''});
+    reset({
+      ...user,
+      direct_supervisor: (user as User).Supervisor?.email || '',
+    });
   }, [userData]);
 
   return user ? (
@@ -132,9 +130,13 @@ export default function EditUserForm() {
             register={register('direct_supervisor', {
               validate: (email) => {
                 if (!email) return true;
-                const countUser = users.filter((user: User) => user.email === email).length;
-                return !countUser ? 'Direct supervisor email is not existsx' : true;
-              }
+                const countUser = users.filter(
+                  (user: User) => user.email === email
+                ).length;
+                return !countUser
+                  ? 'Direct supervisor email is not existsx'
+                  : true;
+              },
             })}
           />
         </div>
