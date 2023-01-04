@@ -3,7 +3,7 @@ import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
-import { useState } from 'react';
+import { createElement, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Group } from '../../../models/group';
 import GroupServices from '../../../services/group-services';
@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { toast } from 'react-toastify';
 import { GroupHandler } from '../../../handlers/group/group-handler';
 import DeletePopup from '../../../components/popup/delete-popup';
+import { jsonToPermissionArray } from '../../../utils/functions/jsonConverter';
 
 const title = ['name', 'description'];
 
@@ -42,13 +43,24 @@ export default function ManageGroupIndex() {
 
   const { data, refetch } = useQuery('groups', GroupServices.getGroups);
   const groups =
-    data?.map((r: Group) => ({
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      directParentGroup: r.directParentGroup,
-      permissions: r.permissions,
-    })) || [];
+    data?.map((r: Group) => {
+      const p = jsonToPermissionArray(r.permissions);
+      console.log(p);
+      const lists = p.map((val) => {
+        return <li key={val}>{val}</li>;
+      });
+      return {
+        id: r.id,
+        name: r.name,
+        description: r.description,
+        directParentGroup: r.directParentGroup,
+        permissions: createElement(
+          'ul',
+          { className: 'pl-4 list-disc' },
+          lists
+        ),
+      };
+    }) || [];
 
   function deleteGroups() {
     if (!selectedGroup) return;
