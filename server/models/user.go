@@ -35,7 +35,6 @@ type UserOrm interface {
 	GetManyByIds(ids []uuid.UUID) ([]User, error)
 	Edit(id uuid.UUID, email string, username string, supervisor *User) (User, error)
 	Delete(ids []uuid.UUID) (bool, error)
-
 	ChangePassword(id uuid.UUID, password string, isPasswordChanged bool) (User, error)
 }
 
@@ -44,6 +43,12 @@ var Users UserOrm
 func init() {
 	database.DB.Get().AutoMigrate(&User{})
 	Users = &userOrm{instance: database.DB.Get()}
+
+	groups, _ := Users.GetAll()
+
+	if len(groups) != 0 {
+		return
+	}
 
 	usersSeeder := NewUsersSeeder(gorm_seeder.SeederConfiguration{Rows: 1})
 	seedersStack := gorm_seeder.NewSeedersStack(database.DB.Get())
