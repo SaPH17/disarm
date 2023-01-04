@@ -260,7 +260,7 @@ func EditGroupPermission(c *gin.Context) {
 	}
 
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
+	// escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
 
 	uuid, errUuid := uuid.FromString(escapedId)
 
@@ -271,7 +271,7 @@ func EditGroupPermission(c *gin.Context) {
 		return
 	}
 
-	group, dbErr := models.Groups.EditPermission(uuid, escapedPermissions)
+	group, dbErr := models.Groups.EditPermission(uuid, body.Permissions)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
