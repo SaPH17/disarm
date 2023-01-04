@@ -82,7 +82,8 @@ export default function ResetPasswordPopup({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Are you sure you want to reset this {`${activeData.name} (${activeData.email})'s`} password?
+                      Are you sure you want to reset this{' '}
+                      {`${activeData.name} (${activeData.email})'s`} password?
                       All of your data will be permanently changed from our
                       servers forever. This action cannot be undone.
                     </p>

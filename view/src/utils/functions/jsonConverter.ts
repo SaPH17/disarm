@@ -25,5 +25,5 @@ const assignValue = (obj: any, action: string, type: string, val: string) => {
 };
 
 export const stepsToJson = (steps: any[]) => {
-  return JSON.stringify(steps)
+  return JSON.stringify(steps);
 };

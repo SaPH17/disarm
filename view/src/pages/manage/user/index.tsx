@@ -36,7 +36,7 @@ export default function ManageUserIndex() {
   const [openedPopup, setOpenedPopup] = useState({
     delete: false,
     assignGroup: false,
-    resetPassword: false
+    resetPassword: false,
   });
   const { data, refetch } = useQuery('users', UserServices.getUsers, {
     refetchOnMount: true,
@@ -103,7 +103,7 @@ export default function ManageUserIndex() {
       });
       refetch();
       setSelectedUser([]);
-    } catch (e) { }
+    } catch (e) {}
   }
 
   async function resetPassword() {
@@ -112,9 +112,9 @@ export default function ManageUserIndex() {
     try {
       await toast.promise(ResetPasswordHandler.handleResetPassword(id), {
         success: {
-          render({data}: any){
+          render({ data }: any) {
             return `Successfully reset ${activeUser.name} (${activeUser.email})'s password to ${data.password}!`;
-          }
+          },
         },
         pending: `Waiting for reset ${activeUser.name} (${activeUser.email})'s password!`,
         error: {
@@ -125,7 +125,7 @@ export default function ManageUserIndex() {
       });
       refetch();
       setActiveUser(defaultUser);
-    } catch (e) { }
+    } catch (e) {}
   }
 
   async function addUserToGroup(selectedGroup: any) {
@@ -149,7 +149,7 @@ export default function ManageUserIndex() {
       );
       refetch();
       setSelectedUser([]);
-    } catch (e) { }
+    } catch (e) {}
   }
 
   return (
@@ -187,10 +187,13 @@ export default function ManageUserIndex() {
         content={activeUser}
       >
         <div className="flex items-center gap-4">
-          <span onClick={() => setOpenedPopup({
-            ...openedPopup,
-            resetPassword: !openedPopup.resetPassword
-          })}
+          <span
+            onClick={() =>
+              setOpenedPopup({
+                ...openedPopup,
+                resetPassword: !openedPopup.resetPassword,
+              })
+            }
             className={'underline cursor-pointer'}
           >
             Reset Password

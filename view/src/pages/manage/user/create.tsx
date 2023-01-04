@@ -1,5 +1,5 @@
-import CreateUserForm from "../../../components/page/user/create-user-form";
-import PrimaryButton from "../../../components/primary-button";
+import CreateUserForm from '../../../components/page/user/create-user-form';
+import PrimaryButton from '../../../components/primary-button';
 
 export default function ManageUserCreate() {
   return (

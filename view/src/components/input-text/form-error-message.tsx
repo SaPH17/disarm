@@ -1,10 +1,10 @@
-import { ErrorMessage } from "@hookform/error-message";
-import { FieldErrorsImpl } from "react-hook-form";
+import { ErrorMessage } from '@hookform/error-message';
+import { FieldErrorsImpl } from 'react-hook-form';
 
 export type FormErrorMessageData = {
   name: string;
-  errors: Partial<FieldErrorsImpl<object>>
-}
+  errors: Partial<FieldErrorsImpl<object>>;
+};
 
 const FormErrorMessage = ({ name, errors }: FormErrorMessageData) => {
   return (
@@ -14,6 +14,6 @@ const FormErrorMessage = ({ name, errors }: FormErrorMessageData) => {
       as={<div className="text-sm text-red-500"></div>}
     />
   );
-}
+};
 
 export default FormErrorMessage;

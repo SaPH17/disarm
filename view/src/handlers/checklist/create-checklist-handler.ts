@@ -1,13 +1,15 @@
-import { ChecklistFormData } from "../../models/forms/checklist-form-data";
-import ChecklistServices from "../../services/checklist-services";
-
+import { ChecklistFormData } from '../../models/forms/checklist-form-data';
+import ChecklistServices from '../../services/checklist-services';
 
 export class CreateChecklistHandler {
-  static async handleCreateChecklistFormSubmit(data: ChecklistFormData, sections: string) {
+  static async handleCreateChecklistFormSubmit(
+    data: ChecklistFormData,
+    sections: string
+  ) {
     const body = {
-        name: data.name,
-        sections: sections
-    }
+      name: data.name,
+      sections: sections,
+    };
     try {
       return (await ChecklistServices.createChecklist(body)).data;
     } catch (e) {

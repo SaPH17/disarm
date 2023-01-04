@@ -1,6 +1,3 @@
-
-export default function UnauthorizedLayout({children}: any){
-  return (<div>
-    {children}
-  </div>);
+export default function UnauthorizedLayout({ children }: any) {
+  return <div>{children}</div>;
 }

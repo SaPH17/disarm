@@ -1,5 +1,5 @@
-import Cookies from "universal-cookie";
-import AuthServices from "../../services/auth-services";
+import Cookies from 'universal-cookie';
+import AuthServices from '../../services/auth-services';
 
 export class LogoutHandlers {
   static async handleLogout() {

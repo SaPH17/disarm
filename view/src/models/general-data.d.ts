@@ -1,4 +1,4 @@
 export type GeneralData = {
-  id: string|number;
+  id: string | number;
   name: string;
 };

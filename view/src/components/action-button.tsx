@@ -18,9 +18,7 @@ export type ActionButtonItem = {
   onClickFunction: Function;
 };
 
-const ActionButton = ({
-  items,
-}: ActionButtonData) => {
+const ActionButton = ({ items }: ActionButtonData) => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -46,13 +44,13 @@ const ActionButton = ({
                 <Menu.Item key={idx}>
                   {({ active }) => (
                     <span
-                        className={classNames(
-                          active
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-700',
-                          'block px-4 py-2 text-sm'
-                        )} onClick={() => val.onClickFunction()}>
-                        {val.name}
+                      className={classNames(
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'block px-4 py-2 text-sm'
+                      )}
+                      onClick={() => val.onClickFunction()}
+                    >
+                      {val.name}
                     </span>
                   )}
                 </Menu.Item>
