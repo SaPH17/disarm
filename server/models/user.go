@@ -147,7 +147,7 @@ func (s *UsersSeeder) Seed(db *gorm.DB) error {
 	var users []User
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("root"), bcrypt.DefaultCost)
 
-	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword), IsPasswordChanged: true})
+	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword), IsPasswordChanged: false})
 	// ,DirectSupervisorId: sql.NullString{String: "", Valid: false}}
 
 	return db.CreateInBatches(users, s.Configuration.Rows).Error

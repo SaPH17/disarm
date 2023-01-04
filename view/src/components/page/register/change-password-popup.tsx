@@ -19,7 +19,7 @@ export type ChangePasswordFormData = {
   oldPassword: string;
   password: string;
   confirmPassword: string;
-}
+};
 
 export default function ChangePasswordPopup({
   open,
@@ -30,23 +30,26 @@ export default function ChangePasswordPopup({
     formState: { errors },
     handleSubmit,
     reset,
-    getValues
+    getValues,
   } = useForm<ChangePasswordFormData>();
   const navigate = useNavigate();
 
-  async function handleChangePassword(data: ChangePasswordFormData){
-    const {confirmPassword, ...body} = data;
-    
+  async function handleChangePassword(data: ChangePasswordFormData) {
+    const { confirmPassword, ...body } = data;
+
     try {
-      await toast.promise(ChangePasswordHandlers.handleChangePasswordFormSubmit(body), {
-        success: 'Successfully change password!',
-        error: {
-          render({ data }: any) {
-            return data.message;
+      await toast.promise(
+        ChangePasswordHandlers.handleChangePasswordFormSubmit(body),
+        {
+          success: 'Successfully change password!',
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
           },
-        },
-        pending: 'Waiting for change password!',
-      });
+          pending: 'Waiting for change password!',
+        }
+      );
 
       return navigate('/');
     } catch (e) {}
@@ -101,7 +104,10 @@ export default function ChangePasswordPopup({
                   <XIcon className="w-6 h-6" aria-hidden="true" />
                 </button>
               </div>
-              <form className="flex flex-col" onSubmit={handleSubmit(handleChangePassword)}>
+              <form
+                className="flex flex-col"
+                onSubmit={handleSubmit(handleChangePassword)}
+              >
                 <div className="sm:flex sm:items-start">
                   <div className="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-yellow-100 rounded-full sm:mx-0 sm:h-10 sm:w-10">
                     <ExclamationIcon
@@ -118,11 +124,11 @@ export default function ChangePasswordPopup({
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        We detected that you are still using the defauvlt
+                        We detected that you are still using the default
                         password. Please change your default password.
                       </p>
                     </div>
-                    <div className='mt-2 space-y-6 text-left sm:space-y-2'>
+                    <div className="mt-2 space-y-6 text-left sm:space-y-2">
                       <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
                         <InputText
                           id="oldPassword"
@@ -159,9 +165,10 @@ export default function ChangePasswordPopup({
                           register={register('confirmPassword', {
                             required: 'Confirm password is required.',
                             validate: (confirmPassword) => {
-                              if (getValues('password') === confirmPassword) return true;
-                              return 'Password is not same with confirm password.'
-                            }
+                              if (getValues('password') === confirmPassword)
+                                return true;
+                              return 'Password is not same with confirm password.';
+                            },
                           })}
                         />
                       </div>
@@ -169,7 +176,11 @@ export default function ChangePasswordPopup({
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                  <PrimaryButton content='Change Password' type='submit' classNames='w-full rounded'/>
+                  <PrimaryButton
+                    content="Change Password"
+                    type="submit"
+                    classNames="w-full rounded"
+                  />
                 </div>
               </form>
             </div>
