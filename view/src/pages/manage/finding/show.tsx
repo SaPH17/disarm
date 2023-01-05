@@ -140,7 +140,7 @@ export default function ManageFindingShow() {
     try {
       toast.promise(FindingHandler.handleEditFinding(id, formData), {
         success: 'Successfully edit finding',
-        pending: 'Editing finding..',
+        pending: 'Editing finding',
         error: {
           render({ data }: any) {
             return data.message;

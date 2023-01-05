@@ -45,8 +45,8 @@ const CreateChecklistForm = () => {
           JSON.stringify(sections)
         ),
         {
-          success: 'Successfully create new checklist',
-          pending: 'Waiting for create new checklist!',
+          success: 'Successfully created a new checklist',
+          pending: 'Creating new checklist',
           error: {
             render({ data }: any) {
               return data.message;

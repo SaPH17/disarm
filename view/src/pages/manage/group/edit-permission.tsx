@@ -60,7 +60,7 @@ const ManageGroupEditPermission = () => {
         ),
         {
           success: 'Successfully edit group permission',
-          pending: 'Waiting for edit group permission!',
+          pending: 'Editing group permission',
           error: {
             render({ data }: any) {
               return data.message;
@@ -72,16 +72,16 @@ const ManageGroupEditPermission = () => {
   };
 
   useEffect(() => {
-    if (groupData && permissions) {
+    if (groupData && permissions.length > 0) {
       const p = JSON.parse(groupData.permissions);
       for (let action in p) {
         for (let objectType in p[action]) {
           p[action][objectType].forEach((id: any) => {
             const fullId = `${action}.${objectType}.${id}`;
-            setSelectedPermission((v) => [
-              ...v,
-              permissions.find((p: any) => p.id === fullId),
-            ]);
+            setSelectedPermission((v) => {
+              const val = permissions.find((p: any) => p.id === fullId);
+              return val ? [...v, val] : [...v];
+            });
           });
         }
       }
@@ -129,26 +129,28 @@ const ManageGroupEditPermission = () => {
               onChange={setShowEnabled}
             />
           </div>
-          <TableCheckbox
-            title={title}
-            content={
-              permissions
-                ? showEnabled
-                  ? permissions
-                      .filter((v: any) =>
-                        selectedPermission.find((p) => p.id === v.id)
+          {permissionsData && (
+            <TableCheckbox
+              title={title}
+              content={
+                permissions
+                  ? showEnabled
+                    ? permissions
+                        .filter((v: any) =>
+                          selectedPermission.find((p) => p.id === v.id)
+                        )
+                        .filter((v: any) => v.id.includes(search.toLowerCase()))
+                    : permissions.filter((v: any) =>
+                        v.id.includes(search.toLowerCase())
                       )
-                      .filter((v: any) => v.id.includes(search.toLowerCase()))
-                  : permissions.filter((v: any) =>
-                      v.id.includes(search.toLowerCase())
-                    )
-                : []
-            }
-            selectedData={selectedPermission}
-            setSelectedData={setSelectedPermission}
-            onRowClickFunction={() => {}}
-            isCheckOnRowClick={true}
-          />
+                  : []
+              }
+              selectedData={selectedPermission}
+              setSelectedData={setSelectedPermission}
+              onRowClickFunction={() => {}}
+              isCheckOnRowClick={true}
+            />
+          )}
         </div>
       </div>
     </div>

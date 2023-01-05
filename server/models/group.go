@@ -13,7 +13,7 @@ type Group struct {
 	Description   string     `gorm:"size:255;not null;" json:"description"`
 	ParentGroupID *uuid.UUID `gorm:"type:uuid;" json:"parent_group_id"`
 	ParentGroup   *Group     `gorm:"foreignkey:ParentGroupID"`
-	Permissions   string     `gorm:"size:255;not null;" json:"permissions"`
+	Permissions   string     `gorm:"not null;" json:"permissions"`
 	Users         []User     `gorm:"many2many:user_groups"`
 }
 

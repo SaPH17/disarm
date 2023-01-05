@@ -61,8 +61,8 @@ export default function EditUserForm() {
   function handleEditUserButton(data: UserFormData) {
     try {
       toast.promise(EditUserHandler.handleEditUserFormSubmit(data, user.id), {
-        success: 'Successfully edit new user',
-        pending: 'Waiting for edit new user!',
+        success: 'Successfully edited user',
+        pending: 'Editting user',
         error: {
           render({ data }: any) {
             return data.message;

@@ -36,8 +36,8 @@ export default function CreateProjectForm() {
       await toast.promise(
         CreateProjectHandler.handleCreateProjectFormSubmit(data),
         {
-          success: 'Successfully create new project',
-          pending: 'Waiting for create new project!',
+          success: 'Successfully created a new project',
+          pending: 'Creating a new project',
           error: {
             render({ data }: any) {
               return data.message;

@@ -62,8 +62,8 @@ export default function EditProjectForm() {
           project.id
         ),
         {
-          success: 'Successfully update new project',
-          pending: 'Waiting for update new project!',
+          success: 'Successfully updated project',
+          pending: 'Updating project',
           error: {
             render({ data }: any) {
               return data.message;

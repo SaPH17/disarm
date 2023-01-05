@@ -44,11 +44,26 @@ export default function ManageGroupIndex() {
   const { data, refetch } = useQuery('groups', GroupServices.getGroups);
   const groups =
     data?.map((r: Group) => {
-      const p = jsonToPermissionArray(r.permissions);
-      console.log(p);
-      const lists = p.map((val) => {
+      console.log(r.permissions);
+      const permissionArr = jsonToPermissionArray(r.permissions);
+      const slicedArr = permissionArr.slice(0, 3);
+
+      const lists = slicedArr.map((val) => {
         return <li key={val}>{val}</li>;
       });
+      if (permissionArr.length > 3) {
+        lists.push(
+          <li>
+            <Link
+              to={`/groups/${activeGroup.id}/edit-permission`}
+              className={'underline'}
+            >
+              View more...
+            </Link>
+          </li>
+        );
+      }
+
       return {
         id: r.id,
         name: r.name,
@@ -67,8 +82,8 @@ export default function ManageGroupIndex() {
     const ids = selectedGroup.map((group: Group) => group.id);
     try {
       toast.promise(GroupHandler.handleDeleteGroupSubmit(ids), {
-        success: `Successfully delete ${ids.length} group(s)!`,
-        pending: `Waiting for delete ${ids.length} group(s)!`,
+        success: `Successfully deleted ${ids.length} group(s)!`,
+        pending: `Deleting ${ids.length} group(s)!`,
         error: {
           render({ data }: any) {
             return data.message;

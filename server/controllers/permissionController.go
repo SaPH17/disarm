@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"disarm/main/database"
 	"disarm/main/models"
 	"html"
 	"net/http"
@@ -10,53 +11,43 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func CreatePermission(c *gin.Context) {
-	var body struct {
-		PermissionActionId string `json:"permission_action_id" binding:"required"`
-		ObjectTypeId       string `json:"object_type_id" binding:"required"`
-		ObjectId           string `json:"object_id" binding:"required"`
+func CreatePermission(actionTypes []string, objectType string, objectId uuid.UUID) error {
+	var types []models.PermissionObjectType
+	var actions []models.PermissionAction
+
+	if dbErr := database.DB.Get().Find(&types).Error; dbErr != nil {
+		return dbErr
 	}
 
-	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
+	if dbErr := database.DB.Get().Find(&actions).Error; dbErr != nil {
+		return dbErr
 	}
 
-	escapedPermissionActionId := html.EscapeString(strings.TrimSpace(body.PermissionActionId))
-	escapedObjectTypeId := html.EscapeString(strings.TrimSpace(body.ObjectTypeId))
-	escapedObjectId := html.EscapeString(strings.TrimSpace(body.ObjectId))
+	var actionUuids []uuid.UUID
+	var objectTypeUuid uuid.UUID
 
-	actionUuid, errAction := uuid.FromString(escapedPermissionActionId)
-	objectTypeUuid, errType := uuid.FromString(escapedObjectTypeId)
-
-	if errAction != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errAction.Error(),
-		})
-		return
+	for _, actionType := range actionTypes {
+		for _, t := range actions {
+			if actionType == t.Name {
+				actionUuids = append(actionUuids, t.ID)
+			}
+		}
 	}
 
-	if errType != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errType.Error(),
-		})
-		return
+	for _, element := range types {
+		if element.Name == objectType {
+			objectTypeUuid = element.ID
+		}
 	}
 
-	permission, dbErr := models.Permissions.Create(actionUuid, objectTypeUuid, escapedObjectId)
-
-	if dbErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": dbErr,
-		})
-		return
+	for _, uuid := range actionUuids {
+		_, dbErr := models.Permissions.Create(uuid, objectTypeUuid, objectId.String())
+		if dbErr != nil {
+			return dbErr
+		}
 	}
 
-	c.JSON(200, gin.H{
-		"permission": permission,
-	})
+	return nil
 }
 
 func GetAllPermission(c *gin.Context) {
@@ -133,28 +124,39 @@ func EditPermission(c *gin.Context) {
 	})
 }
 
-func DeletePermission(c *gin.Context) {
-	id := c.Param("id")
-	escapedId := html.EscapeString(strings.TrimSpace(id))
-	uuid, errUuid := uuid.FromString(escapedId)
+func DeletePermission(actionTypes []string, objectType string, objectId uuid.UUID) error {
+	var types []models.PermissionObjectType
+	var actions []models.PermissionAction
 
-	if errUuid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errUuid.Error(),
-		})
-		return
+	if dbErr := database.DB.Get().Find(&types).Error; dbErr != nil {
+		return dbErr
 	}
 
-	result, dbErr := models.Permissions.Delete(uuid)
+	if dbErr := database.DB.Get().Find(&actions).Error; dbErr != nil {
+		return dbErr
+	}
 
+	var actionUuids []uuid.UUID
+	var objectTypeUuid uuid.UUID
+
+	for _, actionType := range actionTypes {
+		for _, t := range actions {
+			if actionType == t.Name {
+				actionUuids = append(actionUuids, t.ID)
+			}
+		}
+	}
+
+	for _, element := range types {
+		if element.Name == objectType {
+			objectTypeUuid = element.ID
+		}
+	}
+
+	_, dbErr := models.Permissions.Delete(actionUuids, objectTypeUuid, objectId.String())
 	if dbErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": dbErr,
-		})
-		return
+		return dbErr
 	}
 
-	c.JSON(200, gin.H{
-		"result": result,
-	})
+	return nil
 }

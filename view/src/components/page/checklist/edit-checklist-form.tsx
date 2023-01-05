@@ -57,8 +57,8 @@ const EditChecklistForm = () => {
           params.id as string
         ),
         {
-          success: 'Successfully Edit checklist',
-          pending: 'Waiting for Edit checklist!',
+          success: 'Successfully edited checklist',
+          pending: 'Editing checklist',
           error: {
             render({ data }: any) {
               return data.message;

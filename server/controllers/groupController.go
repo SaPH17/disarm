@@ -71,6 +71,14 @@ func CreateGroup(c *gin.Context) {
 		return
 	}
 
+	permissionErr := CreatePermission([]string{"view", "view-detail", "edit", "delete"}, "group", group.ID)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"group": group,
 	})
@@ -86,8 +94,9 @@ func GetAllGroup(c *gin.Context) {
 		return
 	}
 
-	for _, element := range groups {
+	for idx, element := range groups {
 		element.Permissions = html.UnescapeString(element.Permissions)
+		groups[idx] = element
 	}
 
 	c.JSON(200, gin.H{
@@ -108,6 +117,7 @@ func GetGroupById(c *gin.Context) {
 	}
 
 	group, dbErr := models.Groups.GetOneById(uuid)
+	group.Permissions = html.UnescapeString(group.Permissions)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -260,7 +270,7 @@ func EditGroupPermission(c *gin.Context) {
 	}
 
 	escapedId := html.EscapeString(strings.TrimSpace(id))
-	// escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
+	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
 
 	uuid, errUuid := uuid.FromString(escapedId)
 
@@ -271,7 +281,7 @@ func EditGroupPermission(c *gin.Context) {
 		return
 	}
 
-	group, dbErr := models.Groups.EditPermission(uuid, body.Permissions)
+	group, dbErr := models.Groups.EditPermission(uuid, escapedPermissions)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -308,6 +318,14 @@ func DeleteGroup(c *gin.Context) {
 		return
 	}
 
+	permissionErr := DeletePermission([]string{"view", "view-detail", "edit", "delete"}, "group", idUuid)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"result": result,
 	})
@@ -337,6 +355,16 @@ func DeleteGroupByIds(c *gin.Context) {
 			"error": dbErr,
 		})
 		return
+	}
+
+	for _, idUuid := range parsedUuids {
+		permissionErr := DeletePermission([]string{"view", "view-detail", "edit", "delete"}, "group", idUuid)
+		if permissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": permissionErr,
+			})
+			return
+		}
 	}
 
 	c.JSON(200, gin.H{

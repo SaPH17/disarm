@@ -9,7 +9,7 @@ export class GroupHandler {
     const body = {
       ...data,
       assigned_user: assignedUser,
-      permissions: '-',
+      permissions: '{}',
     };
     try {
       return (await GroupServices.createGroup(body)).data;

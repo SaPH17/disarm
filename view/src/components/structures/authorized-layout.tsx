@@ -47,8 +47,8 @@ export default function AuthorizedLayout({ children }: any) {
   async function handleLogout() {
     try {
       await toast.promise(LogoutHandlers.handleLogout(), {
-        success: 'Successfully logout!',
-        pending: 'Waiting for logout!',
+        success: 'Successfully logout',
+        pending: 'Waiting for logout',
         error: {
           render({ data }: any) {
             return data.message;

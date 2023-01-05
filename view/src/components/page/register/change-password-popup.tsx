@@ -41,13 +41,13 @@ export default function ChangePasswordPopup({
       await toast.promise(
         ChangePasswordHandlers.handleChangePasswordFormSubmit(body),
         {
-          success: 'Successfully change password!',
+          success: 'Successfully changed password',
           error: {
             render({ data }: any) {
               return data.message;
             },
           },
-          pending: 'Waiting for change password!',
+          pending: 'Changing password',
         }
       );
 

@@ -93,8 +93,8 @@ export default function ManageUserIndex() {
     const ids = selectedUser.map((user: User) => user.id);
     try {
       await toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(ids), {
-        success: `Successfully delete ${ids.length} user(s)!`,
-        pending: `Waiting for delete ${ids.length} user(s)!`,
+        success: `Successfully deleted ${ids.length} user(s)!`,
+        pending: `Deleting ${ids.length} user(s)!`,
         error: {
           render({ data }: any) {
             return data.message;
@@ -116,7 +116,7 @@ export default function ManageUserIndex() {
             return `Successfully reset ${activeUser.name} (${activeUser.email})'s password to ${data.password}!`;
           },
         },
-        pending: `Waiting for reset ${activeUser.name} (${activeUser.email})'s password!`,
+        pending: `Reseting ${activeUser.name} (${activeUser.email})'s password!`,
         error: {
           render({ data }: any) {
             return data.message;
