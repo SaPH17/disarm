@@ -10,6 +10,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var GROUP_ACTION_TYPE = []string{"view", "edit", "delete"}
+
 func CreateGroup(c *gin.Context) {
 	var body struct {
 		Name          string   `json:"name" binding:"required"`
@@ -71,7 +73,7 @@ func CreateGroup(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission([]string{"view", "edit", "delete"}, "group", group.ID)
+	permissionErr := CreatePermission(GROUP_ACTION_TYPE, "group", group.ID)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,
@@ -318,7 +320,7 @@ func DeleteGroup(c *gin.Context) {
 		return
 	}
 
-	permissionErr := DeletePermission([]string{"view", "edit", "delete"}, "group", idUuid)
+	permissionErr := DeletePermission(GROUP_ACTION_TYPE, "group", idUuid)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,
@@ -358,7 +360,7 @@ func DeleteGroupByIds(c *gin.Context) {
 	}
 
 	for _, idUuid := range parsedUuids {
-		permissionErr := DeletePermission([]string{"view", "edit", "delete"}, "group", idUuid)
+		permissionErr := DeletePermission(GROUP_ACTION_TYPE, "group", idUuid)
 		if permissionErr != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": permissionErr,

@@ -11,10 +11,12 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var CHECKLIST_ACTION_TYPE = []string{"view", "view-detail", "edit", "delete"}
+
 func CreateChecklist(c *gin.Context) {
 	var body struct {
-		Name      string `json:"name" binding:"required"`
-		Sections  string `json:"sections" binding:"required"`
+		Name     string `json:"name" binding:"required"`
+		Sections string `json:"sections" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -28,17 +30,25 @@ func CreateChecklist(c *gin.Context) {
 	escapedSections := strings.TrimSpace(body.Sections)
 
 	createdByUuid, err := token.ExtractTokenID(c)
-	
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	checklist, dbErr := models.Checklists.Create(escapedName, "Active", createdByUuid, escapedSections)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": dbErr,
+		})
+		return
+	}
+
+	permissionErr := CreatePermission(CHECKLIST_ACTION_TYPE, "checklist", checklist.ID)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
 		})
 		return
 	}
@@ -92,8 +102,8 @@ func GetChecklistById(c *gin.Context) {
 func EditChecklist(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Name      string `json:"name" binding:"required"`
-		Sections  string `json:"sections" binding:"required"`
+		Name     string `json:"name" binding:"required"`
+		Sections string `json:"sections" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -130,7 +140,6 @@ func EditChecklist(c *gin.Context) {
 	})
 }
 
-
 func DeleteChecklist(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
@@ -150,6 +159,14 @@ func DeleteChecklist(c *gin.Context) {
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": dbErr,
+		})
+		return
+	}
+
+	permissionErr := DeletePermission(CHECKLIST_ACTION_TYPE, "checklist", idUuid)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
 		})
 		return
 	}
@@ -183,6 +200,16 @@ func DeleteChecklistByIds(c *gin.Context) {
 			"error": dbErr,
 		})
 		return
+	}
+
+	for _, idUuid := range parsedUuids {
+		permissionErr := DeletePermission(CHECKLIST_ACTION_TYPE, "checklist", idUuid)
+		if permissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": permissionErr,
+			})
+			return
+		}
 	}
 
 	c.JSON(200, gin.H{

@@ -15,6 +15,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var FINDING_ACTION_TYPES = []string{"view", "view-detail", "edit"}
+
 func CreateFinding(c *gin.Context) {
 	// var body struct {
 	// 	Title             string `json:"title" binding:"required"`
@@ -142,6 +144,14 @@ func CreateFinding(c *gin.Context) {
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": dbErr,
+		})
+		return
+	}
+
+	permissionErr := CreatePermission(FINDING_ACTION_TYPES, "finding", finding.ID)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
 		})
 		return
 	}

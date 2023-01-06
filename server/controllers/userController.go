@@ -15,6 +15,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var USER_ACTION_TYPE = []string{"view", "edit", "delete"}
+
 func CreateUser(c *gin.Context) {
 	var body struct {
 		Email           string   `json:"email" binding:"required"`
@@ -84,6 +86,14 @@ func CreateUser(c *gin.Context) {
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": dbErr,
+		})
+		return
+	}
+
+	permissionErr := CreatePermission(USER_ACTION_TYPE, "user", user.ID)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
 		})
 		return
 	}
@@ -288,6 +298,14 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
+	permissionErr := DeletePermission(USER_ACTION_TYPE, "user", idUuid)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"result": result,
 	})
@@ -317,6 +335,16 @@ func DeleteUserByIds(c *gin.Context) {
 			"error": dbErr,
 		})
 		return
+	}
+
+	for _, idUuid := range parsedUuids {
+		permissionErr := DeletePermission(USER_ACTION_TYPE, "user", idUuid)
+		if permissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": permissionErr,
+			})
+			return
+		}
 	}
 
 	c.JSON(200, gin.H{
