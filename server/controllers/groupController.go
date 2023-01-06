@@ -71,7 +71,7 @@ func CreateGroup(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission([]string{"view", "view-detail", "edit", "delete"}, "group", group.ID)
+	permissionErr := CreatePermission([]string{"view", "edit", "delete"}, "group", group.ID)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,
@@ -318,7 +318,7 @@ func DeleteGroup(c *gin.Context) {
 		return
 	}
 
-	permissionErr := DeletePermission([]string{"view", "view-detail", "edit", "delete"}, "group", idUuid)
+	permissionErr := DeletePermission([]string{"view", "edit", "delete"}, "group", idUuid)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,
@@ -358,7 +358,7 @@ func DeleteGroupByIds(c *gin.Context) {
 	}
 
 	for _, idUuid := range parsedUuids {
-		permissionErr := DeletePermission([]string{"view", "view-detail", "edit", "delete"}, "group", idUuid)
+		permissionErr := DeletePermission([]string{"view", "edit", "delete"}, "group", idUuid)
 		if permissionErr != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": permissionErr,
