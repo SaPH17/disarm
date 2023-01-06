@@ -3,7 +3,7 @@ import axios from 'axios';
 export default class ProjectServices {
   static async getProjects() {
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/projects/`,
+      `${import.meta.env.VITE_API_URL}/projects/`,
       {
         withCredentials: true,
       }
@@ -13,7 +13,7 @@ export default class ProjectServices {
 
   static async getOneProject(id: any) {
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/projects/${id}`,
+      `${import.meta.env.VITE_API_URL}/projects/${id}`,
       {
         withCredentials: true,
       }
@@ -22,20 +22,20 @@ export default class ProjectServices {
   }
 
   static async deleteProjectByIds(body: object) {
-    return axios.delete(`${process.env.REACT_APP_API_URL}/projects/`, {
+    return axios.delete(`${import.meta.env.VITE_API_URL}/projects/`, {
       withCredentials: true,
       data: body,
     });
   }
 
   static async createProject(body: object) {
-    return axios.post(`${process.env.REACT_APP_API_URL}/projects/`, body, {
+    return axios.post(`${import.meta.env.VITE_API_URL}/projects/`, body, {
       withCredentials: true,
     });
   }
 
   static async updateProject(body: object, id: string | number) {
-    return axios.put(`${process.env.REACT_APP_API_URL}/projects/${id}`, body, {
+    return axios.put(`${import.meta.env.VITE_API_URL}/projects/${id}`, body, {
       withCredentials: true,
     });
   }
