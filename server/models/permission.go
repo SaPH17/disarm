@@ -65,7 +65,7 @@ func (o *permissionOrm) Delete(permissionActionIds []uuid.UUID, objectTypeId uui
 		Where("permission_action_id IN ?", permissionActionIds).
 		Where("object_type_id = ?", objectTypeId).
 		Where("object_id = ?", objectId).Find(&permissions).Error
-	o.instance.Delete(&permissions)
+	o.instance.Unscoped().Delete(&permissions)
 
 	return true, err
 }
