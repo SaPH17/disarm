@@ -3,7 +3,7 @@ import PrimaryButton from '../../../components/primary-button';
 import ActionButton, {
   ActionButtonItem,
 } from '../../../components/action-button';
-import { useState } from 'react';
+import { createElement, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Group } from '../../../models/group';
 import GroupServices from '../../../services/group-services';
@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { toast } from 'react-toastify';
 import { GroupHandler } from '../../../handlers/group/group-handler';
 import DeletePopup from '../../../components/popup/delete-popup';
+import { jsonToPermissionArray } from '../../../utils/functions/jsonConverter';
 
 const title = ['name', 'description'];
 
@@ -42,21 +43,47 @@ export default function ManageGroupIndex() {
 
   const { data, refetch } = useQuery('groups', GroupServices.getGroups);
   const groups =
-    data?.map((r: Group) => ({
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      directParentGroup: r.directParentGroup,
-      permissions: r.permissions,
-    })) || [];
+    data?.map((r: Group) => {
+      console.log(r.permissions);
+      const permissionArr = jsonToPermissionArray(r.permissions);
+      const slicedArr = permissionArr.slice(0, 3);
+
+      const lists = slicedArr.map((val) => {
+        return <li key={val}>{val}</li>;
+      });
+      if (permissionArr.length > 3) {
+        lists.push(
+          <li>
+            <Link
+              to={`/groups/${activeGroup.id}/edit-permission`}
+              className={'underline'}
+            >
+              View more...
+            </Link>
+          </li>
+        );
+      }
+
+      return {
+        id: r.id,
+        name: r.name,
+        description: r.description,
+        directParentGroup: r.directParentGroup,
+        permissions: createElement(
+          'ul',
+          { className: 'pl-4 list-disc' },
+          lists
+        ),
+      };
+    }) || [];
 
   function deleteGroups() {
     if (!selectedGroup) return;
     const ids = selectedGroup.map((group: Group) => group.id);
     try {
       toast.promise(GroupHandler.handleDeleteGroupSubmit(ids), {
-        success: `Successfully delete ${ids.length} group(s)!`,
-        pending: `Waiting for delete ${ids.length} group(s)!`,
+        success: `Successfully deleted ${ids.length} group(s)!`,
+        pending: `Deleting ${ids.length} group(s)!`,
         error: {
           render({ data }: any) {
             return data.message;

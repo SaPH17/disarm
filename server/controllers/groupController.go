@@ -10,6 +10,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var GROUP_ACTION_TYPE = []string{"view", "edit", "delete"}
+
 func CreateGroup(c *gin.Context) {
 	var body struct {
 		Name          string   `json:"name" binding:"required"`
@@ -71,6 +73,14 @@ func CreateGroup(c *gin.Context) {
 		return
 	}
 
+	permissionErr := CreatePermission(GROUP_ACTION_TYPE, "group", group.ID)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"group": group,
 	})
@@ -86,8 +96,9 @@ func GetAllGroup(c *gin.Context) {
 		return
 	}
 
-	for _, element := range groups {
+	for idx, element := range groups {
 		element.Permissions = html.UnescapeString(element.Permissions)
+		groups[idx] = element
 	}
 
 	c.JSON(200, gin.H{
@@ -108,6 +119,7 @@ func GetGroupById(c *gin.Context) {
 	}
 
 	group, dbErr := models.Groups.GetOneById(uuid)
+	group.Permissions = html.UnescapeString(group.Permissions)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -308,6 +320,14 @@ func DeleteGroup(c *gin.Context) {
 		return
 	}
 
+	permissionErr := DeletePermission(GROUP_ACTION_TYPE, "group", idUuid)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"result": result,
 	})
@@ -337,6 +357,16 @@ func DeleteGroupByIds(c *gin.Context) {
 			"error": dbErr,
 		})
 		return
+	}
+
+	for _, idUuid := range parsedUuids {
+		permissionErr := DeletePermission(GROUP_ACTION_TYPE, "group", idUuid)
+		if permissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": permissionErr,
+			})
+			return
+		}
 	}
 
 	c.JSON(200, gin.H{

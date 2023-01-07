@@ -66,8 +66,8 @@ export default function CreateFindingForm() {
 
     try {
       toast.promise(FindingHandler.handleCreateFindingFormSubmit(formData), {
-        success: 'Successfully create new finding',
-        pending: 'Waiting for create new finding!',
+        success: 'Successfully created a new finding',
+        pending: 'Creating new finding',
         error: {
           render({ data }: any) {
             return data.message;

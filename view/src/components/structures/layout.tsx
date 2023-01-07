@@ -10,7 +10,11 @@ export default function Layout({ children }: any) {
 
   return (
     <div>
-      {auth ? <AuthorizedLayout children={ children }/> : <UnauthorizedLayout children={ children }/>}
+      {auth ? (
+        <AuthorizedLayout children={children} />
+      ) : (
+        <UnauthorizedLayout children={children} />
+      )}
       <ToastContainer />
     </div>
   );

@@ -58,8 +58,8 @@ export default function ManageProjectIndex() {
     const ids = selectedProject.map((project: Project) => project.id);
     try {
       toast.promise(DeleteProjectsHandler.handleDeleteProjectSubmit(ids), {
-        success: `Successfully delete ${ids.length} project(s)!`,
-        pending: `Waiting for delete ${ids.length} project(s)!`,
+        success: `Successfully deleted ${ids.length} project(s)!`,
+        pending: `Deleting ${ids.length} project(s)!`,
         error: {
           render({ data }: any) {
             return data.message;

@@ -79,8 +79,8 @@ const CreateGroupForm = () => {
           selectedUsers.map((user) => user.id) as string[]
         ),
         {
-          success: 'Successfully create new group',
-          pending: 'Waiting for create new group!',
+          success: 'Successfully created a new group',
+          pending: 'Creating a new group',
           error: {
             render({ data }: any) {
               return data.message;

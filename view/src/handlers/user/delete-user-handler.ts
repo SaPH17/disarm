@@ -1,10 +1,10 @@
-import UserServices from "../../services/user-services";
+import UserServices from '../../services/user-services';
 
 export class DeleteUsersHandler {
   static async handleDeleteUserSubmit(selectedData: (string | number)[]) {
     const body = {
-      ids: selectedData
-    }
+      ids: selectedData,
+    };
     try {
       return (await UserServices.deleteUserByIds(body)).data;
     } catch (e) {

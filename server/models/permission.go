@@ -24,7 +24,7 @@ type PermissionOrm interface {
 	Create(permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string) (Permission, error)
 	GetAll() ([]Permission, error)
 	Edit(id uuid.UUID, permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string) (Permission, error)
-	Delete(id uuid.UUID) (bool, error)
+	Delete(permissionActionIds []uuid.UUID, objectTypeId uuid.UUID, objectId string) (bool, error)
 }
 
 var Permissions PermissionOrm
@@ -59,10 +59,13 @@ func (o *permissionOrm) Edit(id uuid.UUID, permissionActionId uuid.UUID, objectT
 	return permission, err
 }
 
-func (o *permissionOrm) Delete(id uuid.UUID) (bool, error) {
-	var permission Permission
-	err := o.instance.Model(Permission{}).Where("id = ?", id).Take(&permission).Error
-	o.instance.Delete(&permission)
+func (o *permissionOrm) Delete(permissionActionIds []uuid.UUID, objectTypeId uuid.UUID, objectId string) (bool, error) {
+	var permissions []Permission
+	err := o.instance.Model(Permission{}).
+		Where("permission_action_id IN ?", permissionActionIds).
+		Where("object_type_id = ?", objectTypeId).
+		Where("object_id = ?", objectId).Find(&permissions).Error
+	o.instance.Unscoped().Delete(&permissions)
 
 	return true, err
 }

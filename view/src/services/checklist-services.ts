@@ -3,7 +3,7 @@ import axios from 'axios';
 export default class ChecklistServices {
   static async getChecklists() {
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/checklists/`,
+      `${import.meta.env.VITE_API_URL}/checklists/`,
       {
         withCredentials: true,
       }
@@ -13,7 +13,7 @@ export default class ChecklistServices {
   static async getOneChecklist(id: string | number | undefined) {
     if (id === undefined) return null;
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/checklists/${id}`,
+      `${import.meta.env.VITE_API_URL}/checklists/${id}`,
       {
         withCredentials: true,
       }
@@ -22,13 +22,13 @@ export default class ChecklistServices {
   }
 
   static async createChecklist(body: object) {
-    return axios.post(`${process.env.REACT_APP_API_URL}/checklists/`, body, {
+    return axios.post(`${import.meta.env.VITE_API_URL}/checklists/`, body, {
       withCredentials: true,
     });
   }
 
   static async deleteChecklistByIds(body: object) {
-    return axios.delete(`${process.env.REACT_APP_API_URL}/checklists/`, {
+    return axios.delete(`${import.meta.env.VITE_API_URL}/checklists/`, {
       withCredentials: true,
       data: body,
     });
@@ -36,7 +36,7 @@ export default class ChecklistServices {
 
   static async editChecklist(body: object, id: string | number) {
     return axios.put(
-      `${process.env.REACT_APP_API_URL}/checklists/${id}`,
+      `${import.meta.env.VITE_API_URL}/checklists/${id}`,
       body,
       {
         withCredentials: true,

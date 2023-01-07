@@ -24,22 +24,25 @@ const InputText = ({
   placeholder,
   errors,
   register,
-  onChange = () => { },
+  onChange = () => {},
   disabled = false,
   listId,
   datalist,
-  labelLastSeen = ''
+  labelLastSeen = '',
 }: InputTextData) => {
-  
   return (
     <>
-      <div className='hidden sm:hidden'></div>
-      {label !== "" && <label
-        htmlFor={id}
-        className={`block ${labelLastSeen === '' ? '' : (labelLastSeen + ':hidden')} text-sm font-medium text-gray-700  sm:mt-px sm:pt-2`}
-      >
-        {label}
-      </label>}
+      <div className="hidden sm:hidden"></div>
+      {label !== '' && (
+        <label
+          htmlFor={id}
+          className={`block ${
+            labelLastSeen === '' ? '' : labelLastSeen + ':hidden'
+          } text-sm font-medium text-gray-700  sm:mt-px sm:pt-2`}
+        >
+          {label}
+        </label>
+      )}
       <div className="mt-1 sm:mt-0 sm:col-span-2">
         <input
           id={id}

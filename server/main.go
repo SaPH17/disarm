@@ -2,12 +2,32 @@ package main
 
 import (
 	"disarm/main/controllers"
+	"disarm/main/database"
 	"disarm/main/middlewares"
+	"disarm/main/seeders"
+	"fmt"
+
+	gorm_seeder "github.com/kachit/gorm-seeder"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	actionsSeeder := seeders.NewPermissionActionsSeeder(gorm_seeder.SeederConfiguration{Rows: 5})
+	objectTypesSeeder := seeders.NewPermissionObjectTypesSeeder(gorm_seeder.SeederConfiguration{Rows: 6})
+	permissionSeeder := seeders.NewPermissionsSeeder(gorm_seeder.SeederConfiguration{Rows: 6})
+	seedersStack := gorm_seeder.NewSeedersStack(database.DB.Get())
+	seedersStack.AddSeeder(&actionsSeeder)
+	seedersStack.AddSeeder(&objectTypesSeeder)
+
+	err := seedersStack.Seed()
+	fmt.Println(err)
+
+	seedersStack2 := gorm_seeder.NewSeedersStack(database.DB.Get())
+	seedersStack2.AddSeeder(&permissionSeeder)
+
+	err2 := seedersStack2.Seed()
+	fmt.Println(err2)
 
 	r := gin.Default()
 
@@ -22,6 +42,11 @@ func main() {
 		}
 		apiWithJWT := api.Group("")
 		apiWithJWT.Use(middlewares.JwtAuthMiddleware())
+
+		authWithMiddleware := apiWithJWT.Group("/auth")
+		{
+			authWithMiddleware.PATCH("/change-password", controllers.ChangePassword)
+		}
 
 		user := apiWithJWT.Group("/users")
 		{
@@ -84,9 +109,7 @@ func main() {
 		permission := apiWithJWT.Group("/permissions")
 		{
 			permission.GET("/", controllers.GetAllPermission)
-			permission.POST("/", controllers.CreatePermission)
 			permission.PUT("/:id", controllers.EditPermission)
-			permission.DELETE("/:id", controllers.DeletePermission)
 		}
 
 		report := apiWithJWT.Group("/reports")

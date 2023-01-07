@@ -4,7 +4,7 @@ import Accordion from './accordion';
 export type TableData = {
   title: string[];
   content: object[];
-  setContent: React.Dispatch<React.SetStateAction<any[]>>
+  setContent: React.Dispatch<React.SetStateAction<any[]>>;
   isEditable?: boolean;
 };
 
@@ -20,10 +20,14 @@ export default function TableAccordion({
 }: TableData) {
   return (
     <div className="flex flex-col mb-4 overflow-hidden border-gray-200 rounded-sm shadow">
-      <div className='hidden grid-cols-8'></div>
-      <div className='hidden grid-cols-9'><div className='hidden col-span-9'></div></div>
+      <div className="hidden grid-cols-8"></div>
+      <div className="hidden grid-cols-9">
+        <div className="hidden col-span-9"></div>
+      </div>
       <div
-        className={`bg-white p-3 pl-5 items-center inline-grid grid-cols-${(title.length * 2 + (isEditable ? 1 : 0))}`}
+        className={`bg-white p-3 pl-5 items-center inline-grid grid-cols-${
+          title.length * 2 + (isEditable ? 1 : 0)
+        }`}
       >
         {title.map((t, idx) => {
           return (

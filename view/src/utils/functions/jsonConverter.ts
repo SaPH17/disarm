@@ -18,6 +18,21 @@ export const permissionToJson = (
   return JSON.stringify(result);
 };
 
+export const jsonToPermissionArray = (json: string) => {
+  const permissions = JSON.parse(json);
+  let result: string[] = [];
+
+  for (let action in permissions) {
+    for (let objectType in permissions[action]) {
+      permissions[action][objectType].forEach((id: any) => {
+        result.push(`${action}.${objectType}.${id}`);
+      });
+    }
+  }
+
+  return result;
+};
+
 const assignValue = (obj: any, action: string, type: string, val: string) => {
   obj = obj[action] = obj[action] || {};
   obj = obj[type] = obj[type] || [];
@@ -25,5 +40,5 @@ const assignValue = (obj: any, action: string, type: string, val: string) => {
 };
 
 export const stepsToJson = (steps: any[]) => {
-  return JSON.stringify(steps)
+  return JSON.stringify(steps);
 };

@@ -16,7 +16,7 @@ export type GeneralSelectBoxData = {
   register?: UseFormRegisterReturn<any>;
   name?: string;
   errors?: Partial<FieldErrorsImpl<object>>;
-  initialSelected? :GeneralData;
+  initialSelected?: GeneralData;
 };
 
 export default function SelectBox({
@@ -26,9 +26,11 @@ export default function SelectBox({
   register,
   errors,
   name,
-  initialSelected
+  initialSelected,
 }: GeneralSelectBoxData) {
-  const [selected, setSelected] = useState<null | GeneralData>(initialSelected || null);
+  const [selected, setSelected] = useState<null | GeneralData>(
+    initialSelected || null
+  );
 
   return (
     <>

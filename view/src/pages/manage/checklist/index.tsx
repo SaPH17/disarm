@@ -68,8 +68,8 @@ export default function ManageChecklistIndex() {
       await toast.promise(
         DeleteChecklistsHandler.handleDeleteChecklistSubmit(ids),
         {
-          success: `Successfully delete ${ids.length} checklist(s)!`,
-          pending: `Waiting for delete ${ids.length} checklist(s)!`,
+          success: `Successfully deleted ${ids.length} checklist(s)!`,
+          pending: `deleting ${ids.length} checklist(s)!`,
           error: {
             render({ data }: any) {
               return data.message;

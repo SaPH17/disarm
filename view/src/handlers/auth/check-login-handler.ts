@@ -1,4 +1,4 @@
-import AuthServices from "../../services/auth-services";
+import AuthServices from '../../services/auth-services';
 
 export class CheckLoginHandlers {
   static async handleLoginFormSubmit() {

@@ -10,6 +10,9 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var PROJECT_ACTION_TYPES = []string{"view", "view-detail", "edit", "delete"}
+var PROJECT_FINDING_ACTION_TYPES = []string{"create"}
+
 func CreateProject(c *gin.Context) {
 	var body struct {
 		Name        string `json:"name" binding:"required"`
@@ -41,7 +44,7 @@ func CreateProject(c *gin.Context) {
 		})
 		return
 	}
-	user, dbErr := models.Projects.Create(escapedName, escapedCompany, escapedPhase, checklistUuid)
+	project, dbErr := models.Projects.Create(escapedName, escapedCompany, escapedPhase, checklistUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -50,8 +53,24 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
+	permissionErr := CreatePermission(PROJECT_ACTION_TYPES, "project", project.ID)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
+		})
+		return
+	}
+
+	findingPermissionErr := CreatePermission(PROJECT_FINDING_ACTION_TYPES, "finding", project.ID)
+	if findingPermissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": findingPermissionErr,
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
-		"user": user,
+		"project": project,
 	})
 }
 
@@ -172,6 +191,24 @@ func DeleteProject(c *gin.Context) {
 		return
 	}
 
+	for _, idUuid := range uuids {
+		permissionErr := DeletePermission(PROJECT_ACTION_TYPES, "project", idUuid)
+		if permissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": permissionErr,
+			})
+			return
+		}
+
+		findingPermissionErr := DeletePermission(PROJECT_FINDING_ACTION_TYPES, "finding", idUuid)
+		if findingPermissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": findingPermissionErr,
+			})
+			return
+		}
+	}
+
 	c.JSON(200, gin.H{
 		"result": result,
 	})
@@ -201,6 +238,24 @@ func DeleteProjectByIds(c *gin.Context) {
 			"error": dbErr,
 		})
 		return
+	}
+
+	for _, idUuid := range parsedUuids {
+		permissionErr := DeletePermission(PROJECT_ACTION_TYPES, "project", idUuid)
+		if permissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": permissionErr,
+			})
+			return
+		}
+
+		findingPermissionErr := DeletePermission(PROJECT_FINDING_ACTION_TYPES, "finding", idUuid)
+		if findingPermissionErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": findingPermissionErr,
+			})
+			return
+		}
 	}
 
 	c.JSON(200, gin.H{
