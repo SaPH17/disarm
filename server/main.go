@@ -33,6 +33,7 @@ func main() {
 			user.DELETE("/:id", controllers.DeleteUser)
 			user.GET("/:id/groups", controllers.GetManyGroupsByUser)
 			user.PATCH("/:id/reset-password", controllers.ResetUserPassword)
+			user.GET("/:id/perms", controllers.GetUserPermissions)
 		}
 
 		project := apiWithJWT.Group("/projects")

@@ -4,6 +4,7 @@ import (
 	"disarm/main/actions"
 	"disarm/main/database"
 	"disarm/main/models"
+	"fmt"
 	"html"
 	"net/http"
 	"strings"
@@ -87,7 +88,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"user": user,
+		"user":     user,
 		"password": body.Password,
 	})
 }
@@ -169,6 +170,37 @@ func GetUserById(c *gin.Context) {
 	})
 }
 
+func GetUserPermissions(c *gin.Context) {
+	id := c.Param("id")
+	escapedId := html.EscapeString(strings.TrimSpace(id))
+	currentUuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUuid.Error(),
+		})
+		return
+	}
+	user, dbErr := models.Users.GetOneById(currentUuid)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	permissions := make([]string, len(user.Groups))
+	fmt.Println(len(user.Groups))
+	for _, g := range user.Groups {
+		permissions = append(permissions, g.Permissions)
+	}
+
+	c.JSON(200, gin.H{
+		"permissions": permissions,
+	})
+}
+
 func EditUser(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
@@ -220,7 +252,7 @@ func EditUser(c *gin.Context) {
 func ResetUserPassword(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Password           string `json:"password"`
+		Password string `json:"password"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -234,8 +266,8 @@ func ResetUserPassword(c *gin.Context) {
 
 	password := actions.CreatePassword()
 	isPasswordChanged := false
-	
-	if (body.Password != ""){
+
+	if body.Password != "" {
 		password = body.Password
 		isPasswordChanged = true
 	}
@@ -258,7 +290,7 @@ func ResetUserPassword(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"user": user,
+		"user":     user,
 		"password": password,
 	})
 }
