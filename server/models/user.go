@@ -27,7 +27,6 @@ type userOrm struct {
 }
 
 type UserOrm interface {
-	GetAllGroups() (groups []Group, err error)
 	Create(email string, password string, username string, supervisor *User, groups []Group) (User, error)
 	GetAll() ([]User, error)
 	GetOneByEmail(email string) (User, error)
@@ -76,13 +75,6 @@ func (o *userOrm) GetAll() ([]User, error) {
 	result := o.instance.Preload("Groups").Preload("Supervisor").Find(&users)
 
 	return users, result.Error
-}
-
-func (o *userOrm) GetAllGroups() ([]Group, error) {
-	var groups []Group
-	result := o.instance.Preload("Users").Find(&groups)
-
-	return groups, result.Error
 }
 
 func (o *userOrm) GetOneByEmail(email string) (User, error) {
