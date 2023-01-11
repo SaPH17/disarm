@@ -44,7 +44,6 @@ export default function ManageGroupIndex() {
   const { data, refetch } = useQuery('groups', GroupServices.getGroups);
   const groups =
     data?.map((r: Group) => {
-      console.log(r.permissions);
       const permissionArr = jsonToPermissionArray(r.permissions);
       const slicedArr = permissionArr.slice(0, 3);
 
@@ -55,7 +54,7 @@ export default function ManageGroupIndex() {
         lists.push(
           <li>
             <Link
-              to={`/groups/${activeGroup.id}/edit-permission`}
+              to={`/groups/${r.id}/edit-permission`}
               className={'underline'}
             >
               View more...

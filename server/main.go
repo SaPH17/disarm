@@ -108,7 +108,6 @@ func main() {
 		permission := apiWithJWT.Group("/permissions")
 		{
 			permission.GET("/", controllers.GetAllPermission)
-			permission.PUT("/:id", controllers.EditPermission)
 		}
 
 		report := apiWithJWT.Group("/reports")
