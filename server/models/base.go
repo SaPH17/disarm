@@ -14,10 +14,10 @@ import (
 //	  gorm.Model
 //	}
 type Base struct {
-	ID        uuid.UUID      `gorm:"type:uuid;primarykey;" json:"id"`
-	CreatedAt time.Time      `gorm:"type:time;" json:"created_at"`
-	UpdatedAt time.Time      `gorm:"type:time;" json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	ID        uuid.UUID `gorm:"type:uuid;primarykey;" json:"id"`
+	CreatedAt time.Time `gorm:"type:time;" json:"created_at"`
+	UpdatedAt time.Time `gorm:"type:time;" json:"updated_at"`
+	// DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 func (base *Base) BeforeCreate(tx *gorm.DB) (err error) {
