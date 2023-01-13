@@ -19,7 +19,6 @@ export const defaultGroup: Group = {
   description: '-',
   permissions: '-',
   users: [],
-  directParentGroup: '-',
 };
 
 export const defaultUser: User = {

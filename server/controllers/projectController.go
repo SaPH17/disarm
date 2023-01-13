@@ -118,10 +118,9 @@ func GetProjectById(c *gin.Context) {
 func EditProject(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Name        string `json:"name" binding:"required"`
-		Company     string `json:"company" binding:"required"`
-		Phase       string `json:"phase" binding:"required"`
-		ChecklistId string `json:"checklist_id" binding:"required"`
+		Name    string `json:"name" binding:"required"`
+		Company string `json:"company" binding:"required"`
+		Phase   string `json:"phase" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -135,10 +134,8 @@ func EditProject(c *gin.Context) {
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
 	escapedCompany := html.EscapeString(strings.TrimSpace(body.Company))
 	escapedPhase := html.EscapeString(strings.TrimSpace(body.Phase))
-	escapedChecklistId := html.EscapeString(strings.TrimSpace(body.ChecklistId))
 
 	idUuid, errUuid := uuid.FromString(escapedId)
-	checklistUuid, errChecklistUuid := uuid.FromString(escapedChecklistId)
 
 	if errUuid != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -147,14 +144,7 @@ func EditProject(c *gin.Context) {
 		return
 	}
 
-	if errChecklistUuid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errChecklistUuid.Error(),
-		})
-		return
-	}
-
-	project, dbErr := models.Projects.Edit(idUuid, escapedName, escapedCompany, escapedPhase, checklistUuid)
+	project, dbErr := models.Projects.Edit(idUuid, escapedName, escapedCompany, escapedPhase)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

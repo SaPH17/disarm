@@ -1,40 +1,29 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { UpdateProjectHandler } from '../../../handlers/project/edit-project-handler';
-import { Checklist } from '../../../models/checklist';
 import { ProjectFormData } from '../../../models/forms/project-form-data';
-import ChecklistServices from '../../../services/checklist-services';
 import ProjectServices from '../../../services/project-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
-import { useState } from 'react';
 
 export default function EditProjectForm() {
+  const PHASE_DATA = [
+    { id: '1', name: 'Idle' },
+    { id: '2', name: 'On Progress' },
+    { id: '3', name: 'Done' },
+  ];
   const params = useParams();
   const navigate = useNavigate();
   const { data: projectData } = useQuery(`project/${params.id}`, () =>
     ProjectServices.getOneProject(params.id)
   );
-  const { data: checklistsData } = useQuery(
-    'checklists',
-    ChecklistServices.getChecklists
-  );
 
   const project = projectData || undefined;
-
-  const checklists =
-    checklistsData?.map((checklist: Checklist) => ({
-      id: checklist.id,
-      name: checklist.name,
-    })) || null;
-
-  const [selectedChecklistId, setSelectedChecklistId] = useState<string>(
-    project?.checklist_id || ''
-  );
+  const [selectedPhase, setSelectedPhase] = useState<any>(undefined);
 
   const {
     register,
@@ -47,18 +36,14 @@ export default function EditProjectForm() {
   useEffect(() => {
     if (!project) return;
     reset(project);
+    setSelectedPhase(PHASE_DATA.find((v) => v.name === project?.phase));
   }, [projectData]);
-
-  useEffect(() => {
-    if (!projectData) return;
-    setValue('checklist', projectData.Checklist.id || '');
-  }, []);
 
   async function handleUpdateProjectButton(data: ProjectFormData) {
     try {
       await toast.promise(
         UpdateProjectHandler.handleUpdateProjectFormSubmit(
-          { ...data, checklist_id: selectedChecklistId } as ProjectFormData,
+          { ...data } as ProjectFormData,
           project.id
         ),
         {
@@ -109,30 +94,24 @@ export default function EditProjectForm() {
 
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label
-            htmlFor="country"
+            htmlFor="phase"
             className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
           >
-            Checklist
+            Phase
           </label>
           <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
             <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-              {checklists && (
+              {selectedPhase && (
                 <SelectBox
-                  initialSelected={{
-                    id: project.Checklist.id,
-                    name: project.Checklist.name,
-                  }}
-                  items={checklists}
-                  defaultValue={'Select Checklist'}
+                  initialSelected={selectedPhase}
+                  items={PHASE_DATA}
+                  defaultValue={'Select Phase'}
                   onClickFunction={(item: any) => {
-                    setSelectedChecklistId(item.id);
+                    setValue('phase', item.name);
                   }}
                 />
               )}
             </div>
-            <span className="text-gray-500 underline cursor-pointer hover:text-gray-700">
-              Create a new checklist
-            </span>
           </div>
         </div>
       </div>

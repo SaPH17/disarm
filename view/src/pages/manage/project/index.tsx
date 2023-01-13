@@ -17,7 +17,7 @@ import { toast } from 'react-toastify';
 import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
 
 const title = ['name', 'company', 'phase', 'report'];
-const contentTitle = ['name', 'company', 'checklist', 'phase', 'assignedUser'];
+const contentTitle = ['name', 'company', 'phase', 'checklist'];
 
 export default function ManageProjectIndex() {
   const navigate = useNavigate();
