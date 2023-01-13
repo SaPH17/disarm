@@ -10,6 +10,7 @@ export class EditChecklistHandler {
     const body = {
       name: data.name,
       sections: sections,
+      status: data.status,
     };
     try {
       return (await ChecklistServices.editChecklist(body, id)).data;

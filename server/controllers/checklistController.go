@@ -104,6 +104,7 @@ func EditChecklist(c *gin.Context) {
 	var body struct {
 		Name     string `json:"name" binding:"required"`
 		Sections string `json:"sections" binding:"required"`
+		Status   string `json:"status" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -116,6 +117,7 @@ func EditChecklist(c *gin.Context) {
 	escapedId := html.EscapeString(strings.TrimSpace(id))
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
 	escapedSections := strings.TrimSpace(body.Sections)
+	escapedStatus := strings.TrimSpace(body.Status)
 
 	currentUuid, errUuid := uuid.FromString(escapedId)
 
@@ -126,7 +128,7 @@ func EditChecklist(c *gin.Context) {
 		return
 	}
 
-	checklist, dbErr := models.Checklists.Edit(currentUuid, escapedName, escapedSections)
+	checklist, dbErr := models.Checklists.Edit(currentUuid, escapedName, escapedSections, escapedStatus)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

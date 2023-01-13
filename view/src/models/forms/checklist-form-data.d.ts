@@ -2,6 +2,7 @@ export type ChecklistFormData = {
   name?: string;
   section?: string;
   isSubmit?: boolean;
+  status?: string;
 };
 
 export type ChecklistSectionFormData = {
