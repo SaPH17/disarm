@@ -20,7 +20,12 @@ const ManageGroupEditPermission = () => {
   const { id } = useParams();
   const { data: permissionsData } = useQuery(
     'permissions',
-    PermissionServices.getPermissions
+    PermissionServices.getPermissions,
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
   );
   const [selectedPermission, setSelectedPermission] = useState<Permission[]>(
     []
@@ -52,6 +57,7 @@ const ManageGroupEditPermission = () => {
   ];
 
   const handleEditPermissionSubmit = () => {
+    console.log(permissionToJson(selectedPermission, permissions));
     try {
       toast.promise(
         GroupHandler.handleEditGroupPermissionSubmit(
@@ -71,16 +77,19 @@ const ManageGroupEditPermission = () => {
     } catch (e) {}
   };
 
+  console.log(selectedPermission);
+
   useEffect(() => {
     if (groupData && permissions.length > 0) {
       const p = JSON.parse(groupData.permissions);
+      setSelectedPermission([]);
       for (let action in p) {
         for (let objectType in p[action]) {
           p[action][objectType].forEach((id: any) => {
             const fullId = `${action}.${objectType}.${id}`;
             setSelectedPermission((v) => {
               const val = permissions.find((p: any) => p.id === fullId);
-              return val ? [...v, val] : [...v];
+              return val ? [...v, val] : v;
             });
           });
         }
