@@ -10,6 +10,7 @@ import ChecklistServices from '../../../services/checklist-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import TableAccordion from '../../tables/accordion/table-accordion';
+import SelectBox from '../../select-box';
 
 export type SectionDetail = {
   id: string;
@@ -27,11 +28,16 @@ export type SectionType = {
 const title = ['id', 'detail', 'tool', 'procedure'];
 
 const EditChecklistForm = () => {
+  const STATUS_DATA = [
+    { id: '1', name: 'Active' },
+    { id: '2', name: 'Inactive' },
+  ];
   const navigate = useNavigate();
   const params = useParams();
   const { data: checklistData } = useQuery(`checklists/${params.id}`, () =>
     ChecklistServices.getOneChecklist(params.id)
   );
+  const [selectedStatus, setSelectedStatus] = useState<any>(undefined);
 
   const checklist = checklistData || null;
 
@@ -95,7 +101,10 @@ const EditChecklistForm = () => {
     reset({
       name: checklist.name,
     });
+    setSelectedStatus(STATUS_DATA.find((v) => v.name === checklist?.status));
   }, [checklistData]);
+
+  console.log(selectedStatus);
 
   return (
     checklist && (
@@ -123,6 +132,27 @@ const EditChecklistForm = () => {
                   required: watchIsSubmit ? 'Name is required.' : false,
                 })}
               />
+
+              <label
+                htmlFor="phase"
+                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+              >
+                Status
+              </label>
+              <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
+                <div className="block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                  {selectedStatus && (
+                    <SelectBox
+                      initialSelected={selectedStatus}
+                      items={STATUS_DATA}
+                      defaultValue={'Select Status'}
+                      onClickFunction={(item: any) => {
+                        setValue('status', item.name);
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
             <div className="pt-4 text-xl font-semibold sm:border-t sm:border-gray-200">
               Sections

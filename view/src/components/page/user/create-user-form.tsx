@@ -26,7 +26,6 @@ export default function CreateUserForm() {
       id: r.id,
       name: r.name,
       description: r.description,
-      directParentGroup: r.directParentGroup,
       permissions: r.permissions,
     })) || [];
 

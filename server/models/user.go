@@ -2,10 +2,6 @@ package models
 
 import (
 	"disarm/main/database"
-	"fmt"
-
-	gorm_seeder "github.com/kachit/gorm-seeder"
-	"golang.org/x/crypto/bcrypt"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -27,7 +23,6 @@ type userOrm struct {
 }
 
 type UserOrm interface {
-	GetAllGroups() (groups []Group, err error)
 	Create(email string, password string, username string, supervisor *User, groups []Group) (User, error)
 	GetAll() ([]User, error)
 	GetOneByEmail(email string) (User, error)
@@ -43,19 +38,6 @@ var Users UserOrm
 func init() {
 	database.DB.Get().AutoMigrate(&User{})
 	Users = &userOrm{instance: database.DB.Get()}
-
-	groups, _ := Users.GetAll()
-
-	if len(groups) != 0 {
-		return
-	}
-
-	usersSeeder := NewUsersSeeder(gorm_seeder.SeederConfiguration{Rows: 1})
-	seedersStack := gorm_seeder.NewSeedersStack(database.DB.Get())
-	seedersStack.AddSeeder(&usersSeeder)
-
-	err := seedersStack.Seed()
-	fmt.Println(err)
 }
 
 func (o *userOrm) Create(email string, password string, username string, supervisor *User, groups []Group) (User, error) {
@@ -76,13 +58,6 @@ func (o *userOrm) GetAll() ([]User, error) {
 	result := o.instance.Preload("Groups").Preload("Supervisor").Find(&users)
 
 	return users, result.Error
-}
-
-func (o *userOrm) GetAllGroups() ([]Group, error) {
-	var groups []Group
-	result := o.instance.Preload("Users").Find(&groups)
-
-	return groups, result.Error
 }
 
 func (o *userOrm) GetOneByEmail(email string) (User, error) {
@@ -133,26 +108,4 @@ func (o *userOrm) Delete(ids []uuid.UUID) (bool, error) {
 	o.instance.Delete(&users)
 
 	return true, err
-}
-
-type UsersSeeder struct {
-	gorm_seeder.SeederAbstract
-}
-
-func NewUsersSeeder(cfg gorm_seeder.SeederConfiguration) UsersSeeder {
-	return UsersSeeder{gorm_seeder.NewSeederAbstract(cfg)}
-}
-
-func (s *UsersSeeder) Seed(db *gorm.DB) error {
-	var users []User
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("root"), bcrypt.DefaultCost)
-
-	users = append(users, User{Email: "root@root.com", Username: "root", Password: string(hashedPassword), IsPasswordChanged: false})
-	// ,DirectSupervisorId: sql.NullString{String: "", Valid: false}}
-
-	return db.CreateInBatches(users, s.Configuration.Rows).Error
-}
-
-func (s *UsersSeeder) Clear(db *gorm.DB) error {
-	return s.SeederAbstract.Delete(db, "users")
 }

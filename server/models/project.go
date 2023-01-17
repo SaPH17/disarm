@@ -27,7 +27,7 @@ type ProjectOrm interface {
 	Create(name string, company string, phase string, checklistId uuid.UUID) (Project, error)
 	GetAll() ([]Project, error)
 	GetOneById(id uuid.UUID) (Project, error)
-	Edit(id uuid.UUID, name string, company string, phase string, checklistId uuid.UUID) (Project, error)
+	Edit(id uuid.UUID, name string, company string, phase string) (Project, error)
 	Delete(ids []uuid.UUID) (bool, error)
 }
 
@@ -59,13 +59,12 @@ func (o *projectOrm) GetOneById(id uuid.UUID) (Project, error) {
 	return project, err
 }
 
-func (o *projectOrm) Edit(id uuid.UUID, name string, company string, phase string, checklistId uuid.UUID) (Project, error) {
+func (o *projectOrm) Edit(id uuid.UUID, name string, company string, phase string) (Project, error) {
 	var project Project
 	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
 	project.Name = name
 	project.Company = company
 	project.Phase = phase
-	project.ChecklistId = checklistId
 	o.instance.Save(project)
 
 	return project, err

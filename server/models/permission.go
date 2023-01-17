@@ -23,7 +23,6 @@ type permissionOrm struct {
 type PermissionOrm interface {
 	Create(permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string) (Permission, error)
 	GetAll() ([]Permission, error)
-	Edit(id uuid.UUID, permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string) (Permission, error)
 	Delete(permissionActionIds []uuid.UUID, objectTypeId uuid.UUID, objectId string) (bool, error)
 }
 
@@ -46,17 +45,6 @@ func (o *permissionOrm) GetAll() ([]Permission, error) {
 	result := o.instance.Preload("PermissionAction").Preload("ObjectType").Find(&permissions)
 
 	return permissions, result.Error
-}
-
-func (o *permissionOrm) Edit(id uuid.UUID, permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string) (Permission, error) {
-	var permission Permission
-	err := o.instance.Model(Group{}).Where("id = ?", id).Take(&permission).Error
-	permission.PermissionActionId = permissionActionId
-	permission.ObjectTypeId = objectTypeId
-	permission.ObjectId = objectId
-	o.instance.Save(permission)
-
-	return permission, err
 }
 
 func (o *permissionOrm) Delete(permissionActionIds []uuid.UUID, objectTypeId uuid.UUID, objectId string) (bool, error) {
