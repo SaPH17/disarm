@@ -77,8 +77,6 @@ const ManageGroupEditPermission = () => {
     } catch (e) {}
   };
 
-  console.log(selectedPermission);
-
   useEffect(() => {
     if (groupData && permissions.length > 0) {
       const p = JSON.parse(groupData.permissions);
