@@ -4,6 +4,7 @@ import (
 	"disarm/main/database"
 	"disarm/main/models"
 	"disarm/main/utils/token"
+	"encoding/json"
 	"fmt"
 	"html"
 	"math/rand"
@@ -182,6 +183,57 @@ func GetUserById(c *gin.Context) {
 	})
 }
 
+type PermissionString struct {
+	CreatePermissions struct {
+		User      bool
+		Project   bool
+		Group     bool
+		Checklist bool
+		Log       bool
+		Report    []string
+		Finding   []string
+	}
+
+	ViewPermissions struct {
+		User      []string
+		Project   []string
+		Group     []string
+		Checklist []string
+		Log       []string
+		Report    []string
+		Finding   []string
+	}
+
+	ViewDetailPermissions struct {
+		User      []string
+		Project   []string
+		Group     []string
+		Checklist []string
+		Log       []string
+		Report    []string
+		Finding   []string
+	}
+
+	EditPermissions struct {
+		User      []string
+		Project   []string
+		Group     []string
+		Checklist []string
+		Report    []string
+		Finding   []string
+	}
+
+	DeletePermissions struct {
+		User      []string
+		Project   []string
+		Group     []string
+		Checklist []string
+		Log       []string
+		Report    []string
+		Finding   []string
+	}
+}
+
 func GetUserPermissions(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))
@@ -203,8 +255,25 @@ func GetUserPermissions(c *gin.Context) {
 	}
 
 	permissions := make([]string, len(user.Groups))
-	fmt.Println(len(user.Groups))
 	for _, g := range user.Groups {
+		var data map[string]interface{}
+		jsonText := html.UnescapeString(g.Permissions)
+		json.Unmarshal([]byte(jsonText), &data)
+
+		fmt.Println("json", jsonText, data)
+
+		for k, v := range data {
+			fmt.Println(k)
+			switch v := v.(type) {
+			case map[string]interface{}:
+
+				for ki, vi := range v {
+					fmt.Println(ki, ":", vi)
+				}
+
+			}
+		}
+
 		permissions = append(permissions, g.Permissions)
 	}
 
