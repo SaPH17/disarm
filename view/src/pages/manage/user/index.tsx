@@ -24,6 +24,7 @@ import { ResetPasswordHandler } from '../../../handlers/user/reset-password-hand
 const title = ['name', 'email', 'groups'];
 
 const contentTitle = [
+  'id',
   'name',
   'groups',
   'assignedProjects',

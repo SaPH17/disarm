@@ -1,27 +1,26 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationIcon } from '@heroicons/react/outline';
 
-export type SelectedDeletePopupData = {
+export type SelectedReportPopupData = {
   id: string | number;
 };
 
-export type DeletePopupData = {
+export type ReportPopupData = {
   title: string;
-  selectedData: SelectedDeletePopupData[];
+  selectedData: SelectedReportPopupData[];
   onClickFunction: Function;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function DeletePopup({
+export default function ReportPopup({
   title,
   selectedData,
   onClickFunction,
   open,
   setOpen,
-}: DeletePopupData) {
+}: ReportPopupData) {
   const cancelButtonRef = useRef(null);
 
   return (
@@ -80,10 +79,8 @@ export default function DeletePopup({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Are you sure you want to delete these{' '}
-                      {selectedData.length} data? All of your data will be
-                      permanently removed from our servers forever. This action
-                      cannot be undone.
+                      Are you sure you want to generate report for these
+                      {selectedData.length} project(s)?
                     </p>
                   </div>
                 </div>
@@ -97,7 +94,7 @@ export default function DeletePopup({
                     setOpen(false);
                   }}
                 >
-                  Delete
+                  Generate
                 </button>
                 <button
                   type="button"

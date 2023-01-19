@@ -15,13 +15,16 @@ import { useQuery } from 'react-query';
 import DeletePopup from '../../../components/popup/delete-popup';
 import { toast } from 'react-toastify';
 import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
+import ReportPopup from '../../../components/popup/report-popup';
 
 const title = ['name', 'company', 'phase', 'report'];
-const contentTitle = ['name', 'company', 'phase', 'checklist'];
+const contentTitle = ['id', 'name', 'company', 'phase', 'checklist'];
 
 export default function ManageProjectIndex() {
   const navigate = useNavigate();
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const [isReportPopupOpened, setIsReportPopupOpened] = useState(false);
+
   const { data, refetch } = useQuery('projects', ProjectServices.getProjects);
   const projects =
     data?.map((project: Project) => ({
@@ -49,9 +52,37 @@ export default function ManageProjectIndex() {
     {
       id: '2',
       name: 'Generate Report',
-      onClickFunction: () => {},
+      onClickFunction: () => {
+        if (!selectedProject) return;
+        if (
+          !selectedProject.filter((project: Project) => project.id !== -1)
+            .length
+        )
+          return;
+        setIsReportPopupOpened(true);
+      },
     },
   ];
+
+  function generateReport() {
+    if (!selectedProject) return;
+    const ids = selectedProject.map((project: Project) => project.id);
+    console.log(ids);
+    //logic
+    // try {
+    //   toast.promise(DeleteProjectsHandler.handleDeleteProjectSubmit(ids), {
+    //     success: `Successfully deleted ${ids.length} project(s)!`,
+    //     pending: `Deleting ${ids.length} project(s)!`,
+    //     error: {
+    //       render({ data }: any) {
+    //         return data.message;
+    //       },
+    //     },
+    //   });
+    //   refetch();
+    //   setSelectedProject([]);
+    // } catch (e) {}
+  }
 
   function deleteProjects() {
     if (!selectedProject) return;
@@ -121,6 +152,15 @@ export default function ManageProjectIndex() {
           onClickFunction={deleteProjects}
           open={openDeletePopup}
           setOpen={setOpenDeletePopup}
+        />
+      )}
+      {selectedProject && (
+        <ReportPopup
+          title="Generate Report"
+          selectedData={selectedProject}
+          onClickFunction={generateReport}
+          open={isReportPopupOpened}
+          setOpen={setIsReportPopupOpened}
         />
       )}
     </>

@@ -17,7 +17,7 @@ import { jsonToPermissionArray } from '../../../utils/functions/jsonConverter';
 
 const title = ['name', 'description'];
 
-const contentTitle = ['name', 'description', 'permissions'];
+const contentTitle = ['id', 'name', 'description', 'permissions'];
 
 export default function ManageGroupIndex() {
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
