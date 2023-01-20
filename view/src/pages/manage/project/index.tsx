@@ -16,9 +16,19 @@ import DeletePopup from '../../../components/popup/delete-popup';
 import { toast } from 'react-toastify';
 import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
 import ReportPopup from '../../../components/popup/report-popup';
+import { toReadableDate } from '../../../utils/functions/dates';
 
-const title = ['name', 'company', 'phase', 'report'];
-const contentTitle = ['id', 'name', 'company', 'phase', 'checklist'];
+const title = ['name', 'company', 'phase', 'action'];
+const contentTitle = [
+  'id',
+  'name',
+  'company',
+  'phase',
+  'checklist',
+  'totalFinding',
+  'startDate',
+  'endDate',
+];
 
 export default function ManageProjectIndex() {
   const navigate = useNavigate();
@@ -30,8 +40,12 @@ export default function ManageProjectIndex() {
     data?.map((project: Project) => ({
       ...project,
       checklist: project.Checklist?.name,
+      totalFinding: project.Findings?.length || 0,
+      startDate: toReadableDate(project.start_date),
+      endDate: toReadableDate(project.end_date),
+      action: <div className="cursor-pointer">View Report</div>,
     })) || [];
-
+  console.log(projects);
   const [activeProject, setActiveProject] = useState<Project>(defaultProject);
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
 

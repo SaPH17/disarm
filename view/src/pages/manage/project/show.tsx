@@ -6,8 +6,15 @@ import ProjectServices from '../../../services/project-services';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 
-const title = ['id', 'title', 'impactedSystem', 'risk', 'status', 'action'];
-const contentTitle = ['name', 'company', 'checklist', 'phase', 'assignedUser'];
+const title = [
+  'findingId',
+  'title',
+  'impactedSystem',
+  'risk',
+  'status',
+  'action',
+];
+const contentTitle = ['id', 'name', 'company', 'checklist', 'phase'];
 
 export default function ManageProjectShow() {
   const { id } = useParams();
@@ -20,11 +27,17 @@ export default function ManageProjectShow() {
         ...data,
         checklist: data.Checklist?.name,
         findings:
-          data.Findings?.map((v: any) => ({
-            ...v,
-            impactedSystem: v.impacted_system,
-            action: <div className="cursor-pointer">View</div>,
-          })) || [],
+          data.Findings?.map((v: any, idx: any) => {
+            return {
+              ...v,
+              findingId: `${data.name}-${(idx + 1).toLocaleString('en-US', {
+                minimumIntegerDigits: 3,
+                useGrouping: false,
+              })}`,
+              impactedSystem: v.impacted_system,
+              action: <div className="cursor-pointer">View</div>,
+            };
+          }) || [],
       }
     : [];
 
