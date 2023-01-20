@@ -24,7 +24,6 @@ const EditGroupForm = ({ group }: any) => {
       id: r.id,
       name: r.name,
       description: r.description,
-      directParentGroup: r.directParentGroup,
       permissions: r.permissions,
     })) || null;
 
@@ -109,39 +108,6 @@ const EditGroupForm = ({ group }: any) => {
               errors={errors}
               register={register('description', {
                 required: 'Description is required.',
-              })}
-            />
-          </div>
-
-          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-            <InputText
-              id="parent-group"
-              name="parentGroup"
-              label="Parent Group"
-              type="text"
-              datalist={
-                <datalist id="parent-groups">
-                  {groups &&
-                    groups.map((group: Group) => {
-                      return (
-                        <option key={group.id} value={group.name}></option>
-                      );
-                    })}
-                  <option value=""></option>
-                </datalist>
-              }
-              listId={'parent-groups'}
-              errors={errors}
-              register={register('parentGroup', {
-                validate: (name) => {
-                  if (name === '') {
-                    return true;
-                  }
-                  return groups.filter((group: Group) => group.name === name)
-                    .length !== 1
-                    ? 'Parent group is invalid'
-                    : true;
-                },
               })}
             />
           </div>

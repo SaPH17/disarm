@@ -24,6 +24,7 @@ import { ResetPasswordHandler } from '../../../handlers/user/reset-password-hand
 const title = ['name', 'email', 'groups'];
 
 const contentTitle = [
+  'id',
   'name',
   'groups',
   'assignedProjects',
@@ -59,7 +60,6 @@ export default function ManageUserIndex() {
       id: r.id,
       name: r.name,
       description: r.description,
-      directParentGroup: r.directParentGroup,
       permissions: r.permissions,
     })) || undefined;
 

@@ -14,11 +14,10 @@ var GROUP_ACTION_TYPE = []string{"view", "edit", "delete"}
 
 func CreateGroup(c *gin.Context) {
 	var body struct {
-		Name          string   `json:"name" binding:"required"`
-		Description   string   `json:"description" binding:"required"`
-		ParentGroupId string   `json:"parent_group_id"`
-		Permissions   string   `json:"permissions" binding:"required"`
-		Users         []string `json:"assigned_user"`
+		Name        string   `json:"name" binding:"required"`
+		Description string   `json:"description" binding:"required"`
+		Permissions string   `json:"permissions" binding:"required"`
+		Users       []string `json:"assigned_user"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -30,22 +29,7 @@ func CreateGroup(c *gin.Context) {
 
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
 	escapedDescription := html.EscapeString(strings.TrimSpace(body.Description))
-	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 	escapedPermissions := html.EscapeString(strings.TrimSpace(body.Permissions))
-
-	var parentGroup models.Group
-	var dbErr error
-
-	if escapedParentGroupId != "" {
-		parentGroup, dbErr = models.Groups.GetOneById(uuid.FromStringOrNil(escapedParentGroupId))
-
-		if dbErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": dbErr.Error(),
-			})
-			return
-		}
-	}
 
 	var users []models.User
 
@@ -64,7 +48,7 @@ func CreateGroup(c *gin.Context) {
 		}
 	}
 
-	group, dbErr := models.Groups.Create(escapedName, escapedDescription, &parentGroup, escapedPermissions, users)
+	group, dbErr := models.Groups.Create(escapedName, escapedDescription, escapedPermissions, users)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -138,10 +122,9 @@ func GetGroupById(c *gin.Context) {
 func EditGroup(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Name          string   `json:"name" binding:"required"`
-		Description   string   `json:"description" binding:"required"`
-		ParentGroupId string   `json:"parent_group_id"`
-		Users         []string `json:"assigned_user"`
+		Name        string   `json:"name" binding:"required"`
+		Description string   `json:"description" binding:"required"`
+		Users       []string `json:"assigned_user"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -154,7 +137,6 @@ func EditGroup(c *gin.Context) {
 	escapedId := html.EscapeString(strings.TrimSpace(id))
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
 	escapedDescription := html.EscapeString(strings.TrimSpace(body.Description))
-	escapedParentGroupId := html.EscapeString(strings.TrimSpace(body.ParentGroupId))
 
 	groupUuid, errUuid := uuid.FromString(escapedId)
 
@@ -164,21 +146,6 @@ func EditGroup(c *gin.Context) {
 		})
 		return
 	}
-
-	var parentGroup models.Group
-	var dbErr error
-
-	if escapedParentGroupId != "" {
-		parentGroup, dbErr = models.Groups.GetOneById(uuid.FromStringOrNil(escapedParentGroupId))
-
-		if dbErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": dbErr.Error(),
-			})
-			return
-		}
-	}
-
 	var users []models.User
 
 	if len(body.Users) > 0 {
@@ -196,7 +163,7 @@ func EditGroup(c *gin.Context) {
 		}
 	}
 
-	group, dbErr := models.Groups.Edit(groupUuid, escapedName, escapedDescription, &parentGroup, &users)
+	group, dbErr := models.Groups.Edit(groupUuid, escapedName, escapedDescription, &users)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

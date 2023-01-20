@@ -20,7 +20,7 @@ export default function SelectedDetail({
     <div className="flex flex-col sm:gap-2 rounded divide-y-1 bg-white text-sm shadow">
       <div className="flex flex-row justify-between items-center px-2 sm:px-4 p-2 sm:p-4 bg-gray-50">
         <div className="text-md font-semibold">{title}</div>
-        {content.id === -1 ? <div></div> : children}
+        {content.id === '-' ? <div></div> : children}
       </div>
       <div className="px-2 pb-4 grid grid-cols-2 sm:grid-cols-3">
         {contentTitle.map((ct) => {

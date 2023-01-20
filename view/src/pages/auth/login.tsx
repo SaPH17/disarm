@@ -16,24 +16,28 @@ export default function Login() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>();
   const [auth, setAuth] = useAtom(authAtom);
   const navigate = useNavigate();
   const [openChangePassword, setOpenChangePassword] = useState(false);
-  
+
   const handleLoginFormSubmit = async (data: LoginFormData) => {
     try {
-      const { is_password_changed, ...authData } = await LoginHandlers.handleLoginFormSubmit(data);
-      if (!is_password_changed){
+      const { is_password_changed, ...authData } =
+        await LoginHandlers.handleLoginFormSubmit(data);
+
+      if (!is_password_changed) {
         setOpenChangePassword(true);
       } else {
         setAuth(authData);
         toast.success('Successfully Login');
         navigate('/users');
       }
-
-    } catch (e) {}
+    } catch (e: any) {
+      toast(e.response.data.error, { type: 'error' });
+    }
   };
 
   return (
@@ -72,6 +76,9 @@ export default function Login() {
                   label="Password"
                   type="password"
                   errors={errors}
+                  onChange={(val: any) => {
+                    setValue('password', val);
+                  }}
                   register={register('password', {
                     required: 'Password is required.',
                   })}

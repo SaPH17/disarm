@@ -1,40 +1,35 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { UpdateProjectHandler } from '../../../handlers/project/edit-project-handler';
-import { Checklist } from '../../../models/checklist';
 import { ProjectFormData } from '../../../models/forms/project-form-data';
-import ChecklistServices from '../../../services/checklist-services';
 import ProjectServices from '../../../services/project-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
-import { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import FormErrorMessage from '../../input-text/form-error-message';
 
 export default function EditProjectForm() {
+  const PHASE_DATA = [
+    { id: '1', name: 'Idle' },
+    { id: '2', name: 'On Progress' },
+    { id: '3', name: 'Remediation' },
+    { id: '4', name: 'Done' },
+  ];
   const params = useParams();
   const navigate = useNavigate();
   const { data: projectData } = useQuery(`project/${params.id}`, () =>
     ProjectServices.getOneProject(params.id)
   );
-  const { data: checklistsData } = useQuery(
-    'checklists',
-    ChecklistServices.getChecklists
-  );
 
   const project = projectData || undefined;
-
-  const checklists =
-    checklistsData?.map((checklist: Checklist) => ({
-      id: checklist.id,
-      name: checklist.name,
-    })) || null;
-
-  const [selectedChecklistId, setSelectedChecklistId] = useState<string>(
-    project?.checklist_id || ''
-  );
+  const [selectedPhase, setSelectedPhase] = useState<any>(undefined);
+  const [startDate, setStartDate] = useState<any>(null);
+  const [endDate, setEndDate] = useState<any>(null);
 
   const {
     register,
@@ -47,20 +42,17 @@ export default function EditProjectForm() {
   useEffect(() => {
     if (!project) return;
     reset(project);
+    setSelectedPhase(PHASE_DATA.find((v) => v.name === project?.phase));
+    setStartDate(Date.parse(project.start_date));
+    setValue('startDate', Date.parse(project.start_date));
+    setEndDate(Date.parse(project.end_date));
+    setValue('endDate', Date.parse(project.end_date));
   }, [projectData]);
-
-  useEffect(() => {
-    if (!projectData) return;
-    setValue('checklist', projectData.Checklist.id || '');
-  }, []);
 
   async function handleUpdateProjectButton(data: ProjectFormData) {
     try {
       await toast.promise(
-        UpdateProjectHandler.handleUpdateProjectFormSubmit(
-          { ...data, checklist_id: selectedChecklistId } as ProjectFormData,
-          project.id
-        ),
+        UpdateProjectHandler.handleUpdateProjectFormSubmit(data, project.id),
         {
           success: 'Successfully updated project',
           pending: 'Updating project',
@@ -71,7 +63,7 @@ export default function EditProjectForm() {
           },
         }
       );
-      navigate('/projects');
+      // navigate('/projects');
     } catch (e) {}
   }
 
@@ -106,33 +98,96 @@ export default function EditProjectForm() {
             })}
           />
         </div>
-
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label
             htmlFor="country"
             className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
           >
-            Checklist
+            Start Date
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <DatePicker
+                  placeholderText="Start Date"
+                  selected={startDate}
+                  customInput={
+                    <input
+                      {...register('startDate', {
+                        required: 'Start Date is required.',
+                      })}
+                      placeholder={'Start Date'}
+                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                    />
+                  }
+                  onChange={(date: any) => {
+                    setValue('startDate', date);
+                    setStartDate(date);
+                  }}
+                />
+                {errors && (
+                  <FormErrorMessage name={'startDate'} errors={errors} />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Estimated End Date
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <DatePicker
+                  placeholderText="End Date"
+                  selected={endDate}
+                  customInput={
+                    <input
+                      {...register('endDate', {
+                        required: 'End Date is required.',
+                      })}
+                      placeholder={'Estimated End Date'}
+                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                    />
+                  }
+                  onChange={(date: any) => {
+                    setValue('endDate', date);
+                    setEndDate(date);
+                  }}
+                />
+                {errors && (
+                  <FormErrorMessage name={'endDate'} errors={errors} />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="phase"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Phase
           </label>
           <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
             <div className="block w-full max-w-lg border-gray-300 rounded-md shadow-sm sm:text-sm">
-              {checklists && (
+              {selectedPhase && (
                 <SelectBox
-                  initialSelected={{
-                    id: project.Checklist.id,
-                    name: project.Checklist.name,
-                  }}
-                  items={checklists}
-                  defaultValue={'Select Checklist'}
+                  initialSelected={selectedPhase}
+                  items={PHASE_DATA}
+                  defaultValue={'Select Phase'}
                   onClickFunction={(item: any) => {
-                    setSelectedChecklistId(item.id);
+                    setValue('phase', item.name);
                   }}
                 />
               )}
             </div>
-            <span className="text-gray-500 underline cursor-pointer hover:text-gray-700">
-              Create a new checklist
-            </span>
           </div>
         </div>
       </div>

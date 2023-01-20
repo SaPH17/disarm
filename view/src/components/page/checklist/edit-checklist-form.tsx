@@ -10,6 +10,10 @@ import ChecklistServices from '../../../services/checklist-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import TableAccordion from '../../tables/accordion/table-accordion';
+import SelectBox from '../../select-box';
+import SelectPopup from '../../popup/select-popup';
+import ConfirmPopup from '../../popup/confirmation-popup';
+import { CreateChecklistHandler } from '../../../handlers/checklist/create-checklist-handler';
 
 export type SectionDetail = {
   id: string;
@@ -27,11 +31,19 @@ export type SectionType = {
 const title = ['id', 'detail', 'tool', 'procedure'];
 
 const EditChecklistForm = () => {
+  const STATUS_DATA = [
+    { id: '1', name: 'Active' },
+    { id: '2', name: 'Inactive' },
+  ];
   const navigate = useNavigate();
   const params = useParams();
   const { data: checklistData } = useQuery(`checklists/${params.id}`, () =>
     ChecklistServices.getOneChecklist(params.id)
   );
+  const [selectedStatus, setSelectedStatus] = useState<any>(undefined);
+  const [formData, setFormData] = useState<ChecklistFormData>();
+  const [isConfirmModalOpened, setIsConfirmModalOpened] =
+    useState<boolean>(false);
 
   const checklist = checklistData || null;
 
@@ -49,16 +61,20 @@ const EditChecklistForm = () => {
   const searchRef = useRef(null);
 
   async function handleSubmitChecklistForm(data: ChecklistFormData) {
+    setFormData(data);
+    setIsConfirmModalOpened(true);
+  }
+
+  async function handleSubmitModal() {
     try {
       await toast.promise(
-        EditChecklistHandler.handleEditChecklistFormSubmit(
-          data,
-          JSON.stringify(sections),
-          params.id as string
+        CreateChecklistHandler.handleCreateChecklistFormSubmit(
+          formData as ChecklistFormData,
+          JSON.stringify(sections)
         ),
         {
-          success: 'Successfully edited checklist',
-          pending: 'Editing checklist',
+          success: 'Successfully created a new checklist',
+          pending: 'Creating new checklist',
           error: {
             render({ data }: any) {
               return data.message;
@@ -93,8 +109,9 @@ const EditChecklistForm = () => {
     if (!checklistData) return;
     setSections(JSON.parse(checklistData.sections));
     reset({
-      name: checklist.name,
+      name: '',
     });
+    setSelectedStatus(STATUS_DATA.find((v) => v.name === checklist?.status));
   }, [checklistData]);
 
   return (
@@ -107,22 +124,66 @@ const EditChecklistForm = () => {
           )}
         >
           <div className="space-y-6 sm:space-y-5">
-            <PrimaryButton
-              content="Save"
-              type="submit"
-              onClick={() => setValue('isSubmit', true)}
-            ></PrimaryButton>
+            <div className="space-y-2">
+              <PrimaryButton
+                content="Save"
+                type="submit"
+                onClick={() => setValue('isSubmit', true)}
+              ></PrimaryButton>
+              <div className="flex justify-start text-sm text-gray-500">
+                * Saving will create a new checklist rather than updating the
+                current checklist.
+              </div>
+            </div>
             <div className="pt-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
+              <InputText
+                id="prevName"
+                name="prevName"
+                label="Previous Name"
+                type="text"
+                disabled={true}
+                placeholder={checklist.name}
+              />
               <InputText
                 id="name"
                 name="name"
-                label="Name"
+                label="New Name"
                 type="text"
                 errors={errors}
                 register={register('name', {
                   required: watchIsSubmit ? 'Name is required.' : false,
+                  validate: (name) => {
+                    if (!watchIsSubmit) {
+                      return false;
+                    }
+
+                    return name === checklist.name
+                      ? 'Name cannot be the same as the previous name'
+                      : true;
+                  },
                 })}
               />
+
+              <label
+                htmlFor="phase"
+                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+              >
+                Status
+              </label>
+              <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
+                <div className="block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+                  {selectedStatus && (
+                    <SelectBox
+                      initialSelected={selectedStatus}
+                      items={STATUS_DATA}
+                      defaultValue={'Select Status'}
+                      onClickFunction={(item: any) => {
+                        setValue('status', item.name);
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
             <div className="pt-4 text-xl font-semibold sm:border-t sm:border-gray-200">
               Sections
@@ -149,7 +210,7 @@ const EditChecklistForm = () => {
 
               <div className="flex justify-end">
                 <PrimaryButton
-                  content="Edit Section"
+                  content="Add Section"
                   classNames="w-full sm:w-fit"
                   type="submit"
                   onClick={() => setValue('isSubmit', false)}
@@ -162,7 +223,7 @@ const EditChecklistForm = () => {
                   type="text"
                   ref={searchRef}
                   className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Search section"
+                  placeholder="Delete section"
                 />
                 <button
                   type="button"
@@ -173,7 +234,7 @@ const EditChecklistForm = () => {
                 </button>
               </div>
               <div className="flex justify-end text-sm text-gray-500">
-                * Selected section and detail will be deleted
+                * Inputted section and its detail will be deleted
               </div>
             </div>
           </div>
@@ -184,6 +245,12 @@ const EditChecklistForm = () => {
           setContent={setSections}
           isEditable={true}
         ></TableAccordion>
+        <ConfirmPopup
+          title="Confirm Action"
+          onClickFunction={handleSubmitModal}
+          open={isConfirmModalOpened}
+          setOpen={setIsConfirmModalOpened}
+        />
       </>
     )
   );

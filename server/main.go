@@ -12,23 +12,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func runSeeder() {
 	actionsSeeder := seeders.NewPermissionActionsSeeder(gorm_seeder.SeederConfiguration{Rows: 5})
 	objectTypesSeeder := seeders.NewPermissionObjectTypesSeeder(gorm_seeder.SeederConfiguration{Rows: 6})
-	permissionSeeder := seeders.NewPermissionsSeeder(gorm_seeder.SeederConfiguration{Rows: 6})
+	usersSeeder := seeders.NewUsersSeeder(gorm_seeder.SeederConfiguration{Rows: 1})
 	seedersStack := gorm_seeder.NewSeedersStack(database.DB.Get())
 	seedersStack.AddSeeder(&actionsSeeder)
 	seedersStack.AddSeeder(&objectTypesSeeder)
+	seedersStack.AddSeeder(&usersSeeder)
 
 	err := seedersStack.Seed()
-	fmt.Println(err)
 
+	permissionSeeder := seeders.NewPermissionsSeeder(gorm_seeder.SeederConfiguration{Rows: 6})
 	seedersStack2 := gorm_seeder.NewSeedersStack(database.DB.Get())
 	seedersStack2.AddSeeder(&permissionSeeder)
 
 	err2 := seedersStack2.Seed()
-	fmt.Println(err2)
 
+	fmt.Println(err)
+	fmt.Println(err2)
+}
+
+func main() {
+	runSeeder()
 	r := gin.Default()
 
 	r.Use(middlewares.CORSMiddleware())
@@ -108,7 +114,6 @@ func main() {
 		permission := apiWithJWT.Group("/permissions")
 		{
 			permission.GET("/", controllers.GetAllPermission)
-			permission.PUT("/:id", controllers.EditPermission)
 		}
 
 		report := apiWithJWT.Group("/reports")
