@@ -50,7 +50,6 @@ export default function EditProjectForm() {
   }, [projectData]);
 
   async function handleUpdateProjectButton(data: ProjectFormData) {
-    console.log(data);
     try {
       await toast.promise(
         UpdateProjectHandler.handleUpdateProjectFormSubmit(data, project.id),

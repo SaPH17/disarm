@@ -57,19 +57,21 @@ func AuthenticateUser(c *gin.Context) {
 	user, retrieveErr := models.Users.GetOneByEmail(body.Email)
 
 	if retrieveErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email is not found"})
 		return
 	}
 
 	passwErr := VerifyPassword(body.Password, user.Password)
 
 	if passwErr != nil && passwErr == bcrypt.ErrMismatchedHashAndPassword {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password is invalid."})
 		return
 	}
 
 	token, tokenErr := token.GenerateToken(user.ID)
 
 	if tokenErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error generating token."})
 		return
 	}
 

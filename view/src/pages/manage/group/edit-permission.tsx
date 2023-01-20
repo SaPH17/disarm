@@ -57,7 +57,6 @@ const ManageGroupEditPermission = () => {
   ];
 
   const handleEditPermissionSubmit = () => {
-    console.log(permissionToJson(selectedPermission, permissions));
     try {
       toast.promise(
         GroupHandler.handleEditGroupPermissionSubmit(
