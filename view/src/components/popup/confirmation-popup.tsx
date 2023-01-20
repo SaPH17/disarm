@@ -1,26 +1,21 @@
+/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationIcon } from '@heroicons/react/outline';
 
-export type SelectedReportPopupData = {
-  id: string | number;
-};
-
-export type ReportPopupData = {
+export type ConfirmPopupData = {
   title: string;
-  selectedData: SelectedReportPopupData[];
   onClickFunction: Function;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ReportPopup({
+export default function ConfirmPopup({
   title,
-  selectedData,
   onClickFunction,
   open,
   setOpen,
-}: ReportPopupData) {
+}: ConfirmPopupData) {
   const cancelButtonRef = useRef(null);
 
   return (
@@ -79,8 +74,12 @@ export default function ReportPopup({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Are you sure you want to generate report for these
-                      {selectedData.length} project(s)?
+                      Are you sure you want to edit this checklist?
+                      <br />
+                      <b>
+                        This will create a new checklist rather than updating
+                        it.
+                      </b>
                     </p>
                   </div>
                 </div>
@@ -88,13 +87,13 @@ export default function ReportPopup({
               <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
-                  className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-sm bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => {
                     onClickFunction();
                     setOpen(false);
                   }}
                 >
-                  Generate
+                  Confirm
                 </button>
                 <button
                   type="button"

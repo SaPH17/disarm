@@ -128,7 +128,7 @@ const CreateChecklistForm = () => {
 
             <div className="flex justify-end">
               <PrimaryButton
-                content="Create Section"
+                content="Add Section"
                 classNames="w-full sm:w-fit"
                 type="submit"
                 onClick={() => setValue('isSubmit', false)}
@@ -141,7 +141,7 @@ const CreateChecklistForm = () => {
                 type="text"
                 ref={searchRef}
                 className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Search section"
+                placeholder="Delete section"
               />
               <button
                 type="button"
@@ -152,7 +152,7 @@ const CreateChecklistForm = () => {
               </button>
             </div>
             <div className="flex justify-end text-sm text-gray-500">
-              * Selected section and detail will be deleted
+              * Inputted section and its detail will be deleted
             </div>
           </div>
         </div>
