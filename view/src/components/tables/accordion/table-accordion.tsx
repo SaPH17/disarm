@@ -8,6 +8,7 @@ export type TableData = {
   setContent: React.Dispatch<React.SetStateAction<any[]>>;
   isEditable?: boolean;
   isCheckable?: boolean;
+  initialChecked?: string[];
 };
 
 /*
@@ -19,7 +20,8 @@ export default function TableAccordion({
   content,
   setContent,
   isEditable = false,
-  isCheckable = false
+  isCheckable = false,
+  initialChecked = []
 }: TableData) {
   return (
     <div className="flex flex-col mb-4 overflow-hidden border-gray-200 rounded-sm shadow">
@@ -49,6 +51,8 @@ export default function TableAccordion({
               key={contentIndex}
               isEditable={isEditable}
               isCheckable={isCheckable}
+              initialChecked={initialChecked}
+
               accordionTitle={(c as any).name}
               headers={title}
               index={contentIndex}

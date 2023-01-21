@@ -11,6 +11,7 @@ export type AccordionData = {
   headers: string[];
   isEditable: boolean;
   isCheckable: boolean;
+  initialChecked: string[];
   index: number;
   content: any;
   setContent: React.Dispatch<React.SetStateAction<any[]>>;
@@ -22,6 +23,7 @@ const Accordion = ({
   content,
   isEditable,
   isCheckable,
+  initialChecked,
   index,
   setContent,
 }: AccordionData) => {
@@ -55,10 +57,12 @@ const Accordion = ({
 
   function insertNewDataToRow(data: any) {
     const newContent = content;
+    console.log(data);
     (newContent[index].details as object[])[
       newContent[index].details.length - 1
     ] = {
       ...data,
+      id: data.id.toUpperCase()
     };
     setContent([...newContent]);
     reset();
@@ -114,7 +118,9 @@ const Accordion = ({
                                 return !(
                                   content[index].details as object[]
                                 ).filter(
-                                  (detail: any) => detail?.id === value || false
+                                  (detail: any) => {
+                                    return detail?.id?.toLowerCase() === value.toLowerCase() || false;
+                                  }
                                 ).length
                                   ? true
                                   : 'Id must be unique!';
@@ -174,7 +180,7 @@ const Accordion = ({
                     </div>
                   </div>
                 )}
-                                {
+                {
                   isCheckable && <div
                     className={`col-span-${headers.length * 2 + (isCheckable ? 1 : 0)
                       } sm:col-span-1`}
@@ -186,12 +192,11 @@ const Accordion = ({
                       <div className="hidden sm:block">
                         <input
                           type="checkbox"
-                          // onChange={(e) => {
-                          //   handleCheck(e, `check-${contentIndex}`, c);
-                          // }}
-                          // checked={checkedList.includes(
-                          //   `check-${contentIndex}`
-                          // )}
+                          defaultChecked={initialChecked.includes(
+                            `${contentRow.id}`
+                          ) || false}
+                          name={`checklist[${contentRow.id}]`}
+                          id={`checklist_${contentRow.id}`}
                           className="flex w-4 h-4 mx-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
                       </div>

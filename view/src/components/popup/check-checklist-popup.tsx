@@ -4,15 +4,15 @@ import { ExclamationIcon } from '@heroicons/react/outline';
 import TableAccordion from '../tables/accordion/table-accordion';
 import { useState, useEffect } from 'react';
 import { SectionType } from '../../models/checklist/section';
+import { toast } from 'react-toastify';
+import { UpdateProjectChecklistHandler } from '../../handlers/project/edit-project-checklist-handler';
 
 export type SelectedCheckChecklistPopupData = {
   id: string | number;
 };
 
 export type CheckChecklistPopupData = {
-  title: string;
   selectedData: any;
-  onClickFunction: Function;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -20,24 +20,50 @@ export type CheckChecklistPopupData = {
 const tableTitle = ['id', 'detail', 'tool', 'procedure'];
 
 export default function CheckChecklistPopup({
-  title,
   selectedData,
-  onClickFunction,
   open,
   setOpen,
 }: CheckChecklistPopupData) {
   const cancelButtonRef = useRef(null);
 
   const [sections, setSections] = useState<SectionType[]>([]);
+  const [selectedSections, setSelectedSections] = useState<string[]>([]);
 
   useEffect(() => {
     if (!selectedData.Checklist?.sections) return;
     setSections(JSON.parse(selectedData.Checklist.sections));
-    // reset({
-    //   ...checklist,
-    //   user: checklist.User.username,
-    // });
+    if (selectedData.sections){
+      setSelectedSections(JSON.parse(selectedData.sections));
+    } else {
+      setSelectedSections([]);
+    }
+    
   }, [selectedData]);
+
+  async function handleUpdateProjectChecklist(){
+    const result = document.querySelectorAll('input[type=checkbox][name^=checklist]:checked');
+    const ids = Array.from(result).map(r => r.id.split('_')[1]);
+    
+    try {
+      await toast.promise(
+        UpdateProjectChecklistHandler.handleUpdateProjectChecklistFormSubmit(
+          {
+            sections: JSON.stringify(ids)
+          },
+          selectedData.id
+        ),
+        {
+          success: `Successfully update ${selectedData.name} checklist`,
+          pending: `Updating ${selectedData.name} checklist data`,
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        }
+      );
+    } catch (e) {}
+  }
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -89,17 +115,18 @@ export default function CheckChecklistPopup({
                   content={sections}
                   setContent={setSections}
                   isCheckable={true}
+                  initialChecked={selectedSections}
                 />
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
                     className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={() => {
-                      onClickFunction();
+                      handleUpdateProjectChecklist();
                       setOpen(false);
                     }}
                   >
-                    Generate
+                    Update Checklist Progress
                   </button>
                   <button
                     type="button"

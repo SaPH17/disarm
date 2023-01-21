@@ -196,9 +196,7 @@ export default function ManageProjectIndex() {
             }}
           />
           <CheckChecklistPopup
-            title="Checked Checklist"
             selectedData={activeProject}
-            onClickFunction={deleteProjects}
             open={openedPopup.checkChecklist}
             setOpen={(val: any) => {
               setOpenedPopup({ ...openedPopup, checkChecklist: val });
