@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
 import ReportPopup from '../../../components/popup/report-popup';
 import { toReadableDate } from '../../../utils/functions/dates';
+import CheckChecklistPopup from '../../../components/popup/check-checklist-popup';
 
 const title = ['name', 'company', 'phase', 'action'];
 const contentTitle = [
@@ -32,8 +33,11 @@ const contentTitle = [
 
 export default function ManageProjectIndex() {
   const navigate = useNavigate();
-  const [openDeletePopup, setOpenDeletePopup] = useState(false);
-  const [isReportPopupOpened, setIsReportPopupOpened] = useState(false);
+  const [openedPopup, setOpenedPopup] = useState({
+    deleteProject: false,
+    checkChecklist: false,
+    reportPopup: false
+  });
 
   const { data, refetch } = useQuery('projects', ProjectServices.getProjects);
   const projects =
@@ -45,7 +49,7 @@ export default function ManageProjectIndex() {
       endDate: toReadableDate(project.end_date),
       action: <div className="cursor-pointer">View Report</div>,
     })) || [];
-  console.log(projects);
+    
   const [activeProject, setActiveProject] = useState<Project>(defaultProject);
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
 
@@ -60,7 +64,10 @@ export default function ManageProjectIndex() {
             .length
         )
           return;
-        setOpenDeletePopup(true);
+        setOpenedPopup({
+          ...openedPopup,
+          deleteProject: true
+        })
       },
     },
     {
@@ -73,7 +80,10 @@ export default function ManageProjectIndex() {
             .length
         )
           return;
-        setIsReportPopupOpened(true);
+        setOpenedPopup({
+          ...openedPopup,
+          reportPopup: true
+        })
       },
     },
   ];
@@ -113,9 +123,9 @@ export default function ManageProjectIndex() {
       });
       refetch();
       setSelectedProject([]);
-    } catch (e) {}
+    } catch (e) { }
   }
-
+  
   return projects ? (
     <>
       <div className="text-xl font-semibold">Manage Project</div>
@@ -148,6 +158,12 @@ export default function ManageProjectIndex() {
       >
         <div className="flex items-center gap-4">
           <div>
+            <span className='underline cursor-pointer' onClick={() => setOpenedPopup({
+              ...openedPopup,
+              checkChecklist: true
+            })}>Check Checklist</span>
+          </div>
+          <div>
             <Link to={`/projects/${activeProject.id}`} className={'underline'}>
               View Detail
             </Link>
@@ -160,22 +176,35 @@ export default function ManageProjectIndex() {
         </div>
       </SelectedDetail>
       {selectedProject && (
-        <DeletePopup
-          title="Delete Projects"
-          selectedData={selectedProject}
-          onClickFunction={deleteProjects}
-          open={openDeletePopup}
-          setOpen={setOpenDeletePopup}
-        />
-      )}
-      {selectedProject && (
-        <ReportPopup
-          title="Generate Report"
-          selectedData={selectedProject}
-          onClickFunction={generateReport}
-          open={isReportPopupOpened}
-          setOpen={setIsReportPopupOpened}
-        />
+        <>
+          <DeletePopup
+            title="Delete Projects"
+            selectedData={selectedProject}
+            onClickFunction={deleteProjects}
+            open={openedPopup.deleteProject}
+            setOpen={(val: any) => {
+              setOpenedPopup({ ...openedPopup, deleteProject: val });
+            }}
+          />
+          <ReportPopup
+            title="Generate Report"
+            selectedData={selectedProject}
+            onClickFunction={generateReport}
+            open={openedPopup.reportPopup}
+            setOpen={(val: any) => {
+              setOpenedPopup({ ...openedPopup, reportPopup: val });
+            }}
+          />
+          <CheckChecklistPopup
+            title="Checked Checklist"
+            selectedData={activeProject}
+            onClickFunction={deleteProjects}
+            open={openedPopup.checkChecklist}
+            setOpen={(val: any) => {
+              setOpenedPopup({ ...openedPopup, checkChecklist: val });
+            }}
+          />
+        </>
       )}
     </>
   ) : (

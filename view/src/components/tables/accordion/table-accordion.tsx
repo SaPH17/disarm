@@ -1,11 +1,13 @@
 import { toPascalCase } from '../../../utils/functions/capitalize';
 import Accordion from './accordion';
+import ClassGeneratorElement from './class-generator-element';
 
 export type TableData = {
   title: string[];
   content: object[];
   setContent: React.Dispatch<React.SetStateAction<any[]>>;
   isEditable?: boolean;
+  isCheckable?: boolean;
 };
 
 /*
@@ -17,17 +19,17 @@ export default function TableAccordion({
   content,
   setContent,
   isEditable = false,
+  isCheckable = false
 }: TableData) {
   return (
     <div className="flex flex-col mb-4 overflow-hidden border-gray-200 rounded-sm shadow">
-      <div className="hidden grid-cols-8"></div>
+      <ClassGeneratorElement />
       <div className="hidden grid-cols-9">
         <div className="hidden col-span-9"></div>
       </div>
       <div
-        className={`bg-white p-3 pl-5 items-center inline-grid grid-cols-${
-          title.length * 2 + (isEditable ? 1 : 0)
-        }`}
+        className={`hidden bg-white p-3 pl-5 items-center sm:inline-grid grid-cols-${title.length * 2 + ((isEditable || isCheckable) ? 1 : 0)
+          }`}
       >
         {title.map((t, idx) => {
           return (
@@ -36,7 +38,9 @@ export default function TableAccordion({
             </div>
           );
         })}
-        <div></div>
+        {
+          isCheckable && <div></div>
+        }
       </div>
       <div className="bg-gray-50">
         {content.map((c, contentIndex) => {
@@ -44,6 +48,7 @@ export default function TableAccordion({
             <Accordion
               key={contentIndex}
               isEditable={isEditable}
+              isCheckable={isCheckable}
               accordionTitle={(c as any).name}
               headers={title}
               index={contentIndex}

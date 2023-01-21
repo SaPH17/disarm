@@ -4,11 +4,13 @@ import { defaultChecklistAccordion } from '../../../data/default-values';
 import { toPascalCase } from '../../../utils/functions/capitalize';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
+import SecondaryButton from '../../secondary-button';
 
 export type AccordionData = {
   accordionTitle: string;
   headers: string[];
   isEditable: boolean;
+  isCheckable: boolean;
   index: number;
   content: any;
   setContent: React.Dispatch<React.SetStateAction<any[]>>;
@@ -19,6 +21,7 @@ const Accordion = ({
   headers,
   content,
   isEditable,
+  isCheckable,
   index,
   setContent,
 }: AccordionData) => {
@@ -62,6 +65,7 @@ const Accordion = ({
   }
 
   return (
+
     <div className={`relative overflow-hidden`}>
       <input
         type="checkbox"
@@ -83,17 +87,16 @@ const Accordion = ({
               <div
                 key={contentIndex}
                 className={
-                  'bg-white p-3 pl-5 items-center sm:items-start border-gray-200 border-b inline-grid grid-cols-' +
-                  (headers.length * 2 + (isEditable ? 1 : 0))
+                  'bg-white p-3 items-center sm:items-start border-gray-200 border-b inline-grid grid-cols-' +
+                  (headers.length * 2 + ((isEditable || isCheckable) ? 1 : 0))
                 }
               >
                 {headers.map((h: any, idx: number) => {
                   return (
                     <div
                       key={idx}
-                      className={`col-span-${
-                        headers.length * 2 + (isEditable ? 1 : 0)
-                      } sm:col-span-2 mb-auto`}
+                      className={`col-span-${headers.length * 2 + ((isEditable || isCheckable) ? 1 : 0)
+                        } sm:col-span-2 mb-auto`}
                     >
                       {contentRow.isEdited ? (
                         <div className="px-1 py-2 sm:py-0">
@@ -121,11 +124,11 @@ const Accordion = ({
                         </div>
                       ) : (
                         <div className="grid grid-cols-4 gap-1">
-                          <div className="flex justify-between font-medium sm:hidden">
+                          <div className="flex justify-between gap-1 font-medium sm:hidden">
                             <span>{toPascalCase(h)}</span>
                             <span>:</span>
                           </div>
-                          <div className="col-span-3 sm:col-span-1">
+                          <div className="col-span-3 sm:col-span-4 sm:px-2">
                             {(contentRow as any)[h]}
                           </div>
                         </div>
@@ -135,14 +138,12 @@ const Accordion = ({
                 })}
                 {isEditable && (
                   <div
-                    className={`col-span-${
-                      headers.length * 2 + (isEditable ? 1 : 0)
-                    } sm:col-span-1`}
+                    className={`col-span-${headers.length * 2 + (isEditable ? 1 : 0)
+                      } sm:col-span-1`}
                   >
                     <div
-                      className={`flex justify-center w-full text-gray-500 cursor-pointer pt-${
-                        contentRow.isEdited ? '2.5' : '1'
-                      } hover:text-gray-700`}
+                      className={`flex justify-center w-full text-gray-500 cursor-pointer mt-${contentRow.isEdited ? '2.5' : '1'
+                        } hover:text-gray-700`}
                     >
                       <div className="hidden sm:block">
                         {contentRow.isEdited ? (
@@ -159,15 +160,51 @@ const Accordion = ({
                         )}
                       </div>
                       <div className="flex-1 block sm:hidden">
-                        <PrimaryButton
-                          type="submit"
-                          classNames="w-full"
-                          content="Save"
-                        />
+                        {contentRow.isEdited ? (
+                          <PrimaryButton
+                            type="submit"
+                            classNames="w-full mt-2"
+                            content="Save Row"
+                          />) : <SecondaryButton
+                          onClick={() => deleteDataFromRow(contentIndex)}
+                          classNames="w-full mt-2"
+                          content="Delete Row"
+                        />}
                       </div>
                     </div>
                   </div>
                 )}
+                                {
+                  isCheckable && <div
+                    className={`col-span-${headers.length * 2 + (isCheckable ? 1 : 0)
+                      } sm:col-span-1`}
+                  >
+                    <div
+                      className={`flex justify-center w-full text-gray-500 cursor-pointer mt-${contentRow.isEdited ? '2.5' : '1'
+                        } hover:text-gray-700 sm:-mr-2`}
+                    >
+                      <div className="hidden sm:block">
+                        <input
+                          type="checkbox"
+                          // onChange={(e) => {
+                          //   handleCheck(e, `check-${contentIndex}`, c);
+                          // }}
+                          // checked={checkedList.includes(
+                          //   `check-${contentIndex}`
+                          // )}
+                          className="flex w-4 h-4 mx-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                      </div>
+                      <div className="flex-1 block sm:hidden">
+                        <PrimaryButton
+                          type="submit"
+                          classNames="w-full mt-2"
+                          content="Save Row"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                }
               </div>
             );
           }

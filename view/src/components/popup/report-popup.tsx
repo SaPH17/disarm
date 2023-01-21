@@ -79,8 +79,7 @@ export default function ReportPopup({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Are you sure you want to generate report for these
-                      {selectedData.length} project(s)?
+                      Are you sure you want to generate report for these {selectedData.length} project(s)?
                     </p>
                   </div>
                 </div>
