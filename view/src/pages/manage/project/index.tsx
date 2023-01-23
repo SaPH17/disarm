@@ -34,7 +34,7 @@ const contentTitle = [
   'endDate',
   'projectPercentage',
 ];
-const REPORT_URL_PREFIX = 'http://localhost:8000/reports';
+export const REPORT_URL_PREFIX = 'http://localhost:8000/reports';
 
 function parseChecklistData(data: any) {
   try {

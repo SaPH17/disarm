@@ -7,7 +7,11 @@ import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { toReadableDate } from '../../../utils/functions/dates';
 import Breadcrumbs from '../../../components/breadcrumbs';
-import { getChecklistPercentage } from '.';
+import { REPORT_URL_PREFIX, getChecklistPercentage } from '.';
+import { useState } from 'react';
+import ReportPopup from '../../../components/popup/report.popup';
+import { DocumentIcon } from '@heroicons/react/outline';
+import CheckChecklistPopup from '../../../components/popup/check-checklist-popup';
 
 const title = [
   'findingId',
@@ -32,9 +36,13 @@ const contentTitle = [
 export default function ManageProjectShow() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data } = useQuery(`project/${id}`, () =>
+  const { data, refetch } = useQuery(`project/${id}`, () =>
     ProjectServices.getOneProject(id)
   );
+  const [openedModal, setOpenedModal] = useState<any>({
+    reports: false,
+    checkChecklist: false,
+  });
   const project = data
     ? {
         ...data,
@@ -54,6 +62,20 @@ export default function ManageProjectShow() {
               action: <div className="cursor-pointer">View</div>,
             };
           }) || [],
+        reports: data.Reports?.map((report: any) => ({
+          ...report,
+          dateCreated: toReadableDate(report.created_at),
+          action: (
+            <a
+              target="_blank"
+              href={`${REPORT_URL_PREFIX}/${report.file}`}
+              className="cursor-pointer select-none"
+              rel="noreferrer"
+            >
+              View Report
+            </a>
+          ),
+        })),
         projectPercentage: getChecklistPercentage(data),
       }
     : {};
@@ -68,6 +90,10 @@ export default function ManageProjectShow() {
       url: `/projects/${project?.id}/`,
     },
   ];
+
+  async function callFetchData() {
+    await refetch();
+  }
 
   return project ? (
     <>
@@ -88,10 +114,28 @@ export default function ManageProjectShow() {
           <PrimaryButton content="Insert Finding" />
         </Link>
         <button
+          onClick={() =>
+            setOpenedModal({
+              ...openedModal,
+              checkChecklist: true,
+            })
+          }
           type="button"
           className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          Download Report
+          Check Checklist
+        </button>
+        <button
+          onClick={() =>
+            setOpenedModal({
+              ...openedModal,
+              reports: true,
+            })
+          }
+          type="button"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          View Report
         </button>
       </div>
       <div className="flex flex-col gap-2 p-2 bg-gray-100 border-4 border-dashed rounded sm:gap-4 sm:p-4 ">
@@ -105,6 +149,33 @@ export default function ManageProjectShow() {
           isClickable={true}
         />
       </div>
+      <CheckChecklistPopup
+        selectedData={project}
+        open={openedModal.checkChecklist}
+        fetchData={callFetchData}
+        setOpen={(val: any) => {
+          setOpenedModal({ ...openedModal, checkChecklist: val });
+        }}
+      />
+      {project && (
+        <ReportPopup
+          icon={
+            <DocumentIcon
+              className="w-6 h-6 text-green-600"
+              aria-hidden="true"
+            />
+          }
+          title="Project Reports"
+          availableData={project.reports || []}
+          open={openedModal.reports}
+          setOpen={(val: any) =>
+            setOpenedModal({
+              ...openedModal,
+              reports: val,
+            })
+          }
+        />
+      )}
     </>
   ) : (
     <></>
