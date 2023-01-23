@@ -115,6 +115,7 @@ func main() {
 		permission := apiWithJWT.Group("/permissions")
 		{
 			permission.GET("/", controllers.GetAllPermission)
+			permission.GET("/refresh-permissions", controllers.RefreshPermission)
 		}
 
 		report := apiWithJWT.Group("/reports")

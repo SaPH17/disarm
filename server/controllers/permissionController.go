@@ -98,3 +98,87 @@ func DeletePermission(actionTypes []string, objectType string, objectId uuid.UUI
 
 	return nil
 }
+
+func RefreshPermission(c *gin.Context) {
+	permissions, _ := models.Permissions.GetAll()
+	database.DB.Get().Delete(permissions)
+
+	var types []models.PermissionObjectType
+	database.DB.Get().Find(&types)
+
+	var actions []models.PermissionAction
+	database.DB.Get().Find(&actions)
+
+	users, _ := models.Users.GetAll()
+	projects, _ := models.Projects.GetAll()
+	groups, _ := models.Groups.GetAll()
+	checklists, _ := models.Checklists.GetAll()
+	findings, _ := models.Findings.GetAll()
+
+	var data []models.Permission
+
+	for _, action := range actions {
+		for _, pType := range types {
+			if pType.Name == "report" {
+				continue
+			}
+
+			if pType.Name == "group" && (existInArray(GROUP_ACTION_TYPE, action.Name) || action.Name == "create") {
+				data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: "*"})
+			} else if pType.Name == "project" && (existInArray(PROJECT_ACTION_TYPES, action.Name) || action.Name == "create") {
+				data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: "*"})
+			} else if pType.Name == "user" && (existInArray(USER_ACTION_TYPE, action.Name) || action.Name == "create") {
+				data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: "*"})
+			} else if pType.Name == "checklist" && (existInArray(CHECKLIST_ACTION_TYPE, action.Name) || action.Name == "create") {
+				data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: "*"})
+			} else if pType.Name == "finding" && (existInArray(CHECKLIST_ACTION_TYPE, action.Name) || action.Name == "create") {
+				data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: "*"})
+			}
+
+			for _, user := range users {
+				if pType.Name == "user" && existInArray(USER_ACTION_TYPE, action.Name) {
+					data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: user.ID.String()})
+				}
+			}
+
+			for _, group := range groups {
+				if pType.Name == "group" && existInArray(GROUP_ACTION_TYPE, action.Name) {
+					data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: group.ID.String()})
+				}
+			}
+
+			for _, project := range projects {
+				if pType.Name == "project" && existInArray(PROJECT_ACTION_TYPES, action.Name) {
+					data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: project.ID.String()})
+				}
+				if pType.Name == "finding" && existInArray(PROJECT_FINDING_ACTION_TYPES, action.Name) {
+					data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: project.ID.String()})
+				}
+			}
+
+			for _, checklist := range checklists {
+				if pType.Name == "checklist" && existInArray(CHECKLIST_ACTION_TYPE, action.Name) {
+					data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: checklist.ID.String()})
+				}
+			}
+
+			for _, finding := range findings {
+				if pType.Name == "finding" && existInArray(FINDING_ACTION_TYPES, action.Name) {
+					data = append(data, models.Permission{PermissionActionId: action.ID, ObjectTypeId: pType.ID, ObjectId: finding.ID.String()})
+				}
+			}
+		}
+	}
+
+	database.DB.Get().Create(data)
+}
+
+func existInArray(hay []string, needle string) bool {
+	for _, e := range hay {
+		if e == needle {
+			return true
+		}
+	}
+
+	return false
+}
