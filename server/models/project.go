@@ -17,6 +17,7 @@ type Project struct {
 	StartDate   time.Time `gorm:"type:time;" json:"start_date"`
 	EndDate     time.Time `gorm:"type:time;" json:"end_date"`
 	ChecklistId uuid.UUID `gorm:"type:uuid;" json:"checklist_id"`
+	Sections    string    `gorm:"size:65535;" json:"sections"`
 	Checklist   Checklist
 	Reports     []Report
 	Findings    []Finding
@@ -31,6 +32,7 @@ type ProjectOrm interface {
 	GetAll() ([]Project, error)
 	GetOneById(id uuid.UUID) (Project, error)
 	Edit(id uuid.UUID, name string, company string, phase string, startDate time.Time, endDate time.Time) (Project, error)
+	EditSection(id uuid.UUID, sections string) (Project, error)
 	Delete(ids []uuid.UUID) (bool, error)
 }
 
@@ -50,7 +52,7 @@ func (o *projectOrm) Create(name string, company string, phase string, startDate
 
 func (o *projectOrm) GetAll() ([]Project, error) {
 	var projects []Project
-	result := o.instance.Preload("Checklist").Preload("Findings").Find(&projects)
+	result := o.instance.Preload("Checklist").Preload("Findings").Order("name ASC").Find(&projects)
 
 	return projects, result.Error
 }
@@ -70,6 +72,15 @@ func (o *projectOrm) Edit(id uuid.UUID, name string, company string, phase strin
 	project.Phase = phase
 	project.StartDate = startDate
 	project.EndDate = endDate
+	o.instance.Save(project)
+
+	return project, err
+}
+
+func (o *projectOrm) EditSection(id uuid.UUID, sections string) (Project, error) {
+	var project Project
+	err := o.instance.Model(Project{}).Where("id = ?", id).Take(&project).Error
+	project.Sections = sections
 	o.instance.Save(project)
 
 	return project, err
