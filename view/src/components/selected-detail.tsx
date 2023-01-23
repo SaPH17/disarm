@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 export type SelectedDetailData = {
   title: string;
   contentTitle: string[];
@@ -17,15 +19,15 @@ export default function SelectedDetail({
   children = '',
 }: SelectedDetailData) {
   return (
-    <div className="flex flex-col sm:gap-2 rounded divide-y-1 bg-white text-sm shadow">
-      <div className="flex flex-row justify-between items-center px-2 sm:px-4 p-2 sm:p-4 bg-gray-50">
-        <div className="text-md font-semibold">{title}</div>
+    <div className="flex flex-col text-sm bg-white rounded shadow sm:gap-2 divide-y-1">
+      <div className="flex flex-row items-center justify-between p-2 px-2 sm:px-4 sm:p-4 bg-gray-50">
+        <div className="font-semibold text-md">{title}</div>
         {content.id === '-' ? <div></div> : children}
       </div>
-      <div className="px-2 pb-4 grid grid-cols-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 px-2 pb-4 sm:grid-cols-3">
         {contentTitle.map((ct) => {
           return (
-            <div key={ct} className="col-span-1 flex flex-col p-2 sm:p-4">
+            <div key={ct} className="flex flex-col col-span-1 p-2 sm:p-4">
               <div className="font-semibold">{toPascalCase(ct)}</div>
               <div>{(content as any)[ct]}</div>
             </div>

@@ -5,6 +5,7 @@ import PrimaryButton from '../../../components/primary-button';
 import ProjectServices from '../../../services/project-services';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
+import { getChecklistPercentage } from '.';
 
 const title = [
   'findingId',
@@ -14,7 +15,7 @@ const title = [
   'status',
   'action',
 ];
-const contentTitle = ['id', 'name', 'company', 'checklist', 'phase'];
+const contentTitle = ['id', 'name', 'company', 'checklist', 'phase', 'projectPercentage'];
 
 export default function ManageProjectShow() {
   const { id } = useParams();
@@ -38,6 +39,7 @@ export default function ManageProjectShow() {
               action: <div className="cursor-pointer">View</div>,
             };
           }) || [],
+        projectPercentage: getChecklistPercentage(data)
       }
     : [];
 

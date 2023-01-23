@@ -12,4 +12,6 @@ export type Project = GeneralData & {
   created_at: Date | string;
   updated_at: Date | string;
   Findings?: any[];
+  projectPercentage?: number | string;
+  sections: string;
 };

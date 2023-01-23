@@ -15,6 +15,7 @@ export type CheckChecklistPopupData = {
   selectedData: any;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchData: Function;
 };
 
 const tableTitle = ['id', 'detail', 'tool', 'procedure'];
@@ -23,6 +24,7 @@ export default function CheckChecklistPopup({
   selectedData,
   open,
   setOpen,
+  fetchData
 }: CheckChecklistPopupData) {
   const cancelButtonRef = useRef(null);
 
@@ -62,6 +64,7 @@ export default function CheckChecklistPopup({
           },
         }
       );
+      fetchData();
     } catch (e) {}
   }
 
