@@ -15,8 +15,11 @@ import { useQuery } from 'react-query';
 import DeletePopup from '../../../components/popup/delete-popup';
 import { toast } from 'react-toastify';
 import { DeleteProjectsHandler } from '../../../handlers/project/delete-project-handler';
-import ReportPopup from '../../../components/popup/report-popup';
+import GenerateReportPopup from '../../../components/popup/generate-report-popup';
 import { toReadableDate } from '../../../utils/functions/dates';
+import ReportPopup from '../../../components/popup/report.popup';
+import { DocumentIcon } from '@heroicons/react/outline';
+import { GenerateReportHandler } from '../../../handlers/report/generate-report-handler';
 
 const title = ['name', 'company', 'phase', 'action'];
 const contentTitle = [
@@ -29,13 +32,28 @@ const contentTitle = [
   'startDate',
   'endDate',
 ];
+const REPORT_URL_PREFIX = 'http://localhost:8000/reports';
 
 export default function ManageProjectIndex() {
   const navigate = useNavigate();
-  const [openDeletePopup, setOpenDeletePopup] = useState(false);
-  const [isReportPopupOpened, setIsReportPopupOpened] = useState(false);
+  const [openedModal, setOpenedModal] = useState<any>({
+    delete: false,
+    generateReport: false,
+    reports: false,
+  });
 
   const { data, refetch } = useQuery('projects', ProjectServices.getProjects);
+  const projectActionButton = (
+    <div
+      className="cursor-pointer"
+      onClick={() => {
+        setOpenedModal({ ...openedModal, reports: true });
+      }}
+    >
+      View Report
+    </div>
+  );
+
   const projects =
     data?.map((project: Project) => ({
       ...project,
@@ -43,9 +61,22 @@ export default function ManageProjectIndex() {
       totalFinding: project.Findings?.length || 0,
       startDate: toReadableDate(project.start_date),
       endDate: toReadableDate(project.end_date),
-      action: <div className="cursor-pointer">View Report</div>,
+      reports: project.Reports?.map((report) => ({
+        ...report,
+        dateCreated: toReadableDate(report.created_at),
+        action: (
+          <a
+            target="_blank"
+            href={`${REPORT_URL_PREFIX}/${report.file}`}
+            className="cursor-pointer select-none"
+            rel="noreferrer"
+          >
+            View Report
+          </a>
+        ),
+      })),
+      action: projectActionButton,
     })) || [];
-  console.log(projects);
   const [activeProject, setActiveProject] = useState<Project>(defaultProject);
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
 
@@ -60,7 +91,10 @@ export default function ManageProjectIndex() {
             .length
         )
           return;
-        setOpenDeletePopup(true);
+        setOpenedModal({
+          ...openedModal,
+          delete: true,
+        });
       },
     },
     {
@@ -73,29 +107,32 @@ export default function ManageProjectIndex() {
             .length
         )
           return;
-        setIsReportPopupOpened(true);
+        setOpenedModal({
+          ...openedModal,
+          generateReport: true,
+        });
       },
     },
   ];
 
   function generateReport() {
     if (!selectedProject) return;
-    const ids = selectedProject.map((project: Project) => project.id);
-    console.log(ids);
-    //logic
-    // try {
-    //   toast.promise(DeleteProjectsHandler.handleDeleteProjectSubmit(ids), {
-    //     success: `Successfully deleted ${ids.length} project(s)!`,
-    //     pending: `Deleting ${ids.length} project(s)!`,
-    //     error: {
-    //       render({ data }: any) {
-    //         return data.message;
-    //       },
-    //     },
-    //   });
-    //   refetch();
-    //   setSelectedProject([]);
-    // } catch (e) {}
+    selectedProject.forEach((project: Project) => {
+      try {
+        const id = project.id;
+        toast.promise(GenerateReportHandler.handleGenerateReport(id), {
+          success: `Report generated for ${project.name}`,
+          pending: `Generating report for ${project.name}`,
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
+          },
+        });
+      } catch (e) {}
+    });
+    refetch();
+    setSelectedProject([]);
   }
 
   function deleteProjects() {
@@ -164,17 +201,46 @@ export default function ManageProjectIndex() {
           title="Delete Projects"
           selectedData={selectedProject}
           onClickFunction={deleteProjects}
-          open={openDeletePopup}
-          setOpen={setOpenDeletePopup}
+          open={openedModal.delete}
+          setOpen={(val) =>
+            setOpenedModal({
+              ...openedModal,
+              delete: val,
+            })
+          }
+        />
+      )}
+      {selectedProject && (
+        <GenerateReportPopup
+          title="Generate Report"
+          selectedData={selectedProject}
+          onClickFunction={generateReport}
+          open={openedModal.generateReport}
+          setOpen={(val) =>
+            setOpenedModal({
+              ...openedModal,
+              generateReport: val,
+            })
+          }
         />
       )}
       {selectedProject && (
         <ReportPopup
-          title="Generate Report"
-          selectedData={selectedProject}
-          onClickFunction={generateReport}
-          open={isReportPopupOpened}
-          setOpen={setIsReportPopupOpened}
+          icon={
+            <DocumentIcon
+              className="w-6 h-6 text-green-600"
+              aria-hidden="true"
+            />
+          }
+          title="Project Reports"
+          availableData={activeProject.reports || []}
+          open={openedModal.reports}
+          setOpen={(val: any) =>
+            setOpenedModal({
+              ...openedModal,
+              reports: val,
+            })
+          }
         />
       )}
     </>

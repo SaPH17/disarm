@@ -9,7 +9,7 @@ import (
 
 type Report struct {
 	Base
-	File      string    `gorm:"size:255;not null;" json:"endpoint"`
+	File      string    `gorm:"size:255;not null;" json:"file"`
 	ProjectId uuid.UUID `gorm:"type:uuid;" json:"project_id"`
 	Project   Project
 }

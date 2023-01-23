@@ -33,7 +33,7 @@ export default function Login() {
       } else {
         setAuth(authData);
         toast.success('Successfully Login');
-        navigate('/users');
+        navigate('/');
       }
     } catch (e: any) {
       toast(e.response.data.error, { type: 'error' });

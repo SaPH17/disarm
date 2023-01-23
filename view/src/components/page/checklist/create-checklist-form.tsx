@@ -72,7 +72,7 @@ const CreateChecklistForm = () => {
     const search = (searchRef.current! as any).value;
     if (!search) return;
     const newSection = sections.filter(
-      (section) => !section.name.toLowerCase().includes(search.toLowerCase())
+      (section) => section.name.toLowerCase() !== search.toLowerCase()
     );
     setSections(newSection);
   }

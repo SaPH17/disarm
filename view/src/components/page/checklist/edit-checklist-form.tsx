@@ -3,15 +3,12 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { EditChecklistHandler } from '../../../handlers/checklist/edit-checklist-handler';
-import { Checklist } from '../../../models/checklist';
 import { ChecklistFormData } from '../../../models/forms/checklist-form-data';
 import ChecklistServices from '../../../services/checklist-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import TableAccordion from '../../tables/accordion/table-accordion';
 import SelectBox from '../../select-box';
-import SelectPopup from '../../popup/select-popup';
 import ConfirmPopup from '../../popup/confirmation-popup';
 import { CreateChecklistHandler } from '../../../handlers/checklist/create-checklist-handler';
 
@@ -100,7 +97,7 @@ const EditChecklistForm = () => {
     const search = (searchRef.current! as any).value;
     if (!search) return;
     const newSection = sections.filter(
-      (section) => !section.name.toLowerCase().includes(search.toLowerCase())
+      (section) => section.name.toLowerCase() !== search.toLowerCase()
     );
     setSections(newSection);
   }
@@ -154,7 +151,7 @@ const EditChecklistForm = () => {
                   required: watchIsSubmit ? 'Name is required.' : false,
                   validate: (name) => {
                     if (!watchIsSubmit) {
-                      return false;
+                      return true;
                     }
 
                     return name === checklist.name

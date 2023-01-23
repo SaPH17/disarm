@@ -2,25 +2,25 @@ import { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationIcon } from '@heroicons/react/outline';
 
-export type SelectedReportPopupData = {
+export type SelectedGeneratedReportPopupData = {
   id: string | number;
 };
 
-export type ReportPopupData = {
+export type GenerateReportPopupData = {
   title: string;
-  selectedData: SelectedReportPopupData[];
+  selectedData: SelectedGeneratedReportPopupData[];
   onClickFunction: Function;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ReportPopup({
+export default function GenerateReportPopup({
   title,
   selectedData,
   onClickFunction,
   open,
   setOpen,
-}: ReportPopupData) {
+}: GenerateReportPopupData) {
   const cancelButtonRef = useRef(null);
 
   return (
@@ -79,7 +79,7 @@ export default function ReportPopup({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Are you sure you want to generate report for these
+                      Are you sure you want to generate report for these{' '}
                       {selectedData.length} project(s)?
                     </p>
                   </div>

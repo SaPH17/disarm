@@ -5,6 +5,8 @@ import PrimaryButton from '../../../components/primary-button';
 import ProjectServices from '../../../services/project-services';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
+import { toReadableDate } from '../../../utils/functions/dates';
+import Breadcrumbs from '../../../components/breadcrumbs';
 
 const title = [
   'findingId',
@@ -14,7 +16,16 @@ const title = [
   'status',
   'action',
 ];
-const contentTitle = ['id', 'name', 'company', 'checklist', 'phase'];
+const contentTitle = [
+  'id',
+  'name',
+  'company',
+  'checklist',
+  'phase',
+  'totalFinding',
+  'startDate',
+  'endDate',
+];
 
 export default function ManageProjectShow() {
   const { id } = useParams();
@@ -26,6 +37,9 @@ export default function ManageProjectShow() {
     ? {
         ...data,
         checklist: data.Checklist?.name,
+        totalFinding: data.Findings?.length || 0,
+        startDate: toReadableDate(data.start_date),
+        endDate: toReadableDate(data.end_date),
         findings:
           data.Findings?.map((v: any, idx: any) => {
             return {
@@ -39,10 +53,22 @@ export default function ManageProjectShow() {
             };
           }) || [],
       }
-    : [];
+    : {};
+
+  const breadcrumbsPages = [
+    {
+      name: 'Projects',
+      url: '/projects',
+    },
+    {
+      name: `${project?.name || '-'}`,
+      url: `/projects/${project?.id}/`,
+    },
+  ];
 
   return project ? (
     <>
+      <Breadcrumbs pages={breadcrumbsPages}></Breadcrumbs>
       <div className="flex flex-row justify-between">
         <div className="text-xl font-semibold">{project.name}</div>
         <Link to={`/projects/${id}/edit`}>
