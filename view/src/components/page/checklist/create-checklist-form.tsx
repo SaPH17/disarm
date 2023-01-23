@@ -3,23 +3,13 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CreateChecklistHandler } from '../../../handlers/checklist/create-checklist-handler';
+import { SectionType } from '../../../models/checklist/section';
 import { ChecklistFormData } from '../../../models/forms/checklist-form-data';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
+import SecondaryButton from '../../secondary-button';
 import TableAccordion from '../../tables/accordion/table-accordion';
 
-export type SectionDetail = {
-  id: string;
-  detail: string;
-  tool: string;
-  procedure: string;
-  isEdited: boolean;
-};
-
-export type SectionType = {
-  name: string;
-  details: SectionDetail[];
-};
 
 const title = ['id', 'detail', 'tool', 'procedure'];
 
@@ -143,13 +133,11 @@ const CreateChecklistForm = () => {
                 className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Delete section"
               />
-              <button
-                type="button"
+              <SecondaryButton 
+                type='button'
+                content='Delete'
                 onClick={deleteSection}
-                className="inline-flex items-center justify-center h-8 px-4 text-xs font-medium leading-4 text-white bg-blue-600 border border-transparent rounded shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Delete
-              </button>
+              />
             </div>
             <div className="flex justify-end text-sm text-gray-500">
               * Inputted section and its detail will be deleted

@@ -5,25 +5,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { EditChecklistHandler } from '../../../handlers/checklist/edit-checklist-handler';
 import { Checklist } from '../../../models/checklist';
+import { SectionType } from '../../../models/checklist/section';
 import { ChecklistFormData } from '../../../models/forms/checklist-form-data';
 import { User } from '../../../models/user';
 import ChecklistServices from '../../../services/checklist-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import TableAccordion from '../../tables/accordion/table-accordion';
-
-export type SectionDetail = {
-  id: string;
-  detail: string;
-  tool: string;
-  procedure: string;
-  isEdited: boolean;
-};
-
-export type SectionType = {
-  name: string;
-  details: SectionDetail[];
-};
 
 const title = ['id', 'detail', 'tool', 'procedure'];
 
@@ -61,7 +49,7 @@ const ShowChecklistData = () => {
   return (
     checklist && (
       <>
-        <form className="space-y-8 mb-8">
+        <form className="mb-8 space-y-8">
           <div className="space-y-2">
             <div className="pt-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
               <InputText

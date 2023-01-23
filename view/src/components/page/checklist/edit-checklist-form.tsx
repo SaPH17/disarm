@@ -11,19 +11,7 @@ import TableAccordion from '../../tables/accordion/table-accordion';
 import SelectBox from '../../select-box';
 import ConfirmPopup from '../../popup/confirmation-popup';
 import { CreateChecklistHandler } from '../../../handlers/checklist/create-checklist-handler';
-
-export type SectionDetail = {
-  id: string;
-  detail: string;
-  tool: string;
-  procedure: string;
-  isEdited: boolean;
-};
-
-export type SectionType = {
-  name: string;
-  details: SectionDetail[];
-};
+import { SectionType } from '../../../models/checklist/section';
 
 const title = ['id', 'detail', 'tool', 'procedure'];
 

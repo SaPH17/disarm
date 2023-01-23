@@ -198,6 +198,46 @@ func EditProject(c *gin.Context) {
 	})
 }
 
+
+func EditProjectSection(c *gin.Context) {
+	id := c.Param("id")
+	var body struct {
+		Sections string `json:"sections" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	escapedId := html.EscapeString(strings.TrimSpace(id))
+	escapedSections := strings.TrimSpace(body.Sections)
+
+	idUuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUuid.Error(),
+		})
+		return
+	}
+
+	project, dbErr := models.Projects.EditSection(idUuid, escapedSections)
+
+	if dbErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": dbErr.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"project": project,
+	})
+}
+
 func DeleteProject(c *gin.Context) {
 	id := c.Param("id")
 	escapedId := html.EscapeString(strings.TrimSpace(id))

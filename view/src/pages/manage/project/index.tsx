@@ -20,6 +20,7 @@ import { toReadableDate } from '../../../utils/functions/dates';
 import ReportPopup from '../../../components/popup/report.popup';
 import { DocumentIcon } from '@heroicons/react/outline';
 import { GenerateReportHandler } from '../../../handlers/report/generate-report-handler';
+import CheckChecklistPopup from '../../../components/popup/check-checklist-popup';
 
 const title = ['name', 'company', 'phase', 'action'];
 const contentTitle = [
@@ -31,8 +32,29 @@ const contentTitle = [
   'totalFinding',
   'startDate',
   'endDate',
+  'projectPercentage',
 ];
 const REPORT_URL_PREFIX = 'http://localhost:8000/reports';
+
+function parseChecklistData(data: any) {
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    return null;
+  }
+}
+
+export function getChecklistPercentage(project: Project): string {
+  const checklist = parseChecklistData(project.Checklist?.sections || '');
+  const checklistSections = checklist.reduce(
+    (total: number, checklist: any) => total + checklist.details.length,
+    0
+  );
+
+  const sectionsLength =
+    (parseChecklistData(project.sections) || []).length || 0;
+  return (sectionsLength * 100) / checklistSections + '%';
+}
 
 export default function ManageProjectIndex() {
   const navigate = useNavigate();
@@ -40,6 +62,7 @@ export default function ManageProjectIndex() {
     delete: false,
     generateReport: false,
     reports: false,
+    checkChecklist: false,
   });
 
   const { data, refetch } = useQuery('projects', ProjectServices.getProjects);
@@ -77,8 +100,14 @@ export default function ManageProjectIndex() {
       })),
       action: projectActionButton,
     })) || [];
+
   const [activeProject, setActiveProject] = useState<Project>(defaultProject);
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
+
+  async function callFetchData() {
+    await refetch();
+    setActiveProject(defaultProject);
+  }
 
   const items: ActionButtonItem[] = [
     {
@@ -170,7 +199,11 @@ export default function ManageProjectIndex() {
           setSelectedData={setSelectedProject}
           content={projects as object[]}
           onRowClickFunction={(project: Project) => {
-            setActiveProject(project);
+            const percentage = getChecklistPercentage(project);
+            setActiveProject({
+              ...project,
+              projectPercentage: percentage,
+            });
           }}
           onClickFunction={(project: Project) => {
             navigate(`/projects/${project.id}`);
@@ -184,6 +217,19 @@ export default function ManageProjectIndex() {
         content={activeProject}
       >
         <div className="flex items-center gap-4">
+          <div>
+            <span
+              className="underline cursor-pointer"
+              onClick={() =>
+                setOpenedModal({
+                  ...openedModal,
+                  checkChecklist: true,
+                })
+              }
+            >
+              Check Checklist
+            </span>
+          </div>
           <div>
             <Link to={`/projects/${activeProject.id}`} className={'underline'}>
               View Detail
@@ -243,6 +289,14 @@ export default function ManageProjectIndex() {
           }
         />
       )}
+      <CheckChecklistPopup
+        selectedData={activeProject}
+        open={openedModal.checkChecklist}
+        fetchData={callFetchData}
+        setOpen={(val: any) => {
+          setOpenedModal({ ...openedModal, checkChecklist: val });
+        }}
+      />
     </>
   ) : (
     <></>

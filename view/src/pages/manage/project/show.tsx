@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { toReadableDate } from '../../../utils/functions/dates';
 import Breadcrumbs from '../../../components/breadcrumbs';
+import { getChecklistPercentage } from '.';
 
 const title = [
   'findingId',
@@ -25,6 +26,7 @@ const contentTitle = [
   'totalFinding',
   'startDate',
   'endDate',
+  'projectPercentage',
 ];
 
 export default function ManageProjectShow() {
@@ -52,6 +54,7 @@ export default function ManageProjectShow() {
               action: <div className="cursor-pointer">View</div>,
             };
           }) || [],
+        projectPercentage: getChecklistPercentage(data),
       }
     : {};
 

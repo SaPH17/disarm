@@ -39,4 +39,10 @@ export default class ProjectServices {
       withCredentials: true,
     });
   }
+
+  static async updateProjectChecklist(body: object, id: string | number) {
+    return axios.put(`${import.meta.env.VITE_API_URL}/projects/${id}/checklist`, body, {
+      withCredentials: true,
+    });
+  }
 }

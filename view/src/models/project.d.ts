@@ -14,4 +14,6 @@ export type Project = GeneralData & {
   Findings?: any[];
   Reports?: any[];
   reports?: any[];
+  projectPercentage?: number | string;
+  sections: string;
 };
