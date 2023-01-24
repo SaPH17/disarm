@@ -1,27 +1,26 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationIcon } from '@heroicons/react/outline';
 
-export type SelectedDeletePopupData = {
+export type SelectedGeneratedReportPopupData = {
   id: string | number;
 };
 
-export type DeletePopupData = {
+export type GenerateReportPopupData = {
   title: string;
-  selectedData: SelectedDeletePopupData[];
+  selectedData: SelectedGeneratedReportPopupData[];
   onClickFunction: Function;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function DeletePopup({
+export default function GenerateReportPopup({
   title,
   selectedData,
   onClickFunction,
   open,
   setOpen,
-}: DeletePopupData) {
+}: GenerateReportPopupData) {
   const cancelButtonRef = useRef(null);
 
   return (
@@ -80,10 +79,8 @@ export default function DeletePopup({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Are you sure you want to delete these{' '}
-                      {selectedData.length} data? All of your data will be
-                      permanently removed from our servers forever. This action
-                      cannot be undone.
+                      Are you sure you want to generate report for these{' '}
+                      {selectedData.length} project(s)?
                     </p>
                   </div>
                 </div>
@@ -91,13 +88,13 @@ export default function DeletePopup({
               <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
-                  className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => {
                     onClickFunction();
                     setOpen(false);
                   }}
                 >
-                  Delete
+                  Generate
                 </button>
                 <button
                   type="button"

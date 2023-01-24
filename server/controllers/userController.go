@@ -92,7 +92,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission(USER_ACTION_TYPE, "user", user.ID)
+	permissionErr := CreatePermission(USER_ACTION_TYPE, "user", user.ID, user.Username)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,

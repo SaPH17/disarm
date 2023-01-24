@@ -9,12 +9,16 @@ import ProjectServices from '../../../services/project-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import FormErrorMessage from '../../input-text/form-error-message';
 
 export default function EditProjectForm() {
   const PHASE_DATA = [
     { id: '1', name: 'Idle' },
     { id: '2', name: 'On Progress' },
-    { id: '3', name: 'Done' },
+    { id: '3', name: 'Remediation' },
+    { id: '4', name: 'Done' },
   ];
   const params = useParams();
   const navigate = useNavigate();
@@ -24,6 +28,8 @@ export default function EditProjectForm() {
 
   const project = projectData || undefined;
   const [selectedPhase, setSelectedPhase] = useState<any>(undefined);
+  const [startDate, setStartDate] = useState<any>(null);
+  const [endDate, setEndDate] = useState<any>(null);
 
   const {
     register,
@@ -37,15 +43,16 @@ export default function EditProjectForm() {
     if (!project) return;
     reset(project);
     setSelectedPhase(PHASE_DATA.find((v) => v.name === project?.phase));
+    setStartDate(Date.parse(project.start_date));
+    setValue('startDate', Date.parse(project.start_date));
+    setEndDate(Date.parse(project.end_date));
+    setValue('endDate', Date.parse(project.end_date));
   }, [projectData]);
 
   async function handleUpdateProjectButton(data: ProjectFormData) {
     try {
       await toast.promise(
-        UpdateProjectHandler.handleUpdateProjectFormSubmit(
-          { ...data } as ProjectFormData,
-          project.id
-        ),
+        UpdateProjectHandler.handleUpdateProjectFormSubmit(data, project.id),
         {
           success: 'Successfully updated project',
           pending: 'Updating project',
@@ -56,7 +63,7 @@ export default function EditProjectForm() {
           },
         }
       );
-      navigate('/projects');
+      // navigate('/projects');
     } catch (e) {}
   }
 
@@ -90,6 +97,75 @@ export default function EditProjectForm() {
               required: 'Company name is required.',
             })}
           />
+        </div>
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Start Date
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <DatePicker
+                  placeholderText="Start Date"
+                  selected={startDate}
+                  customInput={
+                    <input
+                      {...register('startDate', {
+                        required: 'Start Date is required.',
+                      })}
+                      placeholder={'Start Date'}
+                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                    />
+                  }
+                  onChange={(date: any) => {
+                    setValue('startDate', date);
+                    setStartDate(date);
+                  }}
+                />
+                {errors && (
+                  <FormErrorMessage name={'startDate'} errors={errors} />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Estimated End Date
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <DatePicker
+                  placeholderText="End Date"
+                  selected={endDate}
+                  customInput={
+                    <input
+                      {...register('endDate', {
+                        required: 'End Date is required.',
+                      })}
+                      placeholder={'Estimated End Date'}
+                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                    />
+                  }
+                  onChange={(date: any) => {
+                    setValue('endDate', date);
+                    setEndDate(date);
+                  }}
+                />
+                {errors && (
+                  <FormErrorMessage name={'endDate'} errors={errors} />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">

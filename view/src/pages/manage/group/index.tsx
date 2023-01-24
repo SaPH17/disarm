@@ -17,7 +17,7 @@ import { jsonToPermissionArray } from '../../../utils/functions/jsonConverter';
 
 const title = ['name', 'description'];
 
-const contentTitle = ['name', 'description', 'permissions'];
+const contentTitle = ['id', 'name', 'description', 'permissions'];
 
 export default function ManageGroupIndex() {
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
@@ -43,11 +43,11 @@ export default function ManageGroupIndex() {
       const slicedArr = permissionArr.slice(0, 3);
 
       const lists = slicedArr.map((val) => {
-        return <li key={val}>{val}</li>;
+        return <li key={`${r.id}-permissions-${val}`}>{val}</li>;
       });
       if (permissionArr.length > 3) {
         lists.push(
-          <li>
+          <li key={`${r.id}-permissions-viewmore`}>
             <Link
               to={`/groups/${r.id}/edit-permission`}
               className={'underline'}

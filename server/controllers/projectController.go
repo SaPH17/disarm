@@ -6,6 +6,7 @@ import (
 	"html"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -19,6 +20,8 @@ func CreateProject(c *gin.Context) {
 		Name        string `json:"name" binding:"required"`
 		Company     string `json:"company" binding:"required"`
 		Phase       string `json:"phase"`
+		StartDate   string `json:"start_date" binding:"required"`
+		EndDate     string `json:"end_date" binding:"required"`
 		ChecklistId string `json:"checklist" binding:"required"`
 	}
 
@@ -32,6 +35,8 @@ func CreateProject(c *gin.Context) {
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
 	escapedCompany := html.EscapeString(strings.TrimSpace(body.Company))
 	escapedPhase := html.EscapeString(strings.TrimSpace(body.Phase))
+	// escapedStartDate := html.EscapeString(strings.TrimSpace(body.StartDate))
+	// escapedEndDate := html.EscapeString(strings.TrimSpace(body.EndDate))
 	escapedChecklistId := html.EscapeString(strings.TrimSpace(body.ChecklistId))
 	checklistUuid, errUuid := uuid.FromString(escapedChecklistId)
 
@@ -45,7 +50,24 @@ func CreateProject(c *gin.Context) {
 		})
 		return
 	}
-	project, dbErr := models.Projects.Create(escapedName, escapedCompany, escapedPhase, checklistUuid)
+
+	startDate, sErr := time.Parse("2006-01-02", body.StartDate)
+	if sErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": sErr.Error(),
+		})
+		return
+	}
+
+	endDate, eErr := time.Parse("2006-01-02", body.EndDate)
+	if eErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": eErr.Error(),
+		})
+		return
+	}
+
+	project, dbErr := models.Projects.Create(escapedName, escapedCompany, escapedPhase, startDate, endDate, checklistUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -54,7 +76,7 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission(PROJECT_ACTION_TYPES, "project", project.ID)
+	permissionErr := CreatePermission(PROJECT_ACTION_TYPES, "project", project.ID, project.Name)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,
@@ -62,7 +84,7 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	findingPermissionErr := CreatePermission(PROJECT_FINDING_ACTION_TYPES, "finding", project.ID)
+	findingPermissionErr := CreatePermission(PROJECT_FINDING_ACTION_TYPES, "finding", project.ID, project.Name)
 	if findingPermissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": findingPermissionErr,
@@ -159,9 +181,11 @@ func GetProjectById(c *gin.Context) {
 func EditProject(c *gin.Context) {
 	id := c.Param("id")
 	var body struct {
-		Name    string `json:"name" binding:"required"`
-		Company string `json:"company" binding:"required"`
-		Phase   string `json:"phase" binding:"required"`
+		Name      string `json:"name" binding:"required"`
+		Company   string `json:"company" binding:"required"`
+		Phase     string `json:"phase" binding:"required"`
+		StartDate string `json:"start_date" binding:"required"`
+		EndDate   string `json:"end_date" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -185,7 +209,62 @@ func EditProject(c *gin.Context) {
 		return
 	}
 
-	project, dbErr := models.Projects.Edit(idUuid, escapedName, escapedCompany, escapedPhase)
+	startDate, sErr := time.Parse("2006-01-02", body.StartDate)
+	if sErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": sErr.Error(),
+		})
+		return
+	}
+
+	endDate, eErr := time.Parse("2006-01-02", body.EndDate)
+	if eErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": eErr.Error(),
+		})
+		return
+	}
+
+	project, dbErr := models.Projects.Edit(idUuid, escapedName, escapedCompany, escapedPhase, startDate, endDate)
+
+	if dbErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": dbErr.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"project": project,
+	})
+}
+
+func EditProjectSection(c *gin.Context) {
+	id := c.Param("id")
+	var body struct {
+		Sections string `json:"sections" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	escapedId := html.EscapeString(strings.TrimSpace(id))
+	escapedSections := strings.TrimSpace(body.Sections)
+
+	idUuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUuid.Error(),
+		})
+		return
+	}
+
+	project, dbErr := models.Projects.EditSection(idUuid, escapedSections)
 
 	if dbErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

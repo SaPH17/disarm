@@ -10,8 +10,15 @@ import ChecklistServices from '../../../services/checklist-services';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SelectBox from '../../select-box';
+import { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import FormErrorMessage from '../../input-text/form-error-message';
 
 export default function CreateProjectForm() {
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
   const navigate = useNavigate();
   const { data: checklistsData } = useQuery(
     'standards',
@@ -83,6 +90,76 @@ export default function CreateProjectForm() {
               required: 'Company name is required.',
             })}
           />
+        </div>
+
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Start Date
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <DatePicker
+                  placeholderText="Start Date"
+                  selected={startDate}
+                  customInput={
+                    <input
+                      {...register('startDate', {
+                        required: 'Start Date is required.',
+                      })}
+                      placeholder={'Start Date'}
+                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                    />
+                  }
+                  onChange={(date: any) => {
+                    setValue('startDate', date);
+                    setStartDate(date);
+                  }}
+                />
+                {errors && (
+                  <FormErrorMessage name={'startDate'} errors={errors} />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-gray-200 sm:pt-5">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          >
+            Estimated End Date
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
+            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <DatePicker
+                  placeholderText="End Date"
+                  selected={endDate}
+                  customInput={
+                    <input
+                      {...register('endDate', {
+                        required: 'End Date is required.',
+                      })}
+                      placeholder={'Estimated End Date'}
+                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                    />
+                  }
+                  onChange={(date: any) => {
+                    setValue('endDate', date);
+                    setEndDate(date);
+                  }}
+                />
+                {errors && (
+                  <FormErrorMessage name={'endDate'} errors={errors} />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">

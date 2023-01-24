@@ -18,6 +18,7 @@ import { toReadableDateTime } from '../../../utils/functions/dates';
 const title = ['name', 'lastModified', 'createdBy', 'status'];
 
 const contentTitle = [
+  'id',
   'name',
   'status',
   'createdBy',

@@ -37,7 +37,6 @@ export class GroupHandler {
     const body = {
       name: data.name,
       description: data.description,
-      parent_group_id: data.parentGroup,
       assigned_user: assignedUser,
     };
     try {

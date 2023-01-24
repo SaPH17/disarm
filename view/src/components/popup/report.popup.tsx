@@ -1,37 +1,25 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState } from 'react';
-import SelectBox from '../select-box';
-import GroupCard from '../page/user/group-card';
+import { Fragment } from 'react';
+import Table from '../table';
 
-export type SelectPopupProps = {
+export type ReportPopupProps = {
   icon: any;
   title: string;
   availableData: any;
-  onClickFunction: Function;
+  onRowClickFunction?: Function;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function SelectPopup({
+export default function ReportPopup({
   icon,
   title,
   availableData,
-  onClickFunction,
+  onRowClickFunction = () => {},
   open,
   setOpen,
-}: SelectPopupProps) {
-  const [availableGroups, setAvailableGroups] = useState(availableData);
-  const [selectedGroups, setSelectedGroups] = useState<any[]>([]);
-
-  const appendGroup = (group: any) => {
-    setSelectedGroups([...selectedGroups, group]);
-    setAvailableGroups((v: any) => v.filter((u: any) => u.id !== group.id));
-  };
-
-  const removeGroup = (group: any) => {
-    setAvailableGroups([...availableGroups, group]);
-    setSelectedGroups((v: any) => v.filter((u: any) => u.id !== group.id));
-  };
+}: ReportPopupProps) {
+  const tableTitles = ['id', 'dateCreated', 'action'];
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -70,7 +58,7 @@ export default function SelectPopup({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+            <div className="inline-block bg-white rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full sm:p-6">
               <div>
                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
                   {icon}
@@ -84,49 +72,25 @@ export default function SelectPopup({
                   </Dialog.Title>
                   <div className="mt-4">
                     <div className="text-sm text-gray-500 gap-3 flex flex-col">
-                      <SelectBox
-                        items={availableGroups}
-                        defaultValue={title}
-                        onClickFunction={(item: any) => {
-                          appendGroup(item);
-                        }}
+                      <Table
+                        title={tableTitles}
+                        content={availableData as object[]}
+                        isClickable={false}
+                        onClickFunction={(project: any) => {}}
                       />
-                      {selectedGroups.map((selectedGroup, index) => (
-                        <GroupCard
-                          key={`select-modal-${index}`}
-                          group={selectedGroup}
-                          onClickFunction={(item: any) => {
-                            removeGroup(item);
-                          }}
-                        />
-                      ))}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+              <div className="mt-5 sm:mt-6">
                 <button
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
                   onClick={() => {
                     setOpen(false);
-                    onClickFunction(selectedGroups);
-                    setSelectedGroups([]);
-                    setAvailableGroups(availableData);
                   }}
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                  onClick={() => {
-                    setOpen(false);
-                    setSelectedGroups([]);
-                    setAvailableGroups(availableData);
-                  }}
-                >
-                  Cancel
+                  Done
                 </button>
               </div>
             </div>

@@ -3,7 +3,7 @@ import { Project } from '../models/project';
 import { User } from '../models/user';
 
 export const defaultProject: Project = {
-  id: -1,
+  id: '-',
   name: '-',
   company: '-',
   phase: '-',
@@ -11,10 +11,11 @@ export const defaultProject: Project = {
   description: '-',
   created_at: '-',
   updated_at: '-',
+  projectPercentage: 0
 };
 
 export const defaultGroup: Group = {
-  id: -1,
+  id: '-',
   name: '-',
   description: '-',
   permissions: '-',
@@ -22,7 +23,7 @@ export const defaultGroup: Group = {
 };
 
 export const defaultUser: User = {
-  id: -1,
+  id: '-',
   email: '-',
   username: '-',
   name: '-',
@@ -33,7 +34,7 @@ export const defaultUser: User = {
 };
 
 export const defaultChecklist = {
-  id: -1,
+  id: '-',
   name: '-',
   created_at: '-',
   updated_at: '-',
