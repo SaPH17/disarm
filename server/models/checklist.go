@@ -24,6 +24,7 @@ type ChecklistOrm interface {
 	Create(name string, status string, createdBy uuid.UUID, sections string) (Checklist, error)
 	GetAll() ([]Checklist, error)
 	GetOneById(id uuid.UUID) (Checklist, error)
+	GetManyByIds(id []uuid.UUID) ([]Checklist, error)
 	Edit(id uuid.UUID, name string, sections string, status string) (Checklist, error)
 	Delete(ids []uuid.UUID) (bool, error)
 }
@@ -54,6 +55,13 @@ func (o *checklistOrm) GetOneById(id uuid.UUID) (Checklist, error) {
 	err := o.instance.Model(Checklist{}).Preload("User").Where("id = ?", id).Take(&checklist).Error
 
 	return checklist, err
+}
+
+func (o *checklistOrm) GetManyByIds(ids []uuid.UUID) ([]Checklist, error) {
+	var checklists []Checklist
+	err := o.instance.Model(Checklist{}).Where("id IN ?", ids).Find(&checklists).Error
+
+	return checklists, err
 }
 
 func (o *checklistOrm) Edit(id uuid.UUID, name string, sections string, status string) (Checklist, error) {

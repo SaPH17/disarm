@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"disarm/main/models"
+	"disarm/main/utils/token"
 	"html"
 	"net/http"
 	"strings"
@@ -75,7 +76,47 @@ func CreateProject(c *gin.Context) {
 }
 
 func GetAllProject(c *gin.Context) {
-	projects, dbErr := models.Projects.GetAll()
+	t, terr := token.ValidateToken(c)
+	if terr != nil {
+		c.String(http.StatusUnauthorized, "Unauthorized")
+		c.Abort()
+		return
+	}
+
+	ps, pserr := GetUserPermissions(t.String())
+	if pserr != nil {
+		c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+		c.Abort()
+		return
+	}
+
+	all := false
+	pids := []uuid.UUID{}
+	for id, _ := range ps.ViewPermissions.Project {
+		if id == "*" {
+			all = true
+			break
+		}
+
+		uid, uiderr := uuid.FromString(id)
+
+		if uiderr != nil {
+			c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+			c.Abort()
+			return
+		}
+
+		pids = append(pids, uid)
+	}
+
+	var projects []models.Project
+	var dbErr error
+
+	if all {
+		projects, dbErr = models.Projects.GetAll()
+	} else {
+		projects, dbErr = models.Projects.GetManyByIds(pids)
+	}
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

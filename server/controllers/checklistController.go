@@ -59,7 +59,47 @@ func CreateChecklist(c *gin.Context) {
 }
 
 func GetAllChecklist(c *gin.Context) {
-	checklists, dbErr := models.Checklists.GetAll()
+	t, terr := token.ValidateToken(c)
+	if terr != nil {
+		c.String(http.StatusUnauthorized, "Unauthorized")
+		c.Abort()
+		return
+	}
+
+	ps, pserr := GetUserPermissions(t.String())
+	if pserr != nil {
+		c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+		c.Abort()
+		return
+	}
+
+	all := false
+	pids := []uuid.UUID{}
+	for id, _ := range ps.ViewPermissions.Checklist {
+		if id == "*" {
+			all = true
+			break
+		}
+
+		uid, uiderr := uuid.FromString(id)
+
+		if uiderr != nil {
+			c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+			c.Abort()
+			return
+		}
+
+		pids = append(pids, uid)
+	}
+
+	var checklists []models.Checklist
+	var dbErr error
+
+	if all {
+		checklists, dbErr = models.Checklists.GetAll()
+	} else {
+		checklists, dbErr = models.Checklists.GetManyByIds(pids)
+	}
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

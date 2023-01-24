@@ -17,8 +17,6 @@ func NewPermissionsSeeder(cfg gorm_seeder.SeederConfiguration) PermissionsSeeder
 }
 
 func (s *PermissionsSeeder) Seed(db *gorm.DB) error {
-	var createAction models.PermissionAction
-
 	var types []models.PermissionObjectType
 	dbErr := database.DB.Get().Find(&types).Error
 
@@ -40,19 +38,16 @@ func (s *PermissionsSeeder) Seed(db *gorm.DB) error {
 		return dbErr3
 	}
 
-	for _, element := range actions {
-		if element.Name == "create" {
-			createAction = element
-		}
-	}
-
 	var data []models.Permission
 
-	for _, element := range types {
-		if element.Name == "finding" || element.Name == "report" {
-			continue
+	for _, element2 := range actions {
+		for _, element := range types {
+			if element.Name == "finding" || element.Name == "report" {
+				continue
+			}
+
+			data = append(data, models.Permission{PermissionActionId: element2.ID, ObjectTypeId: element.ID, ObjectId: "*"})
 		}
-		data = append(data, models.Permission{PermissionActionId: createAction.ID, ObjectTypeId: element.ID, ObjectId: "*"})
 	}
 
 	return db.CreateInBatches(data, len(data)).Error

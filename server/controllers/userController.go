@@ -107,7 +107,49 @@ func CreateUser(c *gin.Context) {
 }
 
 func GetAllUser(c *gin.Context) {
-	users, dbErr := models.Users.GetAll()
+	t, terr := token.ValidateToken(c)
+	if terr != nil {
+		c.String(http.StatusUnauthorized, "Unauthorized")
+		c.Abort()
+		return
+	}
+
+	ps, pserr := GetUserPermissions(t.String())
+	if pserr != nil {
+		c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+		c.Abort()
+		return
+	}
+
+	all := false
+	pids := []uuid.UUID{}
+	for id, _ := range ps.ViewPermissions.User {
+		if id == "*" {
+			all = true
+			break
+		}
+
+		uid, uiderr := uuid.FromString(id)
+
+		if uiderr != nil {
+			c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+			c.Abort()
+			return
+		}
+
+		pids = append(pids, uid)
+	}
+
+	pids = append(pids, t)
+
+	var users []models.User
+	var dbErr error
+
+	if all {
+		users, dbErr = models.Users.GetAll()
+	} else {
+		users, dbErr = models.Users.GetManyByIds(pids)
+	}
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -183,78 +225,131 @@ func GetUserById(c *gin.Context) {
 	})
 }
 
+type CreatePermissions struct {
+	User      map[string]bool
+	Project   map[string]bool
+	Group     map[string]bool
+	Checklist map[string]bool
+	Log       map[string]bool
+	Report    map[string]bool
+	Finding   map[string]bool
+}
+
+type ViewPermissions struct {
+	User      map[string]bool
+	Project   map[string]bool
+	Group     map[string]bool
+	Checklist map[string]bool
+	Log       map[string]bool
+	Report    map[string]bool
+	Finding   map[string]bool
+}
+
+type ViewDetailPermissions struct {
+	User      map[string]bool
+	Project   map[string]bool
+	Group     map[string]bool
+	Checklist map[string]bool
+	Log       map[string]bool
+	Report    map[string]bool
+	Finding   map[string]bool
+}
+
+type EditPermissions struct {
+	User      map[string]bool
+	Project   map[string]bool
+	Group     map[string]bool
+	Checklist map[string]bool
+	Report    map[string]bool
+	Finding   map[string]bool
+}
+
+type DeletePermissions struct {
+	User      map[string]bool
+	Project   map[string]bool
+	Group     map[string]bool
+	Checklist map[string]bool
+	Log       map[string]bool
+	Report    map[string]bool
+	Finding   map[string]bool
+}
+
 type PermissionString struct {
-	CreatePermissions struct {
-		User      bool
-		Project   bool
-		Group     bool
-		Checklist bool
-		Log       bool
-		Report    []string
-		Finding   []string
-	}
+	CreatePermissions     CreatePermissions
+	ViewPermissions       ViewPermissions
+	ViewDetailPermissions ViewDetailPermissions
+	EditPermissions       EditPermissions
+	DeletePermissions     DeletePermissions
+}
 
-	ViewPermissions struct {
-		User      []string
-		Project   []string
-		Group     []string
-		Checklist []string
-		Log       []string
-		Report    []string
-		Finding   []string
-	}
+func InitPermissionString() *PermissionString {
+	return &PermissionString{
+		CreatePermissions: CreatePermissions{
+			User:      make(map[string]bool),
+			Project:   make(map[string]bool),
+			Group:     make(map[string]bool),
+			Checklist: make(map[string]bool),
+			Log:       make(map[string]bool),
+			Report:    make(map[string]bool),
+			Finding:   make(map[string]bool),
+		},
 
-	ViewDetailPermissions struct {
-		User      []string
-		Project   []string
-		Group     []string
-		Checklist []string
-		Log       []string
-		Report    []string
-		Finding   []string
-	}
+		ViewPermissions: ViewPermissions{
+			User:      make(map[string]bool),
+			Project:   make(map[string]bool),
+			Group:     make(map[string]bool),
+			Checklist: make(map[string]bool),
+			Log:       make(map[string]bool),
+			Report:    make(map[string]bool),
+			Finding:   make(map[string]bool),
+		},
 
-	EditPermissions struct {
-		User      []string
-		Project   []string
-		Group     []string
-		Checklist []string
-		Report    []string
-		Finding   []string
-	}
+		ViewDetailPermissions: ViewDetailPermissions{
+			User:      make(map[string]bool),
+			Project:   make(map[string]bool),
+			Group:     make(map[string]bool),
+			Checklist: make(map[string]bool),
+			Log:       make(map[string]bool),
+			Report:    make(map[string]bool),
+			Finding:   make(map[string]bool),
+		},
 
-	DeletePermissions struct {
-		User      []string
-		Project   []string
-		Group     []string
-		Checklist []string
-		Log       []string
-		Report    []string
-		Finding   []string
+		EditPermissions: EditPermissions{
+			User:      make(map[string]bool),
+			Project:   make(map[string]bool),
+			Group:     make(map[string]bool),
+			Checklist: make(map[string]bool),
+			Report:    make(map[string]bool),
+			Finding:   make(map[string]bool),
+		},
+
+		DeletePermissions: DeletePermissions{
+			User:      make(map[string]bool),
+			Project:   make(map[string]bool),
+			Group:     make(map[string]bool),
+			Checklist: make(map[string]bool),
+			Log:       make(map[string]bool),
+			Report:    make(map[string]bool),
+			Finding:   make(map[string]bool),
+		},
 	}
 }
 
-func GetUserPermissions(c *gin.Context) {
-	id := c.Param("id")
+func GetUserPermissions(id string) (*PermissionString, error) {
 	escapedId := html.EscapeString(strings.TrimSpace(id))
 	currentUuid, errUuid := uuid.FromString(escapedId)
 
 	if errUuid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": errUuid.Error(),
-		})
-		return
+		return nil, errUuid
 	}
 	user, dbErr := models.Users.GetOneById(currentUuid)
 
 	if dbErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": dbErr,
-		})
-		return
+		return nil, dbErr
 	}
 
-	permissions := make([]string, len(user.Groups))
+	ps := InitPermissionString()
+
 	for _, g := range user.Groups {
 		var data map[string]interface{}
 		jsonText := html.UnescapeString(g.Permissions)
@@ -263,23 +358,173 @@ func GetUserPermissions(c *gin.Context) {
 		fmt.Println("json", jsonText, data)
 
 		for k, v := range data {
-			fmt.Println(k)
 			switch v := v.(type) {
 			case map[string]interface{}:
 
 				for ki, vi := range v {
-					fmt.Println(ki, ":", vi)
+					varr := vi.([]interface{})
+
+					switch k {
+					case "create":
+						switch ki {
+						case "user":
+							for _, id := range varr {
+								ps.CreatePermissions.User[id.(string)] = true
+							}
+						case "group":
+							for _, id := range varr {
+								ps.CreatePermissions.Group[id.(string)] = true
+							}
+						case "finding":
+							for _, id := range varr {
+								ps.CreatePermissions.Finding[id.(string)] = true
+							}
+						case "checklist":
+							for _, id := range varr {
+								ps.CreatePermissions.Checklist[id.(string)] = true
+							}
+						case "log":
+							for _, id := range varr {
+								ps.CreatePermissions.Log[id.(string)] = true
+							}
+						case "project":
+							for _, id := range varr {
+								ps.CreatePermissions.Project[id.(string)] = true
+							}
+						case "report":
+							for _, id := range varr {
+								ps.CreatePermissions.Report[id.(string)] = true
+							}
+						}
+					case "delete":
+						switch ki {
+						case "user":
+							for _, id := range varr {
+								ps.DeletePermissions.User[id.(string)] = true
+							}
+						case "group":
+							for _, id := range varr {
+								ps.DeletePermissions.Group[id.(string)] = true
+							}
+						case "finding":
+							for _, id := range varr {
+								ps.DeletePermissions.Finding[id.(string)] = true
+							}
+						case "checklist":
+							for _, id := range varr {
+								ps.DeletePermissions.Checklist[id.(string)] = true
+							}
+						case "log":
+							for _, id := range varr {
+								ps.DeletePermissions.Log[id.(string)] = true
+							}
+						case "project":
+							for _, id := range varr {
+								ps.DeletePermissions.Project[id.(string)] = true
+							}
+						case "report":
+							for _, id := range varr {
+								ps.DeletePermissions.Report[id.(string)] = true
+							}
+						}
+					case "edit":
+						switch ki {
+						case "user":
+							for _, id := range varr {
+								ps.EditPermissions.User[id.(string)] = true
+							}
+						case "group":
+							for _, id := range varr {
+								ps.EditPermissions.Group[id.(string)] = true
+							}
+						case "finding":
+							for _, id := range varr {
+								ps.EditPermissions.Finding[id.(string)] = true
+							}
+						case "checklist":
+							for _, id := range varr {
+								ps.EditPermissions.Checklist[id.(string)] = true
+							}
+						case "project":
+							for _, id := range varr {
+								ps.EditPermissions.Project[id.(string)] = true
+							}
+						case "report":
+							for _, id := range varr {
+								ps.EditPermissions.Report[id.(string)] = true
+							}
+						}
+					case "view":
+						switch ki {
+						case "user":
+							for _, id := range varr {
+								ps.ViewPermissions.User[id.(string)] = true
+							}
+						case "group":
+							for _, id := range varr {
+								ps.ViewPermissions.Group[id.(string)] = true
+							}
+						case "finding":
+							for _, id := range varr {
+								ps.ViewPermissions.Finding[id.(string)] = true
+							}
+						case "checklist":
+							for _, id := range varr {
+								ps.ViewPermissions.Checklist[id.(string)] = true
+							}
+						case "log":
+							for _, id := range varr {
+								ps.ViewPermissions.Log[id.(string)] = true
+							}
+						case "project":
+							for _, id := range varr {
+								ps.ViewPermissions.Project[id.(string)] = true
+							}
+						case "report":
+							for _, id := range varr {
+								ps.ViewPermissions.Report[id.(string)] = true
+							}
+						}
+					case "view-detail":
+						switch ki {
+						case "user":
+							for _, id := range varr {
+								ps.ViewDetailPermissions.User[id.(string)] = true
+							}
+						case "group":
+							for _, id := range varr {
+								ps.ViewDetailPermissions.Group[id.(string)] = true
+							}
+						case "finding":
+							for _, id := range varr {
+								ps.ViewDetailPermissions.Finding[id.(string)] = true
+							}
+						case "checklist":
+							for _, id := range varr {
+								ps.ViewDetailPermissions.Checklist[id.(string)] = true
+							}
+						case "log":
+							for _, id := range varr {
+								ps.ViewDetailPermissions.Log[id.(string)] = true
+							}
+						case "project":
+							for _, id := range varr {
+								ps.ViewDetailPermissions.Project[id.(string)] = true
+							}
+						case "report":
+							for _, id := range varr {
+								ps.ViewDetailPermissions.Report[id.(string)] = true
+							}
+						}
+					}
 				}
 
 			}
 		}
 
-		permissions = append(permissions, g.Permissions)
 	}
 
-	c.JSON(200, gin.H{
-		"permissions": permissions,
-	})
+	return ps, nil
 }
 
 func EditUser(c *gin.Context) {
