@@ -45,7 +45,7 @@ func CreateChecklist(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission(CHECKLIST_ACTION_TYPE, "checklist", checklist.ID)
+	permissionErr := CreatePermission(CHECKLIST_ACTION_TYPE, "checklist", checklist.ID, checklist.Name)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,

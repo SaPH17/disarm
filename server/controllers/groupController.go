@@ -57,7 +57,7 @@ func CreateGroup(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission(GROUP_ACTION_TYPE, "group", group.ID)
+	permissionErr := CreatePermission(GROUP_ACTION_TYPE, "group", group.ID, group.Name)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,

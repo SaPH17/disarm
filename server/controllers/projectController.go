@@ -75,7 +75,7 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission(PROJECT_ACTION_TYPES, "project", project.ID)
+	permissionErr := CreatePermission(PROJECT_ACTION_TYPES, "project", project.ID, project.Name)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,
@@ -83,7 +83,7 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	findingPermissionErr := CreatePermission(PROJECT_FINDING_ACTION_TYPES, "finding", project.ID)
+	findingPermissionErr := CreatePermission(PROJECT_FINDING_ACTION_TYPES, "finding", project.ID, project.Name)
 	if findingPermissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": findingPermissionErr,
@@ -197,7 +197,6 @@ func EditProject(c *gin.Context) {
 		"project": project,
 	})
 }
-
 
 func EditProjectSection(c *gin.Context) {
 	id := c.Param("id")

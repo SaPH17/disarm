@@ -148,7 +148,7 @@ func CreateFinding(c *gin.Context) {
 		return
 	}
 
-	permissionErr := CreatePermission(FINDING_ACTION_TYPES, "finding", finding.ID)
+	permissionErr := CreatePermission(FINDING_ACTION_TYPES, "finding", finding.ID, finding.Title)
 	if permissionErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": permissionErr,
