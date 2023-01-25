@@ -17,7 +17,7 @@ type Project struct {
 	StartDate   time.Time `gorm:"type:time;" json:"start_date"`
 	EndDate     time.Time `gorm:"type:time;" json:"end_date"`
 	ChecklistId uuid.UUID `gorm:"type:uuid;" json:"checklist_id"`
-	Sections    string    `gorm:"size:65535;" json:"sections"`
+	Sections    string    `gorm:"not null" json:"sections"`
 	Checklist   Checklist
 	Reports     []Report
 	Findings    []Finding
