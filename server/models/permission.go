@@ -12,6 +12,7 @@ type Permission struct {
 	PermissionActionId uuid.UUID `gorm:"type:uuid;" json:"permission_action_id"`
 	ObjectTypeId       uuid.UUID `gorm:"type:uuid;" json:"object_type_id"`
 	ObjectId           string    `gorm:"size:255;not null;" json:"object_id"`
+	ObjectName         string    `gorm:"size:255;not null;" json:"object_name"`
 	PermissionAction   PermissionAction
 	ObjectType         PermissionObjectType
 }
@@ -21,7 +22,7 @@ type permissionOrm struct {
 }
 
 type PermissionOrm interface {
-	Create(permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string) (Permission, error)
+	Create(permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string, objectName string) (Permission, error)
 	GetAll() ([]Permission, error)
 	Delete(permissionActionIds []uuid.UUID, objectTypeId uuid.UUID, objectId string) (bool, error)
 }
@@ -33,8 +34,8 @@ func init() {
 	Permissions = &permissionOrm{instance: database.DB.Get()}
 }
 
-func (o *permissionOrm) Create(permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string) (Permission, error) {
-	permission := Permission{PermissionActionId: permissionActionId, ObjectTypeId: objectTypeId, ObjectId: objectId}
+func (o *permissionOrm) Create(permissionActionId uuid.UUID, objectTypeId uuid.UUID, objectId string, objectName string) (Permission, error) {
+	permission := Permission{PermissionActionId: permissionActionId, ObjectTypeId: objectTypeId, ObjectId: objectId, ObjectName: objectName}
 	result := o.instance.Create(&permission)
 
 	return permission, result.Error

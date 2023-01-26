@@ -93,7 +93,7 @@ export default function SelectPopup({
                       />
                       {selectedGroups.map((selectedGroup, index) => (
                         <GroupCard
-                          key={index}
+                          key={`select-modal-${index}`}
                           group={selectedGroup}
                           onClickFunction={(item: any) => {
                             removeGroup(item);

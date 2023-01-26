@@ -13,7 +13,7 @@ type Checklist struct {
 	Status      string    `gorm:"size:255;not null;" json:"status"`
 	CreatedByID uuid.UUID `gorm:"type:uuid;" json:"created_by_id"`
 	User        User      `gorm:"foreignKey:CreatedByID"`
-	Sections    string    `gorm:"size:65535;not null;" json:"sections"`
+	Sections    string    `gorm:"not null;" json:"sections"`
 }
 
 type checklistOrm struct {

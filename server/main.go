@@ -7,9 +7,8 @@ import (
 	"disarm/main/seeders"
 	"fmt"
 
-	gorm_seeder "github.com/kachit/gorm-seeder"
-
 	"github.com/gin-gonic/gin"
+	gorm_seeder "github.com/kachit/gorm-seeder"
 )
 
 func runSeeder() {
@@ -39,6 +38,7 @@ func main() {
 
 	r.Use(middlewares.CORSMiddleware())
 	r.Static("/upload", "./upload")
+	r.Static("/reports", "./reports")
 	api := r.Group("/api")
 	{
 		auth := api.Group("/auth")
@@ -73,6 +73,7 @@ func main() {
 			project.DELETE("/", controllers.DeleteProjectByIds)
 			project.GET("/:id", controllers.GetProjectById)
 			project.PUT("/:id", controllers.EditProject)
+			project.PUT("/:id/checklist", controllers.EditProjectSection)
 			project.DELETE("/:id", controllers.DeleteProject)
 		}
 
@@ -114,12 +115,13 @@ func main() {
 		permission := apiWithJWT.Group("/permissions")
 		{
 			permission.GET("/", controllers.GetAllPermission)
+			permission.GET("/refresh-permissions", controllers.RefreshPermission)
 		}
 
 		report := apiWithJWT.Group("/reports")
 		{
 			report.GET("/", controllers.GetAllReport)
-			report.POST("/", controllers.CreateReport)
+			report.POST("/:id", controllers.CreateReport)
 			report.GET("/:id", controllers.GetReportById)
 		}
 	}

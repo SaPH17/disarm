@@ -23,13 +23,7 @@ import { ResetPasswordHandler } from '../../../handlers/user/reset-password-hand
 
 const title = ['name', 'email', 'groups'];
 
-const contentTitle = [
-  'name',
-  'groups',
-  'assignedProjects',
-  'email',
-  'direct_supervisor',
-];
+const contentTitle = ['id', 'name', 'groups', 'email', 'direct_supervisor'];
 
 export default function ManageUserIndex() {
   const navigate = useNavigate();

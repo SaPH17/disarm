@@ -147,7 +147,7 @@ export default function ManageFindingShow() {
           },
         },
       });
-      // navigate(`/projects/${finding.Project.id}`);
+      navigate(`/projects/${finding.Project.id}`);
     } catch (e) {}
   };
 

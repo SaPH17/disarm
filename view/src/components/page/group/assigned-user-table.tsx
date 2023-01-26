@@ -4,6 +4,7 @@ import Table from '../../table';
 import { useState } from 'react';
 import { User } from '../../../models/user';
 import { toReadableDate } from '../../../utils/functions/dates';
+import InputText from '../../input-text/input-text';
 
 const title = ['name', 'email', 'dateCreated', 'action'];
 
@@ -17,6 +18,9 @@ const AssignedUserTable = ({
   const [newUserEmail, setNewUserEmail] = useState('');
 
   const appendAssignedUser = () => {
+    if (newUserEmail.trim() === '') return;
+    if(!users.find((u: any) => u.email === newUserEmail)) return;
+    
     setAssignedUser((v: any) => [
       ...v,
       users.find((u: any) => u.email === newUserEmail),
@@ -38,7 +42,7 @@ const AssignedUserTable = ({
   return (
     <div className="flex flex-col text-sm bg-white rounded shadow sm:gap-2 divide-y-1">
       <div className="flex flex-row items-center justify-between px-2 py-2 sm:px-8 sm:py-4 bg-gray-50">
-        <div className="flex flex-col sm:flex-row gap-x-4 gap-y-2 items-center">
+        <div className="flex flex-col items-center sm:flex-row gap-x-4 gap-y-2">
           <div className="text-lg font-semibold">Assigned User</div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

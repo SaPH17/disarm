@@ -12,11 +12,11 @@ type Finding struct {
 	Title             string    `gorm:"size:255;not null;" json:"title"`
 	Risk              string    `gorm:"size:255;not null;" json:"risk"`
 	ImpactedSystem    string    `gorm:"size:255;not null;" json:"impacted_system"`
-	Description       string    `gorm:"size:255;not null;" json:"description"`
-	Steps             string    `gorm:"size:255;not null;" json:"steps"`
-	Recommendations   string    `gorm:"size:255;not null;" json:"recommendations"`
-	Evidences         string    `gorm:"size:255;not null;" json:"evidences"`
-	FixedEvidences    string    `gorm:"size:255;not null;" json:"fixed_evidences"`
+	Description       string    `gorm:"not null;" json:"description"`
+	Steps             string    `gorm:"not null;" json:"steps"`
+	Recommendations   string    `gorm:"not null;" json:"recommendations"`
+	Evidences         string    `gorm:"not null;" json:"evidences"`
+	FixedEvidences    string    `gorm:"not null;" json:"fixed_evidences"`
 	Status            string    `gorm:"size:255;not null;" json:"status"`
 	ChecklistDetailId string    `gorm:"size:255;not null;" json:"checklist_detail_id"`
 	ProjectId         uuid.UUID `gorm:"type:uuid;" json:"project_id"`

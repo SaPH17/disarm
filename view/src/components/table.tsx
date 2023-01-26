@@ -61,7 +61,7 @@ export default function Table({
                               titleIndex === 0
                                 ? 'font-medium text-gray-900'
                                 : 'text-gray-500',
-                              'px-6 py-4 whitespace-nowrap text-sm'
+                              'px-6 py-4 whitespace-nowrap text-sm text-left'
                             )}
                           >
                             {(c as any)[t]}

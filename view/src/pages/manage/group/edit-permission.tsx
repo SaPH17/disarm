@@ -14,13 +14,18 @@ import { permissionToJson } from '../../../utils/functions/jsonConverter';
 import { toast } from 'react-toastify';
 import { GroupHandler } from '../../../handlers/group/group-handler';
 
-const title = ['id', 'action', 'objectType', 'objectId'];
+const title = ['id', 'action', 'objectType', 'objectInformation'];
 
 const ManageGroupEditPermission = () => {
   const { id } = useParams();
   const { data: permissionsData } = useQuery(
     'permissions',
-    PermissionServices.getPermissions
+    PermissionServices.getPermissions,
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
   );
   const [selectedPermission, setSelectedPermission] = useState<Permission[]>(
     []
@@ -35,7 +40,12 @@ const ManageGroupEditPermission = () => {
         id: `${p.PermissionAction.name}.${p.ObjectType.name}.${p.object_id}`,
         action: capitalize(p.PermissionAction.name),
         objectType: capitalize(p.ObjectType.name),
-        objectId: p.object_id,
+        objectInformation: (
+          <div className="flex flex-col">
+            <div className="font-bold">{p.object_id}</div>
+            <div>{p.object_name}</div>
+          </div>
+        ),
       }))
     : [];
 
@@ -74,13 +84,14 @@ const ManageGroupEditPermission = () => {
   useEffect(() => {
     if (groupData && permissions.length > 0) {
       const p = JSON.parse(groupData.permissions);
+      setSelectedPermission([]);
       for (let action in p) {
         for (let objectType in p[action]) {
           p[action][objectType].forEach((id: any) => {
             const fullId = `${action}.${objectType}.${id}`;
             setSelectedPermission((v) => {
               const val = permissions.find((p: any) => p.id === fullId);
-              return val ? [...v, val] : [...v];
+              return val ? [...v, val] : v;
             });
           });
         }
