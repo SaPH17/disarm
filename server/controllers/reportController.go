@@ -179,7 +179,7 @@ func getFindingOutput(evidences []EvidencesItem) (string, error) {
 func generatePdf(output string, filename string) error {
 	fmt.Println("Output : " + output)
 
-	wkhtmltopdf.SetPath("../wkhtmltopdf.exe")
+	wkhtmltopdf.SetPath("./wkhtmltopdf.exe")
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
 		return err
