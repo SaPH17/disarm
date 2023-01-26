@@ -12,7 +12,7 @@ type Group struct {
 	Name        string `gorm:"size:255;not null;unique" json:"name"`
 	Description string `gorm:"size:255;not null;" json:"description"`
 	Permissions string `gorm:"not null;" json:"permissions"`
-	Users       []User `gorm:"many2many:user_groups"`
+	Users       []User `gorm:"many2many:user_groups;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type groupOrm struct {
@@ -26,7 +26,7 @@ type GroupOrm interface {
 	GetManyByIds(ids []uuid.UUID) ([]Group, error)
 	Edit(id uuid.UUID, name string, description string, users *[]User) (Group, error)
 	EditPermission(id uuid.UUID, permissions string) (Group, error)
-	Delete(ids []uuid.UUID) (bool, error)
+	Delete(id uuid.UUID) (bool, error)
 	AssignUser(ids []uuid.UUID, users *[]User) ([]Group, error)
 }
 
@@ -83,9 +83,9 @@ func (o *groupOrm) EditPermission(id uuid.UUID, permissions string) (Group, erro
 	return group, err
 }
 
-func (o *groupOrm) Delete(ids []uuid.UUID) (bool, error) {
+func (o *groupOrm) Delete(id uuid.UUID) (bool, error) {
 	var groups []Group
-	err := o.instance.Model(Group{}).Where("id IN ?", ids).Find(&groups).Error
+	err := o.instance.Model(Group{}).Where("id = ?", id).Find(&groups).Error
 	o.instance.Delete(&groups)
 
 	return true, err

@@ -276,9 +276,7 @@ func DeleteGroup(c *gin.Context) {
 		return
 	}
 
-	uuids := []uuid.UUID{idUuid}
-
-	result, dbErr := models.Groups.Delete(uuids)
+	result, dbErr := models.Groups.Delete(idUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -302,7 +300,7 @@ func DeleteGroup(c *gin.Context) {
 
 func DeleteGroupByIds(c *gin.Context) {
 	var body struct {
-		Ids []string `json:"ids" binding:"required"`
+		Id string `json:"id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -312,12 +310,17 @@ func DeleteGroupByIds(c *gin.Context) {
 		return
 	}
 
-	var parsedUuids []uuid.UUID
-	for _, element := range body.Ids {
-		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	escapedId := html.EscapeString(strings.TrimSpace(body.Id))
+	idUuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": errUuid,
+		})
+		return
 	}
 
-	result, dbErr := models.Groups.Delete(parsedUuids)
+	result, dbErr := models.Groups.Delete(idUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -326,14 +329,12 @@ func DeleteGroupByIds(c *gin.Context) {
 		return
 	}
 
-	for _, idUuid := range parsedUuids {
-		permissionErr := DeletePermission(GROUP_ACTION_TYPE, "group", idUuid)
-		if permissionErr != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": permissionErr,
-			})
-			return
-		}
+	permissionErr := DeletePermission(GROUP_ACTION_TYPE, "group", idUuid)
+	if permissionErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": permissionErr,
+		})
+		return
 	}
 
 	c.JSON(200, gin.H{

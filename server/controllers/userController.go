@@ -287,9 +287,9 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	uuids := []uuid.UUID{idUuid}
+	// uuids := []uuid.UUID{idUuid}
 
-	result, dbErr := models.Users.Delete(uuids)
+	result, dbErr := models.Users.Delete(idUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -313,7 +313,7 @@ func DeleteUser(c *gin.Context) {
 
 func DeleteUserByIds(c *gin.Context) {
 	var body struct {
-		Ids []string `json:"ids" binding:"required"`
+		Id string `json:"id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -323,12 +323,22 @@ func DeleteUserByIds(c *gin.Context) {
 		return
 	}
 
-	var parsedUuids []uuid.UUID
-	for _, element := range body.Ids {
-		parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	// var parsedUuids []uuid.UUID
+	// for _, element := range body.Ids {
+	// 	parsedUuids = append(parsedUuids, uuid.FromStringOrNil(html.EscapeString(strings.TrimSpace(element))))
+	// }
+
+	escapedId := html.EscapeString(strings.TrimSpace(body.Id))
+	idUuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUuid.Error(),
+		})
+		return
 	}
 
-	result, dbErr := models.Users.Delete(parsedUuids)
+	result, dbErr := models.Users.Delete(idUuid)
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -337,7 +347,7 @@ func DeleteUserByIds(c *gin.Context) {
 		return
 	}
 
-	for _, idUuid := range parsedUuids {
+	// for _, idUuid := range parsedUuids {
 		permissionErr := DeletePermission(USER_ACTION_TYPE, "user", idUuid)
 		if permissionErr != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -345,7 +355,7 @@ func DeleteUserByIds(c *gin.Context) {
 			})
 			return
 		}
-	}
+	// }
 
 	c.JSON(200, gin.H{
 		"result": result,
