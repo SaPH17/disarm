@@ -23,14 +23,7 @@ import { ResetPasswordHandler } from '../../../handlers/user/reset-password-hand
 
 const title = ['name', 'email', 'groups'];
 
-const contentTitle = [
-  'id',
-  'name',
-  'groups',
-  'assignedProjects',
-  'email',
-  'direct_supervisor',
-];
+const contentTitle = ['id', 'name', 'groups', 'email', 'direct_supervisor'];
 
 export default function ManageUserIndex() {
   const navigate = useNavigate();
@@ -92,15 +85,19 @@ export default function ManageUserIndex() {
     if (!selectedUser) return;
     const ids = selectedUser.map((user: User) => user.id);
     try {
-      await toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(ids), {
-        success: `Successfully deleted ${ids.length} user(s)!`,
-        pending: `Deleting ${ids.length} user(s)!`,
-        error: {
-          render({ data }: any) {
-            return data.message;
-          },
-        },
-      });
+      await Promise.all(
+        ids.map(async (id, index) =>
+          toast.promise(DeleteUsersHandler.handleDeleteUserSubmit(id), {
+            success: `Successfully deleted ${selectedUser[index].name} user!`,
+            pending: `Deleting ${selectedUser[index].name} user!`,
+            error: {
+              render({ data }: any) {
+                return data.message;
+              },
+            },
+          })
+        )
+      );
       refetch();
       setSelectedUser([]);
     } catch (e) {}

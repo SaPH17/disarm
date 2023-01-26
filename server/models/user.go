@@ -9,7 +9,7 @@ import (
 
 type User struct {
 	Base
-	Groups            []Group    `gorm:"many2many:user_groups"`
+	Groups            []Group    `gorm:"many2many:user_groups; constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Email             string     `gorm:"size:255;not null;unique" json:"email"`
 	Username          string     `gorm:"size:255;not null;unique" json:"username"`
 	Password          string     `gorm:"size:255;not null;" json:"password"`
@@ -29,7 +29,7 @@ type UserOrm interface {
 	GetOneById(id uuid.UUID) (User, error)
 	GetManyByIds(ids []uuid.UUID) ([]User, error)
 	Edit(id uuid.UUID, email string, username string, supervisor *User) (User, error)
-	Delete(ids []uuid.UUID) (bool, error)
+	Delete(id uuid.UUID) (bool, error)
 	ChangePassword(id uuid.UUID, password string, isPasswordChanged bool) (User, error)
 }
 
@@ -102,9 +102,9 @@ func (o *userOrm) ChangePassword(id uuid.UUID, password string, isPasswordChange
 	return user, err
 }
 
-func (o *userOrm) Delete(ids []uuid.UUID) (bool, error) {
+func (o *userOrm) Delete(id uuid.UUID) (bool, error) {
 	var users []User
-	err := o.instance.Model(User{}).Where("id IN ?", ids).Find(&users).Error
+	err := o.instance.Model(User{}).Where("id = ?", id).Find(&users).Error
 	o.instance.Delete(&users)
 
 	return true, err

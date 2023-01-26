@@ -17,7 +17,7 @@ type Project struct {
 	StartDate   time.Time `gorm:"type:time;" json:"start_date"`
 	EndDate     time.Time `gorm:"type:time;" json:"end_date"`
 	ChecklistId uuid.UUID `gorm:"type:uuid;" json:"checklist_id"`
-	Sections    string    `gorm:"size:65535;" json:"sections"`
+	Sections    string    `gorm:"not null" json:"sections"`
 	Checklist   Checklist
 	Reports     []Report
 	Findings    []Finding
@@ -34,7 +34,7 @@ type ProjectOrm interface {
 	GetManyByIds(ids []uuid.UUID) ([]Project, error)
 	Edit(id uuid.UUID, name string, company string, phase string, startDate time.Time, endDate time.Time) (Project, error)
 	EditSection(id uuid.UUID, sections string) (Project, error)
-	Delete(ids []uuid.UUID) (bool, error)
+	Delete(id uuid.UUID) (bool, error)
 }
 
 var Projects ProjectOrm
@@ -94,10 +94,10 @@ func (o *projectOrm) EditSection(id uuid.UUID, sections string) (Project, error)
 	return project, err
 }
 
-func (o *projectOrm) Delete(ids []uuid.UUID) (bool, error) {
+func (o *projectOrm) Delete(id uuid.UUID) (bool, error) {
 	var projects []Project
-	err := o.instance.Model(Project{}).Where("id IN ?", ids).Find(&projects).Error
-	fmt.Println(ids)
+	err := o.instance.Model(Project{}).Where("id = ?", id).Find(&projects).Error
+	fmt.Println(id)
 	fmt.Println(projects)
 	o.instance.Delete(&projects)
 

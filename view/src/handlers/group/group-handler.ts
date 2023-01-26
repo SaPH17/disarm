@@ -18,12 +18,12 @@ export class GroupHandler {
     }
   }
 
-  static async handleDeleteGroupSubmit(selectedData: (string | number)[]) {
+  static async handleDeleteGroupSubmit(selectedData: (string | number)) {
     const body = {
-      ids: selectedData,
+      id: selectedData,
     };
     try {
-      return (await GroupServices.deleteUserByIds(body)).data;
+      return (await GroupServices.deleteGroupByIds(body)).data;
     } catch (e) {
       throw e;
     }

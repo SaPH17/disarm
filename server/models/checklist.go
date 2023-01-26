@@ -13,7 +13,7 @@ type Checklist struct {
 	Status      string    `gorm:"size:255;not null;" json:"status"`
 	CreatedByID uuid.UUID `gorm:"type:uuid;" json:"created_by_id"`
 	User        User      `gorm:"foreignKey:CreatedByID"`
-	Sections    string    `gorm:"size:65535;not null;" json:"sections"`
+	Sections    string    `gorm:"not null;" json:"sections"`
 }
 
 type checklistOrm struct {
@@ -26,7 +26,7 @@ type ChecklistOrm interface {
 	GetOneById(id uuid.UUID) (Checklist, error)
 	GetManyByIds(id []uuid.UUID) ([]Checklist, error)
 	Edit(id uuid.UUID, name string, sections string, status string) (Checklist, error)
-	Delete(ids []uuid.UUID) (bool, error)
+	Delete(id uuid.UUID) (bool, error)
 }
 
 var Checklists ChecklistOrm
@@ -72,10 +72,20 @@ func (o *checklistOrm) Edit(id uuid.UUID, name string, sections string, status s
 	return checklist, err
 }
 
-func (o *checklistOrm) Delete(ids []uuid.UUID) (bool, error) {
+func (o *checklistOrm) Delete(id uuid.UUID) (bool, error) {
 	var checklists []Checklist
-	err := o.instance.Model(Checklist{}).Where("id IN ?", ids).Find(&checklists).Error
-	o.instance.Delete(&checklists)
+	err := o.instance.Model(Checklist{}).Where("id = ?", id).Find(&checklists).Error
+
+	if err != nil {
+		return false, err
+	}
+		
+
+	err = o.instance.Delete(&checklists).Error
+
+	if err != nil {
+		return false, err
+	}
 
 	return true, err
 }

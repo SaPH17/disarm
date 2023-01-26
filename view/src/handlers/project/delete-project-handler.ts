@@ -1,9 +1,9 @@
 import ProjectServices from '../../services/project-services';
 
 export class DeleteProjectsHandler {
-  static async handleDeleteProjectSubmit(selectedData: (string | number)[]) {
+  static async handleDeleteProjectSubmit(selectedData: (string | number)) {
     const body = {
-      ids: selectedData,
+      id: selectedData,
     };
     try {
       return (await ProjectServices.deleteProjectByIds(body)).data;
