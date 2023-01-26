@@ -4,6 +4,7 @@ import (
 	"disarm/main/models"
 	"disarm/main/utils/token"
 	"encoding/json"
+	"fmt"
 	"html"
 	"net/http"
 	"path/filepath"
@@ -163,6 +164,91 @@ func CreateFinding(c *gin.Context) {
 
 func GetAllFinding(c *gin.Context) {
 	findings, dbErr := models.Findings.GetAll()
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"findings": findings,
+	})
+}
+
+func GetAllFindingByProjectId(c *gin.Context) {
+	id := c.Param("id")
+	escapedId := html.EscapeString(strings.TrimSpace(id))
+	puuid, errUuid := uuid.FromString(escapedId)
+
+	if errUuid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errUuid.Error(),
+		})
+		return
+	}
+
+	t, terr := token.ValidateToken(c)
+	if terr != nil {
+		c.String(http.StatusUnauthorized, "Unauthorized")
+		c.Abort()
+		return
+	}
+
+	ps, pserr := GetUserPermissions(t.String())
+	if pserr != nil {
+		c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+		c.Abort()
+		return
+	}
+
+	var findings []models.Finding
+	var dbErr error
+
+	findings, dbErr = models.Findings.GetAllByProjectId(puuid)
+
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": dbErr,
+		})
+		return
+	}
+
+	fid := make(map[string]bool)
+
+	for _, f := range findings {
+		fid[f.ID.String()] = true
+	}
+
+	fmt.Println(fid)
+
+	all := false
+	pids := []uuid.UUID{}
+	for id, _ := range ps.ViewPermissions.Group {
+		if id == "*" {
+			all = true
+			break
+		}
+
+		uid, uiderr := uuid.FromString(id)
+
+		if uiderr != nil {
+			c.String(http.StatusInternalServerError, "Error Parsing Permissions")
+			c.Abort()
+			return
+		}
+
+		if fid[id] {
+			pids = append(pids, uid)
+		}
+	}
+
+	if all {
+		findings, dbErr = models.Findings.GetAllByProjectId(puuid)
+	} else {
+		findings, dbErr = models.Findings.GetManyByIds(pids)
+	}
 
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

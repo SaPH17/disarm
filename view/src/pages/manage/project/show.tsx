@@ -12,6 +12,7 @@ import { useState } from 'react';
 import ReportPopup from '../../../components/popup/report.popup';
 import { DocumentIcon } from '@heroicons/react/outline';
 import CheckChecklistPopup from '../../../components/popup/check-checklist-popup';
+import FindingServices from '../../../services/finding-services';
 
 const title = [
   'findingId',
@@ -36,33 +37,42 @@ const contentTitle = [
 export default function ManageProjectShow() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, refetch } = useQuery(`project/${id}`, () =>
-    ProjectServices.getOneProject(id)
+  const { data: projectData, refetch: refetchProject } = useQuery(
+    `project/${id}`,
+    () => ProjectServices.getOneProject(id)
+  );
+  const { data: findingData, refetch: refetchFinding } = useQuery(
+    `project/${id}/findings`,
+    () => FindingServices.getFindingByProjectId(projectData?.id),
+    { enabled: !!projectData?.id }
   );
   const [openedModal, setOpenedModal] = useState<any>({
     reports: false,
     checkChecklist: false,
   });
-  const project = data
+  const project = projectData
     ? {
-        ...data,
-        checklist: data.Checklist?.name,
-        totalFinding: data.Findings?.length || 0,
-        startDate: toReadableDate(data.start_date),
-        endDate: toReadableDate(data.end_date),
+        ...projectData,
+        checklist: projectData.Checklist?.name,
+        totalFinding: projectData.Findings?.length || 0,
+        startDate: toReadableDate(projectData.start_date),
+        endDate: toReadableDate(projectData.end_date),
         findings:
-          data.Findings?.map((v: any, idx: any) => {
+          findingData?.map((v: any, idx: any) => {
             return {
               ...v,
-              findingId: `${data.name}-${(idx + 1).toLocaleString('en-US', {
-                minimumIntegerDigits: 3,
-                useGrouping: false,
-              })}`,
+              findingId: `${projectData.name}-${(idx + 1).toLocaleString(
+                'en-US',
+                {
+                  minimumIntegerDigits: 3,
+                  useGrouping: false,
+                }
+              )}`,
               impactedSystem: v.impacted_system,
               action: <div className="cursor-pointer">View</div>,
             };
           }) || [],
-        reports: data.Reports?.map((report: any) => ({
+        reports: projectData.Reports?.map((report: any) => ({
           ...report,
           dateCreated: toReadableDate(report.created_at),
           action: (
@@ -76,7 +86,7 @@ export default function ManageProjectShow() {
             </a>
           ),
         })),
-        projectPercentage: getChecklistPercentage(data),
+        projectPercentage: getChecklistPercentage(projectData),
       }
     : {};
 
@@ -92,7 +102,7 @@ export default function ManageProjectShow() {
   ];
 
   async function callFetchData() {
-    await refetch();
+    await refetchProject();
   }
 
   return project ? (

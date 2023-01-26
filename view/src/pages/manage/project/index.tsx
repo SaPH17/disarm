@@ -21,6 +21,7 @@ import ReportPopup from '../../../components/popup/report.popup';
 import { DocumentIcon } from '@heroicons/react/outline';
 import { GenerateReportHandler } from '../../../handlers/report/generate-report-handler';
 import CheckChecklistPopup from '../../../components/popup/check-checklist-popup';
+import FindingServices from '../../../services/finding-services';
 
 const title = ['name', 'company', 'phase', 'action'];
 const contentTitle = [
@@ -65,7 +66,11 @@ export default function ManageProjectIndex() {
     checkChecklist: false,
   });
 
-  const { data, refetch } = useQuery('projects', ProjectServices.getProjects);
+  const { data, refetch: refetchProject } = useQuery(
+    'projects',
+    ProjectServices.getProjects
+  );
+
   const projectActionButton = (
     <div
       className="cursor-pointer"
@@ -105,7 +110,7 @@ export default function ManageProjectIndex() {
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
 
   async function callFetchData() {
-    await refetch();
+    await refetchProject();
     setActiveProject(defaultProject);
   }
 

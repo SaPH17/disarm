@@ -27,6 +27,17 @@ export default class FindingServices {
     );
   }
 
+  static async getFindingByProjectId(id: string|number){
+    if(!id) return
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_API_URL}/projects/${id}/findings`,
+      {
+        withCredentials: true,
+      }
+    );
+    return data.findings;
+  }
+
   static async getOneFinding(id: string | number | undefined) {
     if (id === undefined) return;
     const { data } = await axios.get(

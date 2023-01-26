@@ -35,6 +35,8 @@ type FindingOrm interface {
 	Create(title string, risk string, impactedSystem string, description string, steps string, recommendations string, evidences string, fixedEvidences string, checklistDetailId string, projectId uuid.UUID, checklistId uuid.UUID, userId uuid.UUID) (Finding, error)
 	GetAll() ([]Finding, error)
 	GetOneById(id uuid.UUID) (Finding, error)
+	GetAllByProjectId(id uuid.UUID) ([]Finding, error)
+	GetManyByIds(ids []uuid.UUID) ([]Finding, error)
 	Edit(id uuid.UUID, title string, risk string, impactedSystem string, description string, steps string, recommendations string, evidences string, fixedEvidences string, checklistDetailId string, status string) (Finding, error)
 }
 
@@ -56,6 +58,20 @@ func (o *findingOrm) Create(title string, risk string, impactedSystem string, de
 func (o *findingOrm) GetAll() ([]Finding, error) {
 	var findings []Finding
 	result := o.instance.Find(&findings)
+
+	return findings, result.Error
+}
+
+func (o *findingOrm) GetManyByIds(ids []uuid.UUID) ([]Finding, error) {
+	var findings []Finding
+	err := o.instance.Model(Finding{}).Where("id IN ?", ids).Find(&findings).Error
+
+	return findings, err
+}
+
+func (o *findingOrm) GetAllByProjectId(id uuid.UUID) ([]Finding, error) {
+	var findings []Finding
+	result := o.instance.Model(Finding{}).Where("project_id = ?", id).Find(&findings)
 
 	return findings, result.Error
 }
