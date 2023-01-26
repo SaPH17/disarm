@@ -67,7 +67,17 @@ func (o *checklistOrm) Edit(id uuid.UUID, name string, sections string, status s
 func (o *checklistOrm) Delete(id uuid.UUID) (bool, error) {
 	var checklists []Checklist
 	err := o.instance.Model(Checklist{}).Where("id = ?", id).Find(&checklists).Error
-	o.instance.Delete(&checklists)
+
+	if err != nil {
+		return false, err
+	}
+		
+
+	err = o.instance.Delete(&checklists).Error
+
+	if err != nil {
+		return false, err
+	}
 
 	return true, err
 }

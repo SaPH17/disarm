@@ -75,6 +75,8 @@ export default function ManageChecklistIndex() {
               pending: `Deleting ${selectedChecklist[index].name} checklist!`,
               error: {
                 render({ data }: any) {
+                  if ((data.response.data.error.Detail as string).includes("referenced")) 
+                    return 'Cannot delete because this checklist is used in other project(s)'
                   return data.message;
                 },
               },
