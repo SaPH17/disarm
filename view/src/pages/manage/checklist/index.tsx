@@ -67,15 +67,18 @@ export default function ManageChecklistIndex() {
     const ids = selectedChecklist.map((checklist: Checklist) => checklist.id);
     try {
       ids.forEach(async (id, index) => {
-        await toast.promise(DeleteChecklistsHandler.handleDeleteChecklistSubmit(id), {
-          success: `Successfully deleted ${selectedChecklist[index].name} checklist!`,
-          pending: `deleting ${ids.length} checklist(s)!`,
-          error: {
-            render({ data }: any) {
-              return data.message;
+        await toast.promise(
+          DeleteChecklistsHandler.handleDeleteChecklistSubmit(id),
+          {
+            success: `Successfully deleted ${selectedChecklist[index].name} checklist!`,
+            pending: `Deleting ${selectedChecklist[index].name} checklist!`,
+            error: {
+              render({ data }: any) {
+                return data.message;
+              },
             },
-          },
-        });
+          }
+        );
       })
       
       refetch();
