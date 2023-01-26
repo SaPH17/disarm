@@ -70,19 +70,22 @@ export default function ManageGroupIndex() {
       };
     }) || [];
 
-  function deleteGroups() {
+  async function deleteGroups() {
     if (!selectedGroup) return;
     const ids = selectedGroup.map((group: Group) => group.id);
     try {
-      toast.promise(GroupHandler.handleDeleteGroupSubmit(ids), {
-        success: `Successfully deleted ${ids.length} group(s)!`,
-        pending: `Deleting ${ids.length} group(s)!`,
-        error: {
-          render({ data }: any) {
-            return data.message;
+      await Promise.all(
+        ids.map(async (id, index) =>
+        toast.promise(GroupHandler.handleDeleteGroupSubmit(id), {
+          success: `Successfully deleted ${selectedGroup[index].name} group!`,
+          pending: `Deleting ${selectedGroup[index].name} group!`,
+          error: {
+            render({ data }: any) {
+              return data.message;
+            },
           },
-        },
-      });
+        }))
+      );
       refetch();
     } catch (e) {}
   }

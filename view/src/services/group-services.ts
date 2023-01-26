@@ -28,7 +28,7 @@ export default class GroupServices {
     });
   }
 
-  static async deleteUserByIds(body: object) {
+  static async deleteGroupByIds(body: object) {
     return axios.delete(`${import.meta.env.VITE_API_URL}/groups/`, {
       withCredentials: true,
       data: body,
