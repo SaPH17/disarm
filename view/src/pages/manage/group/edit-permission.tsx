@@ -40,6 +40,7 @@ const ManageGroupEditPermission = () => {
         id: `${p.PermissionAction.name}.${p.ObjectType.name}.${p.object_id}`,
         action: capitalize(p.PermissionAction.name),
         objectType: capitalize(p.ObjectType.name),
+        objectId: p.object_id,
         objectInformation: (
           <div className="flex flex-col">
             <div className="font-bold">{p.object_id}</div>
