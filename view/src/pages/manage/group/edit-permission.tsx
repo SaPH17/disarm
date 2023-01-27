@@ -41,6 +41,7 @@ const ManageGroupEditPermission = () => {
         action: capitalize(p.PermissionAction.name),
         objectType: capitalize(p.ObjectType.name),
         objectId: p.object_id,
+        objectName: p.object_name,
         objectInformation: (
           <div className="flex flex-col">
             <div className="font-bold">{p.object_id}</div>
@@ -152,8 +153,12 @@ const ManageGroupEditPermission = () => {
                           selectedPermission.find((p) => p.id === v.id)
                         )
                         .filter((v: any) => v.id.includes(search.toLowerCase()))
-                    : permissions.filter((v: any) =>
-                        v.id.includes(search.toLowerCase())
+                    : permissions.filter(
+                        (v: any) =>
+                          v.id.includes(search.toLowerCase()) ||
+                          v.objectName
+                            .toLowerCase()
+                            .includes(search.toLowerCase())
                       )
                   : []
               }
