@@ -5,6 +5,7 @@ import { toPascalCase } from '../../../utils/functions/capitalize';
 import InputText from '../../input-text/input-text';
 import PrimaryButton from '../../primary-button';
 import SecondaryButton from '../../secondary-button';
+import TextArea from '../../text-area/text-area';
 
 export type AccordionData = {
   accordionTitle: string;
@@ -104,7 +105,7 @@ const Accordion = ({
                     >
                       {contentRow.isEdited ? (
                         <div className="px-1 py-2 sm:py-0">
-                          <InputText
+                          <TextArea
                             id={`${h}_${idx}`}
                             name={`${h}`}
                             label={`${toPascalCase(h)}`}
@@ -134,7 +135,7 @@ const Accordion = ({
                             <span>{toPascalCase(h)}</span>
                             <span>:</span>
                           </div>
-                          <div className="col-span-3 sm:col-span-4 sm:px-2">
+                          <div className="inline-block col-span-3 break-all whitespace-pre-wrap sm:col-span-4 sm:px-2 hyphens-auto">
                             {(contentRow as any)[h]}
                           </div>
                         </div>
