@@ -165,7 +165,7 @@ export default function ManageProjectIndex() {
         });
       } catch (e) {}
     });
-    refetch();
+    refetchProject();
     setSelectedProject([]);
   }
 
@@ -186,7 +186,7 @@ export default function ManageProjectIndex() {
           })
         )
       );
-      refetch();
+      refetchProject();
       setSelectedProject([]);
     } catch (e) {}
   }
