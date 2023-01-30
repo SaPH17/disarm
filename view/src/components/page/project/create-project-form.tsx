@@ -167,7 +167,7 @@ export default function CreateProjectForm() {
             htmlFor="country"
             className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
           >
-            Standard
+            Checklist
           </label>
           <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
             <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
