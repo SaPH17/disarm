@@ -12,6 +12,8 @@ import { toast } from 'react-toastify';
 import { FindingHandler } from '../../../handlers/finding/finding-handler';
 import { stepsToJson } from '../../../utils/functions/jsonConverter';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import ProjectServices from '../../../services/project-services';
 
 export default function CreateFindingForm() {
   const { id } = useParams();
@@ -30,6 +32,22 @@ export default function CreateFindingForm() {
   const [fixedEvidences, setFixedEvidences] = useState<ImageListData[]>([
     { ...defaultListData },
   ]);
+
+  const { data: project } = useQuery(`project/${id}`, () => ProjectServices.getOneProject(id));
+  const checklistIds = getChecklistData(parseChecklistData(project?.Checklist?.sections) || '');
+
+  function parseChecklistData(data: any) {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getChecklistData(data: any){
+    if (data === '') return null;
+    return [].concat(...data.map((checklist: any) => checklist.details.map((d: any) => d.id)))
+  }
 
   const handleCreateFindingFormSubmit = (data: any) => {
     const formData = new FormData();
@@ -141,11 +159,21 @@ export default function CreateFindingForm() {
             name="checklist-detail-id"
             label="Checklist Detail Id"
             type="text"
+            listId='checklist-detail-id-data'
             errors={errors}
             register={register('checklistDetailId', {
               required: 'Checklist Detail Id is required.',
             })}
           />
+          {
+            checklistIds && <datalist id='checklist-detail-id-data'>
+              {
+                 checklistIds?.map(checklistId => {
+                  return <option key={ checklistId } value={ checklistId }>{checklistId}</option>
+                })
+              }
+            </datalist>
+          }
         </div>
 
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
