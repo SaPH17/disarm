@@ -31,7 +31,7 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		_, pserr := controllers.GetUserPermissions(uid.String())
+		ps, pserr := controllers.GetUserPermissions(uid.String())
 		if pserr != nil {
 			c.String(http.StatusInternalServerError, "Ps Error")
 			c.Abort()
@@ -39,108 +39,168 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 
 		urlp := strings.Split(c.Request.RequestURI, "/")
 
-		fmt.Println(urlp)
+		fmt.Println(urlp[0], urlp[1], urlp[2], urlp[3])
 		fmt.Println(len(urlp))
 		abort := false
 
-		// switch c.Request.Method {
-		// case "GET":
-		// 	if urlp[3] != "" {
-		// 		switch urlp[2] {
-		// 		case "users":
-		// 			_, exists := ps.ViewDetailPermissions.User[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "projects":
-		// 			_, exists := ps.ViewDetailPermissions.Project[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "findings":
-		// 			_, exists := ps.ViewDetailPermissions.Finding[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "checklists":
-		// 			_, exists := ps.ViewDetailPermissions.Checklist[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "groups":
-		// 			_, exists := ps.ViewDetailPermissions.Group[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		}
-		// 	}
-		// case "PUT":
-		// 	if urlp[3] != "" {
-		// 		switch urlp[2] {
-		// 		case "users":
-		// 			_, exists := ps.EditPermissions.User[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "projects":
-		// 			fmt.Println("oi")
-		// 			_, exists := ps.EditPermissions.Project[urlp[3]]
-		// 			if !exists {
-		// 				fmt.Println("oi2")
-		// 				abort = true
-		// 			}
-		// 		case "findings":
-		// 			_, exists := ps.EditPermissions.Finding[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "checklists":
-		// 			_, exists := ps.EditPermissions.Checklist[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "groups":
-		// 			_, exists := ps.EditPermissions.Group[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
+		switch c.Request.Method {
+		case "POST":
+			if len(urlp) >= 3 && urlp[2] != "" {
+				switch urlp[2] {
+				case "users":
+					_, all := ps.CreatePermissions.User["*"]
 
-		// 		}
-		// 	}
-		// case "DELETE":
-		// 	if urlp[3] != "" {
-		// 		switch urlp[2] {
-		// 		case "users":
-		// 			_, exists := ps.DeletePermissions.User[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "projects":
-		// 			fmt.Println("oi")
-		// 			_, exists := ps.DeletePermissions.Project[urlp[3]]
-		// 			if !exists {
-		// 				fmt.Println("oi2")
-		// 				abort = true
-		// 			}
-		// 		case "findings":
-		// 			_, exists := ps.DeletePermissions.Finding[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "checklists":
-		// 			_, exists := ps.DeletePermissions.Checklist[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
-		// 		case "groups":
-		// 			_, exists := ps.DeletePermissions.Group[urlp[3]]
-		// 			if !exists {
-		// 				abort = true
-		// 			}
+					if !all {
+						abort = true
+					}
+				case "projects":
+					_, all := ps.CreatePermissions.Project["*"]
 
-		// 		}
-		// 	}
-		// }
+					if !all {
+						abort = true
+					}
+				case "findings":
+					_, exists := ps.CreatePermissions.Finding[urlp[3]]
+					_, all := ps.CreatePermissions.Finding["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "checklists":
+					_, all := ps.CreatePermissions.Checklist["*"]
+
+					if !all {
+						abort = true
+					}
+				case "groups":
+					_, all := ps.CreatePermissions.Group["*"]
+
+					if !all {
+						abort = true
+					}
+				}
+			}
+		case "GET":
+			if len(urlp) >= 4 && urlp[3] != "" {
+				switch urlp[2] {
+				case "users":
+					_, exists := ps.ViewPermissions.User[urlp[3]]
+					_, all := ps.ViewPermissions.User["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "projects":
+					_, exists := ps.ViewDetailPermissions.Project[urlp[3]]
+					_, all := ps.ViewDetailPermissions.Project["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "findings":
+					_, exists := ps.ViewDetailPermissions.Finding[urlp[3]]
+					_, all := ps.ViewDetailPermissions.Finding["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "checklists":
+					_, exists := ps.ViewDetailPermissions.Checklist[urlp[3]]
+					_, all := ps.ViewDetailPermissions.Checklist["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "groups":
+					_, exists := ps.ViewPermissions.Group[urlp[3]]
+					_, all := ps.ViewPermissions.Group["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				}
+			}
+		case "PUT":
+			if urlp[3] != "" {
+				switch urlp[2] {
+				case "users":
+					_, exists := ps.EditPermissions.User[urlp[3]]
+					_, all := ps.EditPermissions.User["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "projects":
+					_, exists := ps.EditPermissions.Project[urlp[3]]
+					_, all := ps.EditPermissions.Project["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "findings":
+					_, exists := ps.EditPermissions.Finding[urlp[3]]
+					_, all := ps.EditPermissions.Finding["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "checklists":
+					_, exists := ps.EditPermissions.Checklist[urlp[3]]
+					_, all := ps.EditPermissions.Checklist["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "groups":
+					_, exists := ps.EditPermissions.Group[urlp[3]]
+					_, all := ps.EditPermissions.Group["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				}
+			}
+		case "DELETE":
+			if urlp[3] != "" {
+				switch urlp[2] {
+				case "users":
+					_, exists := ps.DeletePermissions.User[urlp[3]]
+					_, all := ps.DeletePermissions.User["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "projects":
+					_, exists := ps.DeletePermissions.Project[urlp[3]]
+					_, all := ps.DeletePermissions.Project["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "findings":
+					_, exists := ps.DeletePermissions.Finding[urlp[3]]
+					_, all := ps.DeletePermissions.Finding["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "checklists":
+					_, exists := ps.DeletePermissions.Checklist[urlp[3]]
+					_, all := ps.DeletePermissions.Checklist["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				case "groups":
+					_, exists := ps.DeletePermissions.Group[urlp[3]]
+					_, all := ps.DeletePermissions.Group["*"]
+
+					if !exists && !all {
+						abort = true
+					}
+				}
+			}
+		}
 
 		if abort {
 			c.String(http.StatusUnauthorized, "Ps Unauthorized")

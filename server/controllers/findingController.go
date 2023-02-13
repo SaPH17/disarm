@@ -225,7 +225,7 @@ func GetAllFindingByProjectId(c *gin.Context) {
 
 	all := false
 	pids := []uuid.UUID{}
-	for id, _ := range ps.ViewPermissions.Group {
+	for id, _ := range ps.ViewPermissions.Finding {
 		if id == "*" {
 			all = true
 			break
