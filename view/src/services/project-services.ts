@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default class ProjectServices {
   static async getProjects() {
@@ -12,13 +13,17 @@ export default class ProjectServices {
   }
 
   static async getOneProject(id: any) {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_API_URL}/projects/${id}`,
-      {
-        withCredentials: true,
-      }
-    );
-    return data.project;
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/projects/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      return data.project;
+    } catch (e) {
+      return null;
+    }
   }
 
   static async deleteProjectByIds(body: object) {

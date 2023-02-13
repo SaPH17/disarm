@@ -8,11 +8,12 @@ import { useQuery } from 'react-query';
 import { toReadableDate } from '../../../utils/functions/dates';
 import Breadcrumbs from '../../../components/breadcrumbs';
 import { REPORT_URL_PREFIX, getChecklistPercentage } from '.';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReportPopup from '../../../components/popup/report.popup';
 import { DocumentIcon } from '@heroicons/react/outline';
 import CheckChecklistPopup from '../../../components/popup/check-checklist-popup';
 import FindingServices from '../../../services/finding-services';
+import { toast } from 'react-toastify';
 
 const title = [
   'findingId',
@@ -41,6 +42,16 @@ export default function ManageProjectShow() {
     `project/${id}`,
     () => ProjectServices.getOneProject(id)
   );
+
+  useEffect(() => {
+    if (projectData === null){
+      toast.error('Unauthorized!', {
+        toastId: 'Unauthorized Show Project Detail',
+      });
+      navigate(-1);
+    }
+  }, [projectData]);
+
   const { data: findingData, refetch: refetchFinding } = useQuery(
     `project/${id}/findings`,
     () => FindingServices.getFindingByProjectId(projectData?.id),
