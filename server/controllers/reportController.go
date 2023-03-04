@@ -23,8 +23,9 @@ type EvidencesItem struct {
 	Content string `json:"content" binding:"required"`
 }
 
+var APP_URL = os.Getenv("APP_URL")
 var TEMPLATE_FOLDER string = "./templates/"
-var UPLOAD_FOLDER string = "http://localhost:8000/upload/"
+var UPLOAD_FOLDER string = "http://" + APP_URL + ":8000/upload/"
 var TARGET_FOLDER string = "./reports/"
 var STYLE_TEMPLATE_PATH string = TEMPLATE_FOLDER + "style-template.html"
 var PROJECT_REPORT_TEMPLATE_PATH string = TEMPLATE_FOLDER + "project-report-template.html"

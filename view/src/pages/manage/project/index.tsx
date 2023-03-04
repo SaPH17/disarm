@@ -21,7 +21,6 @@ import ReportPopup from '../../../components/popup/report.popup';
 import { DocumentIcon } from '@heroicons/react/outline';
 import { GenerateReportHandler } from '../../../handlers/report/generate-report-handler';
 import CheckChecklistPopup from '../../../components/popup/check-checklist-popup';
-import FindingServices from '../../../services/finding-services';
 
 const title = ['name', 'company', 'phase', 'action'];
 const contentTitle = [
@@ -35,7 +34,9 @@ const contentTitle = [
   'endDate',
   'projectPercentage',
 ];
-export const REPORT_URL_PREFIX = 'http://localhost:8000/reports';
+export const REPORT_URL_PREFIX = `http://${
+  import.meta.env.VITE_APP_URL
+}:8000/reports`;
 
 function parseChecklistData(data: any) {
   try {

@@ -24,7 +24,7 @@ const contentTitle = [
   { name: 'picName', editable: false },
 ];
 
-const IMAGE_URL_PREFIX = 'http://localhost:8000/upload';
+const IMAGE_URL_PREFIX = `http://${import.meta.env.VITE_APP_URL}:8000/upload`;
 const STATUS = [
   { id: '1', name: 'Fixing' },
   { id: '2', name: 'Fixed' },
