@@ -1,6 +1,6 @@
-import { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationIcon } from '@heroicons/react/outline';
+import { Fragment, useRef } from 'react';
 
 export type SelectedGeneratedReportPopupData = {
   id: string | number;
@@ -88,7 +88,7 @@ export default function GenerateReportPopup({
               <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
-                  className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => {
                     onClickFunction();
                     setOpen(false);

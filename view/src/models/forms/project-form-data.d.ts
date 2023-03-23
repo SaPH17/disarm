@@ -5,4 +5,5 @@ export type ProjectFormData = {
   startDate: any;
   endDate: any;
   checklist?: string;
+  inherited_project?: string;
 };

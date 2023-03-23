@@ -3,8 +3,14 @@ package controllers
 import (
 	"disarm/main/models"
 	"disarm/main/utils/token"
+	"encoding/json"
+	"fmt"
 	"html"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,6 +29,7 @@ func CreateProject(c *gin.Context) {
 		StartDate   string `json:"start_date" binding:"required"`
 		EndDate     string `json:"end_date" binding:"required"`
 		ChecklistId string `json:"checklist" binding:"required"`
+		InheritedProjectId string `json:"inherited_project"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -38,7 +45,9 @@ func CreateProject(c *gin.Context) {
 	// escapedStartDate := html.EscapeString(strings.TrimSpace(body.StartDate))
 	// escapedEndDate := html.EscapeString(strings.TrimSpace(body.EndDate))
 	escapedChecklistId := html.EscapeString(strings.TrimSpace(body.ChecklistId))
+	escapedInheritedProjectId := html.EscapeString(strings.TrimSpace(body.InheritedProjectId))
 	checklistUuid, errUuid := uuid.FromString(escapedChecklistId)
+	inheritedProjectUuid := uuid.FromStringOrNil(escapedInheritedProjectId)
 
 	if escapedPhase == "" {
 		escapedPhase = "Idle"
@@ -64,7 +73,21 @@ func CreateProject(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": eErr.Error(),
 		})
-		return
+		return	
+	}
+
+	var inheritedProject models.Project
+	if inheritedProjectUuid != uuid.Nil {
+		var inheritedProjectErr error
+		inheritedProject, inheritedProjectErr = models.Projects.GetOneById(inheritedProjectUuid)
+		if inheritedProjectErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": inheritedProjectErr,
+			})
+			return
+		}
+
+		escapedPhase = inheritedProject.Phase
 	}
 
 	project, dbErr := models.Projects.Create(escapedName, escapedCompany, escapedPhase, startDate, endDate, checklistUuid)
@@ -90,6 +113,110 @@ func CreateProject(c *gin.Context) {
 			"error": findingPermissionErr,
 		})
 		return
+	}
+
+	if inheritedProjectUuid != uuid.Nil {
+		_, updateSectionDbErr := models.Projects.EditSection(project.ID, inheritedProject.Sections)
+		if updateSectionDbErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": updateSectionDbErr,
+			})
+			return
+		}
+
+		type EvidencesItem struct {
+			Image   string `json:"image" binding:"required"`
+			Content string `json:"content" binding:"required"`
+		}
+
+		copyImage := func(path string) (string, error) {
+			sourceFilePath := "./upload/" + path
+			splitFileName := strings.Split(path, "_")
+			extension := filepath.Ext(path)
+
+			newFileName := strings.Join(splitFileName[:len(splitFileName)-1], "_") + "_" + strconv.FormatInt(time.Now().UTC().UnixNano()/1e6, 10) + extension
+			fmt.Println("called at join filename")
+			fmt.Println(newFileName)
+
+			sourceFileDir := filepath.Dir(sourceFilePath)
+			newFilePath := filepath.Join(sourceFileDir, newFileName)
+
+			sourceFile, openSourceEvidenceErr := os.Open(sourceFilePath)
+			if openSourceEvidenceErr != nil {
+				return newFileName, openSourceEvidenceErr
+			}
+			defer sourceFile.Close()
+
+			destinationFile, createDestFileErr := os.Create(newFilePath)
+			if createDestFileErr != nil {
+				return newFileName, createDestFileErr
+			}
+			defer destinationFile.Close()
+
+			_, copyImageErr := io.Copy(destinationFile, sourceFile)
+			if copyImageErr != nil {
+				return newFileName, copyImageErr
+			}
+
+			return newFileName, nil
+		}
+
+
+		for _, finding := range inheritedProject.Findings {
+			var evidences []EvidencesItem
+			var fixedEvidences []EvidencesItem
+			
+			jsonParseErr1 := json.Unmarshal([]byte(finding.Evidences), &evidences)
+			jsonParseErr2 := json.Unmarshal([]byte(finding.FixedEvidences), &fixedEvidences)
+
+			if jsonParseErr1 != nil || jsonParseErr2 != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"Error": "Invalid JSON Parse of Inherited Project!",
+				})
+				return
+			}
+
+			
+			for idx, evidence := range evidences {
+				fmt.Println("Called at copu evidence")
+				newImagePath, _ := copyImage(evidence.Image)
+				evidences[idx].Image = newImagePath
+			}
+
+			for idx, fixedEvidence := range fixedEvidences {
+				fmt.Println("Called at copu fixed evidence")
+				newImagePath, _ := copyImage(fixedEvidence.Image)
+				fixedEvidences[idx].Image = newImagePath
+			}
+
+			newEvidencesJson, jsonErr3 := json.Marshal(evidences)
+			newFixedEvidencesJson, jsonErr4 := json.Marshal(fixedEvidences)
+		
+			if jsonErr3 != nil || jsonErr4 != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"Error": "Invalid JSON",
+				})
+				return
+			}
+
+			finding, createFindingDbErr := models.Findings.Create(finding.Title, finding.Risk, finding.ImpactedSystem, finding.Description, finding.Steps, finding.Recommendations, string(newEvidencesJson), string(newFixedEvidencesJson), finding.ChecklistDetailId, project.ID, project.ChecklistId, finding.UserId)
+
+			if createFindingDbErr != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error": createFindingDbErr,
+				})
+				return
+			}
+		
+			permissionErr := CreatePermission(FINDING_ACTION_TYPES, "finding", finding.ID, finding.Title)
+			if permissionErr != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error": permissionErr,
+				})
+				return
+			}
+		}
+
 	}
 
 	c.JSON(200, gin.H{

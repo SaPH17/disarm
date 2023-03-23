@@ -158,6 +158,7 @@ func EditChecklist(c *gin.Context) {
 	escapedName := html.EscapeString(strings.TrimSpace(body.Name))
 	escapedSections := strings.TrimSpace(body.Sections)
 	escapedStatus := strings.TrimSpace(body.Status)
+	
 
 	currentUuid, errUuid := uuid.FromString(escapedId)
 

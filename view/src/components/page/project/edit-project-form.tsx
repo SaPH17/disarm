@@ -21,7 +21,6 @@ export default function EditProjectForm() {
     { id: '4', name: 'Done' },
   ];
   const params = useParams();
-  const navigate = useNavigate();
   const { data: projectData } = useQuery(`project/${params.id}`, () =>
     ProjectServices.getOneProject(params.id)
   );
@@ -105,8 +104,8 @@ export default function EditProjectForm() {
           >
             Start Date
           </label>
-          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
-            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+          <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
+            <div className="block w-full max-w-lg border-gray-300 rounded-md sm:text-sm ">
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <DatePicker
                   placeholderText="Start Date"
@@ -117,7 +116,7 @@ export default function EditProjectForm() {
                         required: 'Start Date is required.',
                       })}
                       placeholder={'Start Date'}
-                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   }
                   onChange={(date: any) => {
@@ -140,8 +139,8 @@ export default function EditProjectForm() {
           >
             Estimated End Date
           </label>
-          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col gap-2">
-            <div className="block max-w-lg w-full sm:text-sm border-gray-300 rounded-md ">
+          <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
+            <div className="block w-full max-w-lg border-gray-300 rounded-md sm:text-sm ">
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <DatePicker
                   placeholderText="End Date"
@@ -152,7 +151,7 @@ export default function EditProjectForm() {
                         required: 'End Date is required.',
                       })}
                       placeholder={'Estimated End Date'}
-                      className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border px-3 py-2 border-gray-300 rounded-md"
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   }
                   onChange={(date: any) => {

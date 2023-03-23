@@ -155,20 +155,8 @@ const EditChecklistForm = () => {
               >
                 Status
               </label>
-              <div className="flex flex-col gap-2 mt-1 sm:mt-0 sm:col-span-2">
-                <div className="block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
-                  {selectedStatus && (
-                    <SelectBox
-                      initialSelected={selectedStatus}
-                      items={STATUS_DATA}
-                      defaultValue={'Select Status'}
-                      onClickFunction={(item: any) => {
-                        setValue('status', item.name);
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
+              
+              
             </div>
             <div className="pt-4 text-xl font-semibold sm:border-t sm:border-gray-200">
               Sections

@@ -58,7 +58,6 @@ const Accordion = ({
 
   function insertNewDataToRow(data: any) {
     const newContent = content;
-    console.log(data);
     (newContent[index].details as object[])[
       newContent[index].details.length - 1
     ] = {

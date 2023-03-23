@@ -61,6 +61,7 @@ export default function ManageProjectShow() {
     reports: false,
     checkChecklist: false,
   });
+  
   const project = projectData
     ? {
         ...projectData,
@@ -68,21 +69,21 @@ export default function ManageProjectShow() {
         totalFinding: projectData.Findings?.length || 0,
         startDate: toReadableDate(projectData.start_date),
         endDate: toReadableDate(projectData.end_date),
-        findings:
-          findingData?.map((v: any, idx: any) => {
-            return {
-              ...v,
-              findingId: `${projectData.name}-${(idx + 1).toLocaleString(
-                'en-US',
-                {
-                  minimumIntegerDigits: 3,
-                  useGrouping: false,
-                }
-              )}`,
-              impactedSystem: v.impacted_system,
-              action: <div className="cursor-pointer">View</div>,
-            };
-          }) || [],
+        findings: findingData?.sort((a: any, b: any) => a.created_at > b.created_at ? 1 : -1).map((v: any, idx: any) => {
+          console.log(v.created_at)
+          return {
+            ...v,
+            findingId: `${projectData.name}-${(idx + 1).toLocaleString(
+              'en-US',
+              {
+                minimumIntegerDigits: 3,
+                useGrouping: false,
+              }
+            )}`,
+            impactedSystem: v.impacted_system,
+            action: <div className="cursor-pointer">View</div>,
+          };
+        }),
         reports: projectData.Reports?.map((report: any) => ({
           ...report,
           dateCreated: toReadableDate(report.created_at),
